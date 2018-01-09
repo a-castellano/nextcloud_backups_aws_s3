@@ -1,4 +1,4 @@
-# nexcloud_backups_aws_a3
+# nexcloud_backups_aws_s3
 
 Utility to make backups of Nextcloud and store them in an S3 bucket
 
