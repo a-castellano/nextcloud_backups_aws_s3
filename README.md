@@ -10,8 +10,15 @@ You will need the following:
 - A S3 bucket
 - An user with access to that bucket
 - The command-line Amazon S3 client -> [s3cmd](http://s3tools.org/s3cmd)
+- [myumper](https://github.com/maxbube/mydumper) -> High-performance MySQL backup tool.
 
-For the user you have to create group with the following policy:
+
+Install required packages
+```
+apt-get install s3cmd mydumper
+```
+
+AWS user you create should be in a group with the following policy:
 ```
 {
   "Statement": [
@@ -26,7 +33,6 @@ For the user you have to create group with the following policy:
   ]
 }
 ```
-Include your use to that group.
 
 After creating the user you should be able to list your bucket, but not the others.
 
