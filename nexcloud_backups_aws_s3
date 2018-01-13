@@ -9,7 +9,8 @@
 ENABLE_LOG=false # by default this script write logs via syslog
 
 # Default values
-NEXTCLOUD_DIR='/var/www/nextcloud'
+NEXTCLOUD_PATH='/var/www/nextcloud'
+NEXTCLOUT_USERS='ALL'
 
 # Nextcloud variables
 NEXTCLOUD_CONFIG_SUBDIR='/config/config.php'
@@ -18,10 +19,17 @@ NEXTCLOUD_CONFIG_SUBDIR='/config/config.php'
 LOGGET_TAG="nextcloud_backups_aws_s3"
 LOGGER="$(which logger) -t $LOGGET_TAG"
 
+# Misc
+ECHO=$(which echo)
+TR=$(which tr)
+RM=$(which rm)
+SED=$(which sed)
+CAT=$(which cat)
+
 # Functions
 
 function trim {
-    echo $1 | sed 's/^--//'
+    $ECHO $1 | $SED 's/^--//'
 }
 
 function report_error {
@@ -36,7 +44,7 @@ function report_error {
 function check_option_called {
     option_called="_OPTION_CALLED"
     option_name=$1
-    variable_name=$(echo $option_name | tr '[:lower:]' '[:upper:]' | tr '-' '_')
+    variable_name=$($ECHO $option_name | $TR '[:lower:]' '[:upper:]' | $TR '-' '_')
     variable_called_name="$variable_name$option_called"
     if [[ -z ${!variable_called_name} || "${!variable_called_name}" = false  ]]; then
         if [ "$#" -eq 1 ]; then
@@ -58,20 +66,51 @@ function check_option_called {
     fi
 }
 
-# Main
+# Options
+declare -A short_options_hash
+short_options_hash=(
+    ["v"]="verbose"
+    ["h"]="help"
+    ["n"]="dry-run"
+    ["s"]="silent"
+)
+short_options=$( $ECHO "${!short_options_hash[@]}" | $SED 's/ //g' )
 
-OPTS=`getopt -o vhns --long verbose,dry-run,help,silent,s3-access-key:,s3-secret-key:,database-name:,database-user:,database-passwd:,database-host:,database-port: -n 'parse-options' -- "$@" 2> .error.log `
+declare -a long_options_with_no_params_array
+long_options_with_no_params_array=(
+    'verbose'
+    'help'
+    'dry-run'
+    'silent'
+    'exclude-database'
+)
+long_no_params=$( $ECHO ${long_options_with_no_params_array[@]} | $SED 's/ /,/g' | $SED 's/$/,/g' )
+
+declare -a long_options_with_one_param_array
+long_options_with_one_params_array=(
+    's3-access-key'
+    's3-secret-key'
+    'database-name'
+    'database-user'
+    'database-passwd'
+    'database-host'
+    'database-port'
+    'nextcloud-path'
+    'nextcloud-users'
+)
+long_ones_param=$( $ECHO ${long_options_with_one_params_array[@]} | $SED 's/ /:,/g' | $SED 's/$/:,/g' )
+
+OPTS=`getopt -o $short_options --long $long_no_params$long_ones_param -n 'parse-options' -- "$@" 2> .error.log `
 
 if [ $? -ne 0 ]; then
-    error_msg=$(cat .error.log)
-    $(which rm) .error.log
+    error_msg=$($CAT .error.log)
     report_error $error_msg
     exit 1
 fi
+$RM .error.log
 
 echo "$OPTS"
 eval set -- "$OPTS"
-
 
 while true; do
   case "$1" in
@@ -103,12 +142,20 @@ while true; do
             check_option_called $( trim $1 ) $2
             shift ; shift;;
     --database-host )
-            check_option_called $( echo $1 | sed 's/^--//' ) $2
+            check_option_called $( trim $1 ) $2
             shift ; shift;;
     --database-port )
-            check_option_called $( echo $1 | sed 's/^--//' ) $2
+            check_option_called $( trim $1 ) $2
             shift ; shift;;
-
+    --nextcloud-path )
+            check_option_called $( trim $1 ) $2
+            shift ; shift;;
+    --nextcloud-users )
+            check_option_called $( trim $1 ) $2
+            shift ; shift;;
+    --exclude-database )
+            check_option_called $( trim $1 )
+            shift ;;
     -s | --stack-size ) STACK_SIZE="$2"; shift; shift ;;
     -- ) shift; break ;;
     * ) break ;;
@@ -123,3 +170,4 @@ echo DRY_RUN=$DRY_RUN
 echo S3_ACCESS_KEY=$S3_ACCESS_KEY
 echo S3_SECRET_KEY=$S3_SECRET_KEY
 echo DATABASE_PORT=$DATABASE_PORT
+echo NEXTCLOUD_PATH=$NEXTCLOUD_PATH
