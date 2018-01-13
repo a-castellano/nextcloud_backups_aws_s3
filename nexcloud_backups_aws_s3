@@ -20,6 +20,10 @@ LOGGER="$(which logger) -t $LOGGET_TAG"
 
 # Functions
 
+function trim {
+    echo $1 | sed 's/^--//'
+}
+
 function report_error {
     error_message="Error: $@"
     stderr=""
@@ -84,19 +88,19 @@ while true; do
             check_option_called 'dry-run'
             shift ;;
     --s3-access-key )
-            check_option_called $( echo $1 | sed 's/^--//' ) $2
+            check_option_called $( trim $1 ) $2
             shift ; shift;;
     --s3-secret-key )
-            check_option_called $( echo $1 | sed 's/^--//' ) $2
+            check_option_called $( trim $1 ) $2
             shift ; shift;;
     --database-name )
-            check_option_called $( echo $1 | sed 's/^--//' ) $2
+            check_option_called $( trim $1 ) $2
             shift ; shift;;
     --database-user )
-            check_option_called $( echo $1 | sed 's/^--//' ) $2
+            check_option_called $( trim $1 ) $2
             shift ; shift;;
     --database-passwd )
-            check_option_called $( echo $1 | sed 's/^--//' ) $2
+            check_option_called $( trim $1 ) $2
             shift ; shift;;
     --database-host )
             check_option_called $( echo $1 | sed 's/^--//' ) $2
