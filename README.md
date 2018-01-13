@@ -1,11 +1,11 @@
-# nexcloud_backups_aws_s3
+# nextcloud_backups_aws_s3
 
 Utility to make backups of Nextcloud and store them in an S3 bucket
 
 ## Requirements
 
 You will need the following:
-- A server using Nexcloud
+- A server using Nextcloud
 - An AWS account
 - A S3 bucket
 - An user with access to that bucket
