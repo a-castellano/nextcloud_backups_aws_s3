@@ -1,0 +1,124 @@
+#!/bin/bash
+#
+# ** nextcloud_backups_aws_s3 **
+# Utility to make backups of Nextcloud and store them in an S3 bucket
+#
+# Álvaro Castellano Vela - https://github.com/a-castellano
+
+# Option variables
+
+VERBOSE=false
+VERBOSE_OPTION_CALLED=false
+HELP=false
+HELP_OPTION_CALLED=false
+SILENT=false
+SILENT_OPTION_CALLED=false
+DRY_RUN=false
+DRY_RUN_OPTION_CALLED=false
+
+S3_ACCESS_KEY_OPTION_CALLED=false
+S3_SECRET_KEY_OPTION_CALLED=false
+
+DATABASE_NAME_OPTION_CALLED=false
+DATABASE_USER_OPTION_CALLED=false
+DATABASE_PASSWD_OPTION_CALLED=false
+DATABASE_HOST_OPTION_CALLED=false
+DATABASE_PORT_OPTION_CALLED=false
+
+ENABLE_LOG=false # by default this script write logs via syslog
+
+# Default values
+NEXTCLOUD_DIR='/var/www/nextcloud'
+
+# Nextcloud variables
+
+NEXTCLOUD_CONFIG_SUBDIR='/config/config.php'
+
+LOGGET_TAG="nextcloud_backups_aws_s3"
+LOGGER="$(which logger) -t $LOGGET_TAG"
+
+# Functions
+
+function report_error {
+    error_message="Error: $@"
+    stderr=""
+    if [ "$SILENT" = false ]; then
+       stderr="--stderr"
+    fi
+    $LOGGER $stderr $error_message
+}
+
+function check_option_called {
+    option_called="_OPTION_CALLED"
+    option_name=$1
+    variable_name=$(echo $option_name | tr '[:lower:]' '[:upper:]' | tr '-' '_')
+    variable_called_name="$variable_name$option_called"
+    if [ "${!variable_called_name}" = false  ]; then
+        if [ "$#" -eq 1 ]; then
+            eval $variable_name=true
+        fi
+        if [ "$#" -eq 2 ]; then
+            eval $variable_name=$2
+        fi
+        eval $variable_called_name=true
+    else
+        error_msg="It is not allowed to set $option_name options more than two times."
+        report_error $error_msg
+        exit 1
+    fi
+}
+
+# Main
+
+OPTS=`getopt -o vhns --long verbose,dry-run,help,silent,s3-access-key:,s3-secret-key:,database-name:,database-user:,database-passwd:,database-host:,database-port: -n 'parse-options' -- "$@"`
+
+echo "$OPTS"
+eval set -- "$OPTS"
+
+while true; do
+  case "$1" in
+    -s | --silent )
+            check_option_called 'silent'
+            shift ;;
+    -v | --verbose )
+            check_option_called 'verbose'
+            shift ;;
+    -h | --help )
+            check_option_called 'help'
+            shift ;;
+    -n | --dry-run )
+            check_option_called 'dry-run'
+            shift ;;
+    --s3-access-key )
+            check_option_called 's3-access-key' $2
+            shift ; shift;;
+    --s3-secret-key )
+            check_option_called 's3-secret-key' $2
+            shift ; shift;;
+    --database-name )
+            check_option_called 'database-name' $2
+            shift ; shift;;
+    --database-user )
+            check_option_called 'database-user' $2
+            shift ; shift;;
+    --database-passwd )
+            check_option_called 'database-passwd' $2
+            shift ; shift;;
+    --database-host )
+            check_option_called 'database-host' $2
+            shift ; shift;;
+    --database-port )
+            check_option_called 'database-port' $2
+            shift ; shift;;
+
+    -s | --stack-size ) STACK_SIZE="$2"; shift; shift ;;
+    -- ) shift; break ;;
+    * ) break ;;
+  esac
+done
+
+echo VERBOSE=$VERBOSE
+echo HELP=$HELP
+echo DRY_RUN=$DRY_RUN
+echo S3_ACCESS_KEY=$S3_ACCESS_KEY
+echo S3_SECRET_KEY=$S3_SECRET_KEY
