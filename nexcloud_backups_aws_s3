@@ -20,11 +20,13 @@ LOGGET_TAG="nextcloud_backups_aws_s3"
 LOGGER="$(which logger) -t $LOGGET_TAG"
 
 # Misc
-ECHO=$(which echo)
-TR=$(which tr)
-RM=$(which rm)
-SED=$(which sed)
-CAT=$(which cat)
+WHICH=$(which which)
+ECHO=$($WHICH echo)
+TR=$($WHICH tr)
+RM=$($WHICH rm)
+SED=$($WHICH sed)
+CAT=$($WHICH cat)
+PRINTF=$($WHICH printf)
 
 # Functions
 
@@ -76,15 +78,13 @@ short_options_hash=(
 )
 short_options=$( $ECHO "${!short_options_hash[@]}" | $SED 's/ //g' )
 
+of_short_options=$(for KEY in "${!short_options_hash[@]}"; do $PRINTF "${short_options_hash[$KEY]},"; done)
+
 declare -a long_options_with_no_params_array
 long_options_with_no_params_array=(
-    'verbose'
-    'help'
-    'dry-run'
-    'silent'
     'exclude-database'
 )
-long_no_params=$( $ECHO ${long_options_with_no_params_array[@]} | $SED 's/ /,/g' | $SED 's/$/,/g' )
+no_params=$( $ECHO ${long_options_with_no_params_array[@]} | $SED 's/ /,/g' | $SED 's/$/,/g' )
 
 declare -a long_options_with_one_param_array
 long_options_with_one_params_array=(
@@ -98,9 +98,9 @@ long_options_with_one_params_array=(
     'nextcloud-path'
     'nextcloud-users'
 )
-long_ones_param=$( $ECHO ${long_options_with_one_params_array[@]} | $SED 's/ /:,/g' | $SED 's/$/:,/g' )
+one_param=$( $ECHO ${long_options_with_one_params_array[@]} | $SED 's/ /:,/g' | $SED 's/$/:,/g' )
 
-OPTS=`getopt -o $short_options --long $long_no_params$long_ones_param -n 'parse-options' -- "$@" 2> .error.log `
+OPTS=`getopt -o $short_options --long $no_params$of_short$one_param -n 'parse-options' -- "$@" 2> .error.log `
 
 if [ $? -ne 0 ]; then
     error_msg=$($CAT .error.log)
