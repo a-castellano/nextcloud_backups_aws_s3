@@ -1,7 +1,7 @@
 language: bash
 
 before_script:
-    - apt-get install shunit2
+    - sudo apt-get install shunit2
 
 script:
     - make test
