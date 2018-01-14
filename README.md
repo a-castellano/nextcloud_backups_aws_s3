@@ -1,5 +1,7 @@
 # nextcloud_backups_aws_s3
 
+[![Build Status](https://travis-ci.org/a-castellano/nextcloud_backups_aws_s3.svg?branch=unit_tests)](https://travis-ci.org/a-castellano/nextcloud_backups_aws_s3)
+
 Utility to make backups of Nextcloud and store them in an S3 bucket
 
 ## Requirements
