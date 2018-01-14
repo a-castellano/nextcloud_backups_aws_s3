@@ -10,7 +10,7 @@ ENABLE_LOG=false # by default this script write logs via syslog
 
 # Default values
 NEXTCLOUD_PATH='/var/www/nextcloud'
-NEXTCLOUT_USERS='ALL'
+NEXTCLOUD_USERS='ALL'
 
 # Nextcloud variables
 NEXTCLOUD_CONFIG_SUBDIR='/config/config.php'
@@ -29,9 +29,8 @@ CAT=$($WHICH cat)
 PRINTF=$($WHICH printf)
 
 # Functions
-
 function trim {
-    $ECHO $1 | $SED 's/^--//'
+    $ECHO $1 | $SED 's/^-*//'
 }
 
 function report_error {
@@ -68,23 +67,31 @@ function check_option_called {
     fi
 }
 
+function get_option_from_short_options_hash {
+    arg=$(trim $1)
+    result=${short_options_hash[$arg]}
+    check_option_called $result
+}
+
 # Options
-declare -A short_options_hash
-short_options_hash=(
+declare -A short_options_hash=(
     ["v"]="verbose"
-    ["h"]="help"
-    ["n"]="dry-run"
     ["s"]="silent"
+    ["u"]="usage"
 )
 short_options=$( $ECHO "${!short_options_hash[@]}" | $SED 's/ //g' )
+short_options_OR=$( $ECHO "${!short_options_hash[@]}" | $SED 's/\([^ ]\)/-\1 |/g' | $SED 's/|$//g' )
 
-of_short_options=$(for KEY in "${!short_options_hash[@]}"; do $PRINTF "${short_options_hash[$KEY]},"; done)
+of_short=$(for KEY in "${!short_options_hash[@]}"; do $PRINTF "${short_options_hash[$KEY]},"; done )
+of_short_OR=$(for KEY in "${!short_options_hash[@]}"; do $PRINTF "--${short_options_hash[$KEY]} | "; done | $SED 's/| $//g' )
 
 declare -a long_options_with_no_params_array
 long_options_with_no_params_array=(
     'exclude-database'
+    'dry-run'
 )
 no_params=$( $ECHO ${long_options_with_no_params_array[@]} | $SED 's/ /,/g' | $SED 's/$/,/g' )
+no_params_OR=$( $ECHO ${long_options_with_no_params_array[@]} | $SED 's/\([^ ]*\)/--\1 |/g' | $SED 's/|$//g' )
 
 declare -a long_options_with_one_param_array
 long_options_with_one_params_array=(
@@ -97,8 +104,10 @@ long_options_with_one_params_array=(
     'database-port'
     'nextcloud-path'
     'nextcloud-users'
+    'test'
 )
 one_param=$( $ECHO ${long_options_with_one_params_array[@]} | $SED 's/ /:,/g' | $SED 's/$/:,/g' )
+one_param_OR=$( $ECHO ${long_options_with_one_params_array[@]} | $SED 's/\([^ ]*\)/--\1 |/g' | $SED 's/|$//g' )
 
 OPTS=`getopt -o $short_options --long $no_params$of_short$one_param -n 'parse-options' -- "$@" 2> .error.log `
 
@@ -109,65 +118,34 @@ if [ $? -ne 0 ]; then
 fi
 $RM .error.log
 
-echo "$OPTS"
 eval set -- "$OPTS"
 
 while true; do
-  case "$1" in
-    -s | --silent )
-            check_option_called 'silent'
+  eval "
+  case \"$1\" in
+    $short_options_OR )
+            get_option_from_short_options_hash $1
             shift ;;
-    -v | --verbose )
-            check_option_called 'verbose'
-            shift ;;
-    -h | --help )
-            check_option_called 'help'
-            shift ;;
-    -n | --dry-run )
-            check_option_called 'dry-run'
-            shift ;;
-    --s3-access-key )
-            check_option_called $( trim $1 ) $2
-            shift ; shift;;
-    --s3-secret-key )
-            check_option_called $( trim $1 ) $2
-            shift ; shift;;
-    --database-name )
-            check_option_called $( trim $1 ) $2
-            shift ; shift;;
-    --database-user )
-            check_option_called $( trim $1 ) $2
-            shift ; shift;;
-    --database-passwd )
-            check_option_called $( trim $1 ) $2
-            shift ; shift;;
-    --database-host )
-            check_option_called $( trim $1 ) $2
-            shift ; shift;;
-    --database-port )
-            check_option_called $( trim $1 ) $2
-            shift ; shift;;
-    --nextcloud-path )
-            check_option_called $( trim $1 ) $2
-            shift ; shift;;
-    --nextcloud-users )
-            check_option_called $( trim $1 ) $2
-            shift ; shift;;
-    --exclude-database )
+    $of_short_OR )
             check_option_called $( trim $1 )
             shift ;;
-    -s | --stack-size ) STACK_SIZE="$2"; shift; shift ;;
+    $no_params_OR )
+            check_option_called $( trim $1 )
+            shift ;;
+    $one_param_OR )
+            check_option_called $( trim $1 ) $2
+            shift ; shift;;
     -- ) shift; break ;;
     * ) break ;;
-  esac
+  esac"
 done
 
-echo "---END"
-
 echo VERBOSE=$VERBOSE
-echo HELP=$HELP
+echo USAGE=$USAGE
 echo DRY_RUN=$DRY_RUN
 echo S3_ACCESS_KEY=$S3_ACCESS_KEY
 echo S3_SECRET_KEY=$S3_SECRET_KEY
 echo DATABASE_PORT=$DATABASE_PORT
 echo NEXTCLOUD_PATH=$NEXTCLOUD_PATH
+echo EXCLUDE_DATABASE=$EXCLUDE_DATABASE
+exit 0
