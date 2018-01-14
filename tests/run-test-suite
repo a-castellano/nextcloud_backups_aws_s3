@@ -1,0 +1,20 @@
+#!/bin/sh
+# file: tests/00_test_suite.sh
+
+testUndefinedValue() {
+    undefined_variable=$(./nexcloud_backups_aws_s3 --test='undefined-variable')
+    assertEquals "$undefined_variable" "UNDEFINED_VARIABLE is not defined"
+}
+
+testDefaultNextcloudPath() {
+    nextcloud_path=$(./nexcloud_backups_aws_s3 --test='nextcloud-path')
+    assertEquals "$nextcloud_path" "NEXTCLOUD_PATH -> /var/www/nextcloud"
+}
+
+testChangueNextcloudPath() {
+    nextcloud_path=$(./nexcloud_backups_aws_s3 --nextcloud-path='/home/user/test' --test='nextcloud-path')
+    assertEquals "$nextcloud_path" "NEXTCLOUD_PATH -> /home/user/test"
+}
+
+# Load shUnit2.
+. /usr/bin/shunit2

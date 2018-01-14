@@ -73,6 +73,19 @@ function get_option_from_short_options_hash {
     check_option_called $result
 }
 
+function variables_to_test {
+    variables_to_test=$($ECHO $1 | $SED 's/,/ /g' | $TR '[:lower:]' '[:upper:]' | $TR '-' '_' )
+    for var in $variables_to_test
+    do
+        if [[ -z ${!var} ]]; then
+            $ECHO "$var is not defined"
+        else
+            $ECHO "$var -> ${!var}"
+        fi
+    done
+}
+
+
 # Options
 declare -A short_options_hash=(
     ["v"]="verbose"
@@ -140,12 +153,11 @@ while true; do
   esac"
 done
 
-echo VERBOSE=$VERBOSE
-echo USAGE=$USAGE
-echo DRY_RUN=$DRY_RUN
-echo S3_ACCESS_KEY=$S3_ACCESS_KEY
-echo S3_SECRET_KEY=$S3_SECRET_KEY
-echo DATABASE_PORT=$DATABASE_PORT
-echo NEXTCLOUD_PATH=$NEXTCLOUD_PATH
-echo EXCLUDE_DATABASE=$EXCLUDE_DATABASE
+# Look for tests
+
+if [[ -n $TEST ]]; then
+    variables_to_test $TEST
+    exit 0
+fi
+
 exit 0
