@@ -1,0 +1,7 @@
+language: bash
+
+before_script:
+    - sudo apt-get install shunit2
+
+script:
+    - make test

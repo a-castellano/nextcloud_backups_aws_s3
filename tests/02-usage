@@ -1,0 +1,12 @@
+##!/bin/sh
+# file: tests/02-usage
+
+
+testUsage() {
+    usage_call=$(./nexcloud_backups_aws_s3 -u)
+    startSkipping
+    assertEquals "$usage_call" ""
+}
+
+# Load shUnit2.
+. /usr/bin/shunit2
