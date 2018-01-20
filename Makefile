@@ -8,4 +8,7 @@ all: test
 
 test:
 	@echo "executing $(PROG) unit tests"
-	( $(TEST_DIR)/run-test-suite )
+	@echo "- variables"
+	( $(TEST_DIR)/01-variables )
+	@echo "- usage"
+	( $(TEST_DIR)/02-usage )

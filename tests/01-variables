@@ -1,5 +1,21 @@
-#!/bin/sh
-# file: tests/00_test_suite.sh
+##!/bin/sh
+# file: tests/01-variables
+
+testVerboseNotEnabled() {
+    undefined_verbose=$(./nexcloud_backups_aws_s3 --test='verbose')
+    assertEquals "$undefined_verbose" "VERBOSE is not defined"
+}
+
+testVerboseIsEnabled() {
+    defined_verbose=$(./nexcloud_backups_aws_s3 --test='verbose' -v)
+    assertEquals "$defined_verbose" "VERBOSE -> true"
+}
+
+testUsage() {
+    usage_call=$(./nexcloud_backups_aws_s3 -u)
+    startSkipping
+    assertEquals "$usage_call" "VERBOSE -> true"
+}
 
 testUndefinedValue() {
     undefined_variable=$(./nexcloud_backups_aws_s3 --test='undefined-variable')
