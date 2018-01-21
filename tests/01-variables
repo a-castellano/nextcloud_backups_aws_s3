@@ -183,6 +183,10 @@ testChangeNextcloudUsersWithspaces() {
     assertEquals "$users" "NEXTCLOUD_USERS -> me,bob"
 }
 
+testChangeNextcloudUsersWithspaces() {
+    users=$(./nexcloud_backups_aws_s3 --nextcloud-users="me      , bob" --test='nextcloud-users')
+    assertEquals "$users" "NEXTCLOUD_USERS -> me,bob"
+}
 
 # Load shUnit2.
 . /usr/bin/shunit2
