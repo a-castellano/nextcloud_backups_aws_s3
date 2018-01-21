@@ -1,0 +1,232 @@
+##!/bin/sh
+# file: tests/03-configfiles
+
+cleanVariables() {
+    for var in NEXTCLOUD_PATH NEXTCLOUD_USERS CONFIG_FILE NEXTCLOUD_PATH NEXTCLOUD_CONFIG_ROUTE NEXTCLOUD_CONFIG_FILE VERBOSE HELP USAGE SILENT S3_ACCESS_KEY S3_SECRET_KEY DATABASE_NAME DATABASE_USER DATABASE_PASSWD DATABASE_HOST DATABASE_PORT TEST
+    do
+        unset $var
+    done
+}
+
+oneTimeSetUp() {
+    cleanVariables
+    mkdir -p /tmp/nexcloud_backups_aws_s3/var/www/nexcloud/config
+    cat << EOF > /tmp/nexcloud_backups_aws_s3/var/www/nexcloud/config/config.php
+<?php
+$CONFIG = array (
+  'instanceid' => 'test',
+  'passwordsalt' => 'test',
+  'secret' => 'test',
+  'trusted_domains' =>
+  array (
+    0 => 'test',
+  ),
+  'datadirectory' => '/var/www/nextcloud/data',
+  'overwrite.cli.url' => 'test',
+  'dbtype' => 'mysql',
+  'version' => 'test',
+  'dbname' => 'mydb',
+  'dbhost' => 'localhost',
+  'dbport' => '',
+  'dbtableprefix' => 'oc_',
+  'dbuser' => 'dbuser',
+  'dbpassword' => 'mypassowd',
+  'installed' => true,
+  'memcache.local' => 'test',
+  'memcache.distributed' => 'test',
+  'memcached_servers' =>
+  array (
+    0 =>
+    array (
+      0 => 'localhost',
+      1 => 11211,
+    ),
+  ),
+  'mail_smtpmode' => 'smtp',
+  'mail_smtpauthtype' => 'LOGIN',
+  'mail_from_address' => 'no-reply',
+  'mail_domain' => 'test',
+  'mail_smtphost' => 'test',
+  'mail_smtpport' => '1000000',
+  'mail_smtpauth' => 1,
+  'mail_smtpname' => 'test',
+  'mail_smtppassword' => 'test',
+  'mail_smtpsecure' => 'ssl',
+  'maintenance' => false,
+  'theme' => '',
+  'loglevel' => 2,
+);
+EOF
+}
+
+oneTimeTearDown() {
+    cleanVariables
+    rm -rf /tmp/nexcloud_backups_aws_s3
+}
+
+testConfigDirDefault() {
+    default=$(./nexcloud_backups_aws_s3 --test='config-file' --nexcloud-path="/tmp/nexcloud_backups_aws_s3/var/www/nexcloud" )
+    assertEquals "$default" "CONFIG_FILE -> ~/.config/nexcloud_backups_aws_s3/config"
+}
+
+testConfigDirDefined() {
+    defined=$(./nexcloud_backups_aws_s3 --config-file="/home/user/config" --nexcloud-path="/tmp/nexcloud_backups_aws_s3/var/www/nexcloud")
+    assertEquals "$defined" "CONFIG_FILE -> /home/user/config"
+}
+
+testConfigFileDoesNotExist() {
+    rm -f /tmp/none
+    ./nexcloud_backups_aws_s3 --nexcloud-path="/tmp/nexcloud_backups_aws_s3/var/www/nexcloud" --config-file="/tmp/none" 2> /dev/null > /dev/null
+    ok=$?
+    assertEquals "$ok" "1"
+    rm -f /tmp/none
+}
+
+testConfigFileDoesNotExistCheckFile() {
+    rm -f /tmp/none
+    cat << EOF > /tmp/fileDoesNotExistError
+Error: ConfigFile '/tmp/none' does not exist.
+EOF
+   ./nexcloud_backups_aws_s3 -s --config-file="/tmp/none" --nexcloud-path="/tmp/nexcloud_backups_aws_s3/var/www/nexcloud" 2> /tmp/error
+   sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
+   diff /tmp/fileDoesNotExistError /tmp/error
+   match=$?
+   assertEquals $match 0
+   rm -f /tmp/none /tmp/fileDoesNotExistError
+}
+
+testConfigFileDoesNotExistCheckFile() {
+    rm -f /tmp/none
+    cat << EOF > /tmp/fileDoesNotExistError
+Error: ConfigFile '/tmp/none' does not exist.
+EOF
+   ./nexcloud_backups_aws_s3 -s --config-file="/tmp/none"  --nexcloud-path="/tmp/nexcloud_backups_aws_s3/var/www/nexcloud" 2> /tmp/error
+   sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
+   diff /tmp/fileDoesNotExistError /tmp/error
+   match=$?
+   assertEquals $match 0
+   rm -f /tmp/none /tmp/fileDoesNotExistError
+}
+
+testConfigFileDoesNotExistCheckFile() {
+    rm -f /tmp/none
+    cat << EOF > /tmp/fileDoesNotExistError
+Error: ConfigFile '/tmp/none' does not exist.
+EOF
+   ./nexcloud_backups_aws_s3 -s --config-file="/tmp/none" --nexcloud-path="/tmp/nexcloud_backups_aws_s3/var/www/nexcloud" 2> /tmp/error
+   sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
+   diff /tmp/fileDoesNotExistError /tmp/error
+   match=$?
+   assertEquals $match 0
+   rm -f /tmp/none /tmp/fileDoesNotExistError
+}
+
+testGetVariablesFromFile() {
+    rm -f /tmp/variables /tmp/testMultipleValues /tmp/testMultipleValuesResult
+
+    cat << EOF > /tmp/variables
+S3_ACCESS_KEY=MyAccesKey
+S3_SECRET_KEY=MySecretKey
+DATABASE_NAME=MyDatabase
+DATABASE_USER=MyUser
+DATABASE_PASSWD="Pass word"
+EOF
+
+    cat << EOF > /tmp/testMultipleValues
+S3_ACCESS_KEY -> MyAccesKey
+S3_SECRET_KEY -> MySecretKey
+NEXTCLOUD_USERS -> ALL
+DATABASE_NAME -> MyDatabase
+DATABASE_PASSWD -> "Pass word"
+EOF
+
+   ./nexcloud_backups_aws_s3  --config-file="/tmp/variables" --test="s3-access-key,s3-secret-key,nextcloud-users,database-name,database-passwd" --nexcloud-path="/tmp/nexcloud_backups_aws_s3/var/www/nexcloud" > /tmp/testMultipleValuesResult
+   diff  /tmp/testMultipleValuesResult /tmp/testMultipleValues
+   match=$?
+   assertEquals $match 0
+   rm -f /tmp/variables /tmp/testMultipleValues /tmp/testMultipleValuesResult
+}
+
+testGetVariablesFromNexcloudconfig() {
+    rm -f /tmp/testMultipleValues /tmp/testMultipleValuesResult
+
+    cat << EOF > /tmp/variables
+S3_ACCESS_KEY=MyAccesKey
+S3_SECRET_KEY=MySecretKey
+EOF
+
+    cat << EOF > /tmp/testMultipleValues
+S3_ACCESS_KEY -> MyAccesKey
+S3_SECRET_KEY -> MySecretKey
+DATABASE_NAME -> mydb
+DATABASE_PASSWD -> mypassowd
+DATABASE_PORT -> 3306
+DATABASE_USER -> dbuser
+DATABASE_HOST -> localhost
+NEXTCLOUD_USERS -> ALL
+EOF
+
+   ./nexcloud_backups_aws_s3  --config-file="/tmp/variables" --test="s3-access-key,s3-secret-key,nextcloud-users,database-name,database-passwd" --nexcloud-path="/tmp/nexcloud_backups_aws_s3/var/www/nexcloud" > /tmp/testMultipleValuesResult
+   diff  /tmp/testMultipleValuesResult /tmp/testMultipleValues
+   match=$?
+   assertEquals $match 0
+   rm -f /tmp/variables /tmp/testMultipleValues /tmp/testMultipleValuesResult
+}
+
+testGetVariablesFromNexcloudconfigAndReplaceWithConfig() {
+    rm -f /tmp/testMultipleValues /tmp/testMultipleValuesResult
+
+    cat << EOF > /tmp/variables
+S3_ACCESS_KEY=MyAccesKey
+S3_SECRET_KEY=MySecretKey
+DATABASE_NAME -> mychangeddbname
+EOF
+
+    cat << EOF > /tmp/testMultipleValues
+S3_ACCESS_KEY -> MyAccesKey
+S3_SECRET_KEY -> MySecretKey
+DATABASE_NAME -> mychangeddbname
+DATABASE_PASSWD -> mypassowd
+DATABASE_PORT -> 3306
+DATABASE_USER -> dbuser
+DATABASE_HOST -> localhost
+NEXTCLOUD_USERS -> ALL
+EOF
+
+   ./nexcloud_backups_aws_s3  --config-file="/tmp/variables" --test="s3-access-key,s3-secret-key,nextcloud-users,database-name,database-passwd" --nexcloud-path="/tmp/nexcloud_backups_aws_s3/var/www/nexcloud" > /tmp/testMultipleValuesResult
+   diff  /tmp/testMultipleValuesResult /tmp/testMultipleValues
+   match=$?
+   assertEquals $match 0
+   rm -f /tmp/variables /tmp/testMultipleValues /tmp/testMultipleValuesResult
+}
+
+testGetVariablesFromNexcloudconfigAndReplaceInCommandLine() {
+    rm -f /tmp/testMultipleValues /tmp/testMultipleValuesResult
+
+    cat << EOF > /tmp/variables
+S3_ACCESS_KEY=MyAccesKey
+S3_SECRET_KEY=MySecretKey
+DATABASE_NAME -> mychangeddbname
+EOF
+
+    cat << EOF > /tmp/testMultipleValues
+S3_ACCESS_KEY -> MyAccesKey
+S3_SECRET_KEY -> MyChangedSecretKey
+DATABASE_NAME -> mychangeddbname
+DATABASE_PASSWD -> mypassorwd
+DATABASE_PORT -> 3307
+DATABASE_USER -> dbuser
+DATABASE_HOST -> 127.0.0.1
+NEXTCLOUD_USERS -> ALL
+EOF
+
+   ./nexcloud_backups_aws_s3 --s3-secret-key="MyChangedSecretKey" --database-port=3307 --database-host="127.0.0.1" --config-file="/tmp/variables" --test="s3-access-key,s3-secret-key,nextcloud-users,database-name,database-passwd" --nexcloud-path="/tmp/nexcloud_backups_aws_s3/var/www/nexcloud" > /tmp/testMultipleValuesResult
+   diff  /tmp/testMultipleValuesResult /tmp/testMultipleValues
+   match=$?
+   assertEquals $match 0
+   rm -f /tmp/variables /tmp/testMultipleValues /tmp/testMultipleValuesResult
+}
+
+
+# Load shUnit2.
+. /usr/bin/shunit2

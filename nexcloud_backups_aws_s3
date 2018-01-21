@@ -11,9 +11,10 @@ ENABLE_LOG=false # by default this script write logs via syslog
 # Default values
 NEXTCLOUD_PATH='/var/www/nextcloud'
 NEXTCLOUD_USERS='ALL'
+CONFIG_FOLDER='~/.config/nexcloud_backups_aws_s3'
 
 # Nextcloud variables
-NEXTCLOUD_CONFIG_SUBDIR='/config/config.php'
+NEXTCLOUD_CONFIG_ROUTE='/config/config.php'
 
 # Log variables
 LOGGET_TAG="nextcloud_backups_aws_s3"
@@ -226,7 +227,6 @@ while true; do
 done
 
 # Look for tests
-
 if [[ -n $TEST ]]; then
     variables_to_test $TEST
     exit 0
@@ -247,5 +247,7 @@ if [[ "$#" -ne 0 ]]; then
         fi
         exit 1
 fi
+
+
 
 exit 0

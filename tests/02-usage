@@ -20,6 +20,32 @@ EOF
     rm /tmp/expectedError /tmp/error
 }
 
+testFailToCreateLogPermission() {
+   cat << EOF > /tmp/expectedError
+Error: Cannot write log in '/var/log/nexcloud_backups_aws_s3.log': Permission Denied
+EOF
+    ./nexcloud_backups_aws_s3 -l --log-file="/var/log/nexcloud_backups_aws_s3.log" 2> /tmp/error
+    sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
+    diff /tmp/expectedError /tmp/error
+    match=$?
+    assertEquals $match 0
+    rm /tmp/expectedError /tmp/error
+}
+
+testFailToCreateLogPathDoesNotExist() {
+   rm -rf /tmp/nonexistentfolder/
+   cat << EOF > /tmp/expectedError
+Error: Cannot write log in '/tmp/nonexistentfolder/nexcloud_backups_aws_s3.log': Given path does not exist
+EOF
+    ./nexcloud_backups_aws_s3 -l --log-file="/var/log/nexcloud_backups_aws_s3.log" 2> /tmp/error
+    sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
+    diff /tmp/expectedError /tmp/error
+    match=$?
+    assertEquals $match 0
+    rm /tmp/expectedError /tmp/error
+    rm -rf /tmp/nonexistentfolder/
+}
+
 
 # Load shUnit2.
 . /usr/bin/shunit2

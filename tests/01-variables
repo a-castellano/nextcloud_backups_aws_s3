@@ -166,7 +166,7 @@ EOF
 }
 
 testMultipleValues2() {
-   cat << EOF > /tmp/testMultipleValues
+    cat << EOF > /tmp/testMultipleValues
 S3_ACCESS_KEY -> ACCESS_KEY
 S3_SECRET_KEY -> SECRET_KEY
 NEXTCLOUD_USERS -> ALL
@@ -186,6 +186,26 @@ testChangeNextcloudUsersWithspaces() {
 testChangeNextcloudUsersWithspaces() {
     users=$(./nexcloud_backups_aws_s3 --nextcloud-users="me      , bob" --test='nextcloud-users')
     assertEquals "$users" "NEXTCLOUD_USERS -> me,bob"
+}
+
+testDisableLog() {
+    log=$(./nexcloud_backups_aws_s3  --test='enable-log')
+    assertEquals "$log" "ENABLE_LOG is not defined"
+}
+
+testEnableLog() {
+    log=$(./nexcloud_backups_aws_s3 --enable-log --test='enable-log')
+    assertEquals "$log" "ENABLE_LOG -> true"
+}
+
+testDisabledLogFile() {
+    logfile=$(./nexcloud_backups_aws_s3 --test='log-file')
+    assertEquals "$logfile" "LOG_FILE is not defined"
+}
+
+testEnableLogFile() {
+    logfile=$(./nexcloud_backups_aws_s3 --log-file="/tmp/log" --test='log-file')
+    assertEquals "$logfile" "LOG_FILE -> /tmp/log"
 }
 
 # Load shUnit2.

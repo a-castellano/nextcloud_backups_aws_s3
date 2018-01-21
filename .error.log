@@ -1,1 +1,2 @@
-parse-options: unrecognized option '--nonsene'
+parse-options: unrecognized option '--config-file=/tmp/variables'
+parse-options: unrecognized option '--nexcloud-path=/tmp/nexcloud_backups_aws_s3/var/www/nexcloud'
