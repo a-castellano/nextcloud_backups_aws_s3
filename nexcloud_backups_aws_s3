@@ -27,6 +27,7 @@ RM=$($WHICH rm)
 SED=$($WHICH sed)
 CAT=$($WHICH cat)
 PRINTF=$($WHICH printf)
+CUT=$($WHICH cut)
 
 # Functions
 
@@ -54,6 +55,8 @@ Arguments:
     --nextcloud-users="user1,user2"        By default this script will backup
                                              all users folders.
     --test="argument,argument2"            Prints valuw of selected arguments.
+
+    Nexcloud users and test varibales can be separated by spaces
 
 Options:
 
@@ -92,16 +95,17 @@ function report_error {
 }
 
 function check_option_called {
+    values=$($ECHO $@ | $CUT -d " " -f2- | $SED 's/[ ]*//g')
     option_called="_OPTION_CALLED"
-    option_name=$1
+    option_name=$( $ECHO $@ | $CUT -d " " -f1 )
     variable_name=$($ECHO $option_name | $TR '[:lower:]' '[:upper:]' | $TR '-' '_')
     variable_called_name="$variable_name$option_called"
     if [[ -z ${!variable_called_name} || "${!variable_called_name}" = false  ]]; then
         if [ "$#" -eq 1 ]; then
             eval $variable_name=true
         fi
-        if [ "$#" -eq 2 ]; then
-            eval $variable_name=$2
+        if [ "$#" -gt 1 ]; then
+            eval $variable_name=$values
             if [ -z "$variable_name" ]; then
                 error_msg="$variable_name was supposed to be set. Can't parse '$2'."
                 report_error $error_msg
@@ -232,6 +236,16 @@ fi
 if [[ -n $USAGE || -n $HELP ]]; then
     usage
     exit 0
+fi
+
+#If there still arguments not handled abort this script
+if [[ "$#" -ne 0 ]]; then
+        error_msg="Found illegal parameters: $@"
+        report_error $error_msg
+        if [[ -z $SILENT  ]];then
+            usage
+        fi
+        exit 1
 fi
 
 exit 0

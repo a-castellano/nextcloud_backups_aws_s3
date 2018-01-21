@@ -142,9 +142,15 @@ testUndefinedValue() {
 }
 
 testWithSpaces() {
-    # So far if there are spaces inside test values this scripts returns None
-    test=$(./nexcloud_backups_aws_s3 --test='undefined-variable, space')
-    assertEquals "$test" ""
+cat << EOF > /tmp/testSpaces
+UNDEFINED_VARIABLE is not defined
+SPACE is not defined
+EOF
+    ./nexcloud_backups_aws_s3 --test='       undefined-variable, space' > /tmp/testWithSpaces
+    diff /tmp/testSpaces /tmp/testWithSpaces
+    match=$?
+    assertEquals $match 0
+    rm -f /tmp/testSpaces /tmp/testWithSpaces
 }
 
 testMultipleValues() {
@@ -156,7 +162,7 @@ EOF
     diff /tmp/testMultipleValues /tmp/testMultipleValuesResult
     match=$?
     assertEquals $match 0
-    rm /tmp/testMultipleValues /tmp/testMultipleValuesResult
+    rm -f /tmp/testMultipleValues /tmp/testMultipleValuesResult
 }
 
 testMultipleValues2() {
@@ -172,6 +178,15 @@ EOF
     rm /tmp/testMultipleValues /tmp/testMultipleValuesResult
 }
 
+testChangeNextcloudUsersWithspaces() {
+    users=$(./nexcloud_backups_aws_s3 --nextcloud-users="me, bob" --test='nextcloud-users')
+    assertEquals "$users" "NEXTCLOUD_USERS -> me,bob"
+}
+
+testChangeNextcloudUsersWithspaces() {
+    users=$(./nexcloud_backups_aws_s3 --nextcloud-users="me      , bob" --test='nextcloud-users')
+    assertEquals "$users" "NEXTCLOUD_USERS -> me,bob"
+}
 
 # Load shUnit2.
 . /usr/bin/shunit2
