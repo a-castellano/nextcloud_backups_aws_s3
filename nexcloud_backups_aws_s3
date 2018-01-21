@@ -29,6 +29,7 @@ SED=$($WHICH sed)
 CAT=$($WHICH cat)
 PRINTF=$($WHICH printf)
 CUT=$($WHICH cut)
+TOUCH=$($WHICH touch)
 
 # Functions
 
@@ -197,6 +198,7 @@ OPTS=`getopt -o $short_options_array_list$short_options --long $no_params$of_sho
 if [ $? -ne 0 ]; then
     error_msg=$($CAT .error.log)
     report_error $error_msg
+    $RM .error.log
     exit 1
 fi
 $RM .error.log
@@ -248,6 +250,45 @@ if [[ "$#" -ne 0 ]]; then
     exit 1
 fi
 
+# Get variables from files
+
+# If required, enable log
+if [[ -n $ENABLE_LOG && -z $LOG_FILE ]];then
+    error_msg="Log enabled but there is no log file declared, add '--log-file' option."
+    report_error $error_msg
+    exit 1
+else
+    # Check if folder is writable
+    if [ -f "$LOG_FILE" ]; then
+        if [[ ! -w "$LOG_FILE" ]];then
+            error_msg="Cannot write log in '$LOG_FILE': Permission Denied"
+            report_error $error_msg
+            exit 1
+        fi
+    else
+        folder=$( $ECHO $LOG_FILE | $SED 's|/[^/]*$||' )
+        if [[ -w $folder ]]; then
+            $TOUCH $LOG_FILE
+        else
+            if [[ -d $folder  ]]; then
+                error_msg="Cannot write log in '$folder': Permission Denied"
+                report_error $error_msg
+                exit 1
+            else
+                error_msg="Cannot write log in '$folder': Given path does not exist"
+                report_error $error_msg
+                exit 1
+            fi
+        fi
+    fi
+fi
+
+# Check if folder is writable
+if [[ -n $ENABLE_LOG && -z $LOG_FILE ]];then
+    error_msg="Log enabled but there is no log file declared, add '--log-file' option."
+    report_error $error_msg
+    exit 1
+fi
 
 
 exit 0
