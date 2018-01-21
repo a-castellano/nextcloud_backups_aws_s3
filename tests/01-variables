@@ -11,6 +11,16 @@ testVerboseIsDefined() {
     assertEquals "$defined" "VERBOSE -> true"
 }
 
+testHelpNotDefined() {
+    undefined=$(./nexcloud_backups_aws_s3 --test='help' -u)
+    assertEquals "$undefined" "HELP is not defined"
+}
+
+testHelpIsDefined() {
+    defined=$(./nexcloud_backups_aws_s3 -h --test='help')
+    assertEquals "$defined" "HELP -> true"
+}
+
 testUsageNotDefined() {
     undefined=$(./nexcloud_backups_aws_s3 --test='usage')
     assertEquals "$undefined" "USAGE is not defined"

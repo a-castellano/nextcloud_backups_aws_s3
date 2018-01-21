@@ -29,6 +29,55 @@ CAT=$($WHICH cat)
 PRINTF=$($WHICH printf)
 
 # Functions
+
+function usage {
+$CAT << EOF
+Usage: nexcloud_backups_aws_s3 [OPTIONS] [ARGUMENTS]
+Make backups of Nextcloud and store them in an S3 bucket.
+
+For avoiding user to wirte thier secret credentials in the command line
+this script will look for config variables in ~/.config/nexcloud_backups_aws_s3
+folder. In that folder users can place a files or files contining their
+database credentials, S3 access keys, etc.
+
+Arguments:
+
+    --s3-access-key=YOUR_S3_ACCES_KEY
+    --s3-secret-key=YOUR_S3_SECRET_KEY
+    --database-name=DATABASE_NAME
+    --database-user=DATABASE_USER_NAME
+    --database-passwd=DATABASE_PASSWORD
+    --database-host=DATABSE_HOST           (IP or domain)
+    --database-port=PORT                   By default it will be 3306.
+    --nextcloud-path=PATH                  Nexcloud path is /var/www/nexcloud
+                                             by default.
+    --nextcloud-users="user1,user2"        By default this script will backup
+                                             all users folders.
+    --test="argument,argument2"            Prints valuw of selected arguments.
+
+Options:
+
+    -h                                    Prints this text.
+    -u --usage                            Prints this text.
+    -v --verbose                          Enables verbose output.
+    -s --silent                           Disable any output in STDOUT.
+    -l --enable-log                       By default this scripts uses syslog
+                                            for logging with this option enables
+                                            it also write logs in the file
+                                            spefied in "--logfile" option.
+    --log-file=FILE                       In addition to write logs in syslog the
+                                            logs will be written in the file provided.
+    --exclude-database                    Exclude Nextcloud databse form backups.
+    --dry-run                             Perform a trial run with no changes made.
+
+
+Exit status:
+ 0  if OK,
+ 1  if minor problems (e.g., some important variables are not set),
+ 2  if serious trouble (e.g., cannot perform the backup).
+EOF
+}
+
 function trim {
     $ECHO $1 | $SED 's/^-*//'
 }
@@ -67,6 +116,12 @@ function check_option_called {
     fi
 }
 
+function get_option_from_short_options_array {
+    arg=$(trim $1)
+    result=${short_options_array[$arg]}
+    check_option_called $result
+}
+
 function get_option_from_short_options_hash {
     arg=$(trim $1)
     result=${short_options_hash[$arg]}
@@ -87,10 +142,19 @@ function variables_to_test {
 
 
 # Options
+declare -A short_options_array=(
+   ["h"]="help"
+)
+
+#Because of the eval below, --help option can't exist
+short_options_array_list=$( $ECHO "${!short_options_array[@]}" | $SED 's/ //g' )
+short_options_array_OR=$( $ECHO "${!short_options_array[@]}" | $SED 's/\([^ ]\)/-\1 |/g' | $SED 's/|$//g' )
+
 declare -A short_options_hash=(
     ["v"]="verbose"
     ["s"]="silent"
     ["u"]="usage"
+    ["l"]="enable-log"
 )
 short_options=$( $ECHO "${!short_options_hash[@]}" | $SED 's/ //g' )
 short_options_OR=$( $ECHO "${!short_options_hash[@]}" | $SED 's/\([^ ]\)/-\1 |/g' | $SED 's/|$//g' )
@@ -117,12 +181,13 @@ long_options_with_one_params_array=(
     'database-port'
     'nextcloud-path'
     'nextcloud-users'
+    'log-file'
     'test'
 )
 one_param=$( $ECHO ${long_options_with_one_params_array[@]} | $SED 's/ /:,/g' | $SED 's/$/:,/g' )
 one_param_OR=$( $ECHO ${long_options_with_one_params_array[@]} | $SED 's/\([^ ]*\)/--\1 |/g' | $SED 's/|$//g' )
 
-OPTS=`getopt -o $short_options --long $no_params$of_short$one_param -n 'parse-options' -- "$@" 2> .error.log `
+OPTS=`getopt -o $short_options_array_list$short_options --long $no_params$of_short$one_param -n 'parse-options' -- "$@" 2> .error.log `
 
 if [ $? -ne 0 ]; then
     error_msg=$($CAT .error.log)
@@ -136,6 +201,9 @@ eval set -- "$OPTS"
 while true; do
   eval "
   case \"$1\" in
+    $short_options_array_OR )
+            get_option_from_short_options_array $1
+            shift ;;
     $short_options_OR )
             get_option_from_short_options_hash $1
             shift ;;
@@ -157,6 +225,12 @@ done
 
 if [[ -n $TEST ]]; then
     variables_to_test $TEST
+    exit 0
+fi
+
+# If usage option is set stop the script and print usage
+if [[ -n $USAGE || -n $HELP ]]; then
+    usage
     exit 0
 fi
 
