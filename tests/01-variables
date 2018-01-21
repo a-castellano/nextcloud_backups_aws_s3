@@ -1,143 +1,149 @@
 ##!/bin/sh
 # file: tests/01-variables
 
+oneTimeSetUp() {
+NEXTCLOUD_PATH="$(pwd)/config_test"
+}
+
 testVerboseNotDefined() {
-    undefined=$(./nexcloud_backups_aws_s3 --test='verbose')
+    undefined=$(./nextcloud_backups_aws_s3 --test='verbose')
     assertEquals "$undefined" "VERBOSE is not defined"
 }
 
 testVerboseIsDefined() {
-    defined=$(./nexcloud_backups_aws_s3 --test='verbose' -v)
+    defined=$(./nextcloud_backups_aws_s3 --test='verbose' -v)
     assertEquals "$defined" "VERBOSE -> true"
 }
 
 testHelpNotDefined() {
-    undefined=$(./nexcloud_backups_aws_s3 --test='help' -u)
+    undefined=$(./nextcloud_backups_aws_s3 --test='help' -u)
     assertEquals "$undefined" "HELP is not defined"
 }
 
 testHelpIsDefined() {
-    defined=$(./nexcloud_backups_aws_s3 -h --test='help')
+    defined=$(./nextcloud_backups_aws_s3 -h --test='help')
     assertEquals "$defined" "HELP -> true"
 }
 
 testUsageNotDefined() {
-    undefined=$(./nexcloud_backups_aws_s3 --test='usage')
+    undefined=$(./nextcloud_backups_aws_s3 --test='usage')
     assertEquals "$undefined" "USAGE is not defined"
 }
 
 testUsageIsDefined() {
-    defined=$(./nexcloud_backups_aws_s3 --usage --test='usage')
+    defined=$(./nextcloud_backups_aws_s3 --usage --test='usage')
     assertEquals "$defined" "USAGE -> true"
 }
 
 testSilentNotDefined() {
-    undefined=$(./nexcloud_backups_aws_s3 --test='silent')
+    undefined=$(./nextcloud_backups_aws_s3 --test='silent')
     assertEquals "$undefined" "SILENT is not defined"
 }
 
 testSilentIsDefined() {
-    defined=$(./nexcloud_backups_aws_s3 -s --test='silent')
+    defined=$(./nextcloud_backups_aws_s3 -s --test='silent')
     assertEquals "$defined" "SILENT -> true"
 }
 
 testS3AccessNotDefined() {
-    undefined=$(./nexcloud_backups_aws_s3 --test='s3-access-key')
+    undefined=$(./nextcloud_backups_aws_s3 --test='s3-access-key')
     assertEquals "$undefined" "S3_ACCESS_KEY is not defined"
 }
 
 testS3AccessIsDefined() {
-    defined=$(./nexcloud_backups_aws_s3 --s3-access-key="my-access" --test='s3-access-key')
+    defined=$(./nextcloud_backups_aws_s3 --s3-access-key="my-access" --test='s3-access-key')
     assertEquals "$defined" "S3_ACCESS_KEY -> my-access"
 }
 
 testS3SecretNotDefined() {
-    undefined=$(./nexcloud_backups_aws_s3 --test='s3-secret-key')
+    undefined=$(./nextcloud_backups_aws_s3 --test='s3-secret-key')
     assertEquals "$undefined" "S3_SECRET_KEY is not defined"
 }
 
 testS3SecretIsDefined() {
-    defined=$(./nexcloud_backups_aws_s3 --s3-secret-key "my-secret" --test='s3-secret-key')
+    defined=$(./nextcloud_backups_aws_s3 --s3-secret-key "my-secret" --test='s3-secret-key')
     assertEquals "$defined" "S3_SECRET_KEY -> my-secret"
 }
 
 testDatabaseNameNotDefined() {
-    undefined=$(./nexcloud_backups_aws_s3 --test='database-name')
+    NEXTCLOUD_PATH="$(pwd)/config_test_no_values"
+    undefined=$(./nextcloud_backups_aws_s3 --test='database-name')
     assertEquals "$undefined" "DATABASE_NAME is not defined"
 }
 
 testDatabaseNameIsDefined() {
-    defined=$(./nexcloud_backups_aws_s3 --database-name "mynextclouddatabase" --test='database-name')
+    defined=$(./nextcloud_backups_aws_s3 --database-name "mynextclouddatabase" --test='database-name')
     assertEquals "$defined" "DATABASE_NAME -> mynextclouddatabase"
 }
 
 testDatabaseUserNotDefined() {
-    undefined=$(./nexcloud_backups_aws_s3 --test='database-user')
+    undefined=$(./nextcloud_backups_aws_s3 --test='database-user')
     assertEquals "$undefined" "DATABASE_USER is not defined"
 }
 
 testDatabaseUserIsDefined() {
-    defined=$(./nexcloud_backups_aws_s3 --database-user="user" --test='database-user')
+    defined=$(./nextcloud_backups_aws_s3 --database-user="user" --test='database-user')
     assertEquals "$defined" "DATABASE_USER -> user"
 }
 
 testDatabasePasswordNotDefined() {
-    undefined=$(./nexcloud_backups_aws_s3 --test='database-passwd')
+    undefined=$(./nextcloud_backups_aws_s3 --test='database-passwd')
     assertEquals "$undefined" "DATABASE_PASSWD is not defined"
 }
 
 testDatabasePasswordIsDefined() {
-    defined=$(./nexcloud_backups_aws_s3 --database-passwd="secrepasswd" --test='database-passwd')
+    defined=$(./nextcloud_backups_aws_s3 --database-passwd="secrepasswd" --test='database-passwd')
     assertEquals "$defined" "DATABASE_PASSWD -> secrepasswd"
 }
 
 testDatabaseHostNotDefined() {
-    undefined=$(./nexcloud_backups_aws_s3 --test='database-host')
+    undefined=$(./nextcloud_backups_aws_s3 --test='database-host')
     assertEquals "$undefined" "DATABASE_HOST is not defined"
 }
 
 testDatabaseHostIsDefined() {
-    defined=$(./nexcloud_backups_aws_s3 --database-host="LOLcalhost" --test='database-host')
+    defined=$(./nextcloud_backups_aws_s3 --database-host="LOLcalhost" --test='database-host')
     assertEquals "$defined" "DATABASE_HOST -> LOLcalhost"
 }
 
 testDatabasePortNotDefined() {
-    undefined=$(./nexcloud_backups_aws_s3 --test='database-port')
+    undefined=$(./nextcloud_backups_aws_s3 --test='database-port')
     assertEquals "$undefined" "DATABASE_PORT is not defined"
 }
 
 testTestIsDefined() {
-    defined=$(./nexcloud_backups_aws_s3  --test='test')
+    defined=$(./nextcloud_backups_aws_s3  --test='test')
     assertEquals "$defined" "TEST -> test"
 }
 
 testDatabasePortIsDefined() {
-    defined=$(./nexcloud_backups_aws_s3 --database-port 3307 --test='database-port')
+    defined=$(./nextcloud_backups_aws_s3 --database-port 3307 --test='database-port')
     assertEquals "$defined" "DATABASE_PORT -> 3307"
 }
 
 testDefaultNextcloudPath() {
-    nextcloud_path=$(./nexcloud_backups_aws_s3 --test='nextcloud-path')
-    assertEquals "$nextcloud_path" "NEXTCLOUD_PATH -> /var/www/nextcloud"
+    NEXTCLOUD_PATH="$(pwd)/config_test_no_values"
+    nextcloud_path=$(./nextcloud_backups_aws_s3 --test='nextcloud-path')
+    assertEquals "$nextcloud_path" "NEXTCLOUD_PATH -> $(pwd)/config_test_no_values"
 }
 
 testChangueNextcloudPath() {
-    nextcloud_path=$(./nexcloud_backups_aws_s3 --nextcloud-path='/home/user/test' --test='nextcloud-path')
-    assertEquals "$nextcloud_path" "NEXTCLOUD_PATH -> /home/user/test"
+    nextcloud_path=$(./nextcloud_backups_aws_s3 --nextcloud-path="$(pwd)/config_test_no_values" --test='nextcloud-path')
+    assertEquals "$nextcloud_path" "NEXTCLOUD_PATH -> $(pwd)/config_test_no_values"
 }
 
 testDefaultNextcloudUsers() {
-    users=$(./nexcloud_backups_aws_s3 --test='nextcloud-users')
+    users=$(./nextcloud_backups_aws_s3 --test='nextcloud-users')
     assertEquals "$users" "NEXTCLOUD_USERS -> ALL"
 }
 
 testChangeNextcloudUsers() {
-    users=$(./nexcloud_backups_aws_s3 --nextcloud-users="me,bob" --test='nextcloud-users')
+    users=$(./nextcloud_backups_aws_s3 --nextcloud-users="me,bob" --test='nextcloud-users')
     assertEquals "$users" "NEXTCLOUD_USERS -> me,bob"
 }
 
 testUndefinedValue() {
-    undefined_variable=$(./nexcloud_backups_aws_s3 --test='undefined-variable')
+    undefined_variable=$(./nextcloud_backups_aws_s3 --test='undefined-variable')
     assertEquals "$undefined_variable" "UNDEFINED_VARIABLE is not defined"
 }
 
@@ -146,7 +152,7 @@ cat << EOF > /tmp/testSpaces
 UNDEFINED_VARIABLE is not defined
 SPACE is not defined
 EOF
-    ./nexcloud_backups_aws_s3 --test='       undefined-variable, space' > /tmp/testWithSpaces
+    ./nextcloud_backups_aws_s3 --test='       undefined-variable, space' > /tmp/testWithSpaces
     diff /tmp/testSpaces /tmp/testWithSpaces
     match=$?
     assertEquals $match 0
@@ -158,7 +164,7 @@ testMultipleValues() {
 S3_ACCESS_KEY -> ACCESS_KEY
 S3_SECRET_KEY -> SECRET_KEY
 EOF
-    ./nexcloud_backups_aws_s3 --s3-access-key ACCESS_KEY --s3-secret-key SECRET_KEY --test='s3-access-key,s3-secret-key' > /tmp/testMultipleValuesResult
+    ./nextcloud_backups_aws_s3 --s3-access-key ACCESS_KEY --s3-secret-key SECRET_KEY --test='s3-access-key,s3-secret-key' > /tmp/testMultipleValuesResult
     diff /tmp/testMultipleValues /tmp/testMultipleValuesResult
     match=$?
     assertEquals $match 0
@@ -171,7 +177,7 @@ S3_ACCESS_KEY -> ACCESS_KEY
 S3_SECRET_KEY -> SECRET_KEY
 NEXTCLOUD_USERS -> ALL
 EOF
-    ./nexcloud_backups_aws_s3 --s3-access-key ACCESS_KEY --s3-secret-key SECRET_KEY --test='s3-access-key,s3-secret-key,nextcloud-users' > /tmp/testMultipleValuesResult
+    ./nextcloud_backups_aws_s3 --s3-access-key ACCESS_KEY --s3-secret-key SECRET_KEY --test='s3-access-key,s3-secret-key,nextcloud-users' > /tmp/testMultipleValuesResult
     diff /tmp/testMultipleValues /tmp/testMultipleValuesResult
     match=$?
     assertEquals $match 0
@@ -179,32 +185,32 @@ EOF
 }
 
 testChangeNextcloudUsersWithspaces() {
-    users=$(./nexcloud_backups_aws_s3 --nextcloud-users="me, bob" --test='nextcloud-users')
+    users=$(./nextcloud_backups_aws_s3 --nextcloud-users="me, bob" --test='nextcloud-users')
     assertEquals "$users" "NEXTCLOUD_USERS -> me,bob"
 }
 
 testChangeNextcloudUsersWithspaces() {
-    users=$(./nexcloud_backups_aws_s3 --nextcloud-users="me      , bob" --test='nextcloud-users')
+    users=$(./nextcloud_backups_aws_s3 --nextcloud-users="me      , bob" --test='nextcloud-users')
     assertEquals "$users" "NEXTCLOUD_USERS -> me,bob"
 }
 
 testDisableLog() {
-    log=$(./nexcloud_backups_aws_s3  --test='enable-log')
+    log=$(./nextcloud_backups_aws_s3  --test='enable-log')
     assertEquals "$log" "ENABLE_LOG -> false"
 }
 
 testEnableLog() {
-    log=$(./nexcloud_backups_aws_s3 --enable-log --test='enable-log')
+    log=$(./nextcloud_backups_aws_s3 --enable-log --test='enable-log')
     assertEquals "$log" "ENABLE_LOG -> true"
 }
 
 testDisabledLogFile() {
-    logfile=$(./nexcloud_backups_aws_s3 --test='log-file')
+    logfile=$(./nextcloud_backups_aws_s3 --test='log-file')
     assertEquals "$logfile" "LOG_FILE is not defined"
 }
 
 testEnableLogFile() {
-    logfile=$(./nexcloud_backups_aws_s3 --log-file="/tmp/log" --test='log-file')
+    logfile=$(./nextcloud_backups_aws_s3 --log-file="/tmp/log" --test='log-file')
     assertEquals "$logfile" "LOG_FILE -> /tmp/log"
 }
 
@@ -213,7 +219,7 @@ testIllegalParameters() {
    cat << EOF > /tmp/expectedError
 Error: Found illegal parameters: bob foo
 EOF
-    ./nexcloud_backups_aws_s3 -l bob foo 2> /tmp/error > /dev/null
+    ./nextcloud_backups_aws_s3 -l bob foo 2> /tmp/error > /dev/null
     sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
     diff /tmp/expectedError /tmp/error
     match=$?

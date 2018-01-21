@@ -9,12 +9,18 @@
 ENABLE_LOG=false # by default this script write logs via syslog
 
 # Default values
-NEXTCLOUD_PATH='/var/www/nextcloud'
-NEXTCLOUD_USERS='ALL'
-CONFIG_FOLDER='~/.config/nexcloud_backups_aws_s3'
+if [[ -z $NEXTCLOUD_PATH ]]; then
+    NEXTCLOUD_PATH='/var/www/nextcloud'
+fi
+
+
+if [[ -z $CONFIG_FILE  ]]; then
+    CONFIG_FILE='~/.config/nextcloud_backups_aws_s3'
+fi
 
 # Nextcloud variables
 NEXTCLOUD_CONFIG_ROUTE='/config/config.php'
+NEXTCLOUD_USERS='ALL'
 
 # Log variables
 LOGGET_TAG="nextcloud_backups_aws_s3"
@@ -30,16 +36,17 @@ CAT=$($WHICH cat)
 PRINTF=$($WHICH printf)
 CUT=$($WHICH cut)
 TOUCH=$($WHICH touch)
+GREP=$($WHICH grep)
 
 # Functions
 
 function usage {
 $CAT << EOF
-Usage: nexcloud_backups_aws_s3 [OPTIONS] [ARGUMENTS]
+Usage: nextcloud_backups_aws_s3 [OPTIONS] [ARGUMENTS]
 Make backups of Nextcloud and store them in an S3 bucket.
 
 For avoiding user to wirte thier secret credentials in the command line
-this script will look for config variables in ~/.config/nexcloud_backups_aws_s3
+this script will look for config variables in ~/.config/nextcloud_backups_aws_s3
 folder. In that folder users can place a files or files contining their
 database credentials, S3 access keys, etc.
 
@@ -52,10 +59,13 @@ Arguments:
     --database-passwd=DATABASE_PASSWORD
     --database-host=DATABSE_HOST           (IP or domain)
     --database-port=PORT                   By default it will be 3306.
-    --nextcloud-path=PATH                  Nexcloud path is /var/www/nexcloud
-                                             by default.
+    --config-file=PATH_TO_FILE             File containing script config
+                                             by default it will be
+                                             ~/.config/nextcloud_backups_aws_s3.
     --nextcloud-users="user1,user2"        By default this script will backup
                                              all users folders.
+    --nextcloud-path=PATH                  Nexcloud path is /var/www/nextcloud
+                                             by default.
     --test="argument,argument2"            Prints valuw of selected arguments.
 
     Nexcloud users and test varibales can be separated by spaces
@@ -146,6 +156,32 @@ function variables_to_test {
     done
 }
 
+function get_variables_from_nextcloud_config_file {
+    config_file=$NEXTCLOUD_PATH$NEXTCLOUD_CONFIG_ROUTE
+
+    declare -A variables_to_nextcloud_variables=(
+        ["DATABASE_NAME"]="dbname"
+        ["DATABASE_HOST"]="dbhost"
+        ["DATABASE_PORT"]="dbport"
+        ["DATABASE_USER"]="dbuser"
+        ["DATABASE_PASSWD"]="dbpassword"
+    )
+
+    for var in "${!variables_to_nextcloud_variables[@]}"
+    do
+        if [[ -z ${!var}  ]]; then
+            value=$($GREP ${variables_to_nextcloud_variables[$var]} $config_file | $SED "s/^.* => '//" | $SED "s/',$//")
+            if [[ ! "$value" = "" ]]; then
+                eval $var=$value
+            fi
+        fi
+    done
+}
+
+function get_variables_config_file{
+
+}
+
 
 # Options
 declare -A short_options_array=(
@@ -188,6 +224,7 @@ long_options_with_one_params_array=(
     'nextcloud-path'
     'nextcloud-users'
     'log-file'
+    'config-file'
     'test'
 )
 one_param=$( $ECHO ${long_options_with_one_params_array[@]} | $SED 's/ /:,/g' | $SED 's/$/:,/g' )
@@ -228,6 +265,10 @@ while true; do
   esac"
 done
 
+# Get variables from files
+get_variables_config_file
+get_variables_from_nextcloud_config_file
+
 # Look for tests
 if [[ -n $TEST ]]; then
     variables_to_test $TEST
@@ -250,45 +291,36 @@ if [[ "$#" -ne 0 ]]; then
     exit 1
 fi
 
-# Get variables from files
-
-# If required, enable log
-if [[ -n $ENABLE_LOG && -z $LOG_FILE ]];then
-    error_msg="Log enabled but there is no log file declared, add '--log-file' option."
-    report_error $error_msg
-    exit 1
-else
-    # Check if folder is writable
-    if [ -f "$LOG_FILE" ]; then
-        if [[ ! -w "$LOG_FILE" ]];then
-            error_msg="Cannot write log in '$LOG_FILE': Permission Denied"
-            report_error $error_msg
-            exit 1
-        fi
+# Check if loggins into external file is enabled
+if [[ "$ENABLE_LOG" = true ]]; then
+    if [[ "$ENABLE_LOG" = true && -z $LOG_FILE ]];then
+        error_msg="Log enabled but there is no log file declared, add '--log-file' option."
+        report_error $error_msg
+        exit 1
     else
-        folder=$( $ECHO $LOG_FILE | $SED 's|/[^/]*$||' )
-        if [[ -w $folder ]]; then
-            $TOUCH $LOG_FILE
+        # Check if folder is writable
+        if [ -f "$LOG_FILE" ]; then
+            if [[ ! -w "$LOG_FILE" ]];then
+                error_msg="Cannot write log in '$LOG_FILE': Permission Denied"
+                report_error $error_msg
+                exit 1
+            fi
         else
-            if [[ -d $folder  ]]; then
-                error_msg="Cannot write log in '$folder': Permission Denied"
-                report_error $error_msg
-                exit 1
+            folder=$( $ECHO $LOG_FILE | $SED 's|/[^/]*$||' )
+            if [[ -w $folder ]]; then
+                $TOUCH $LOG_FILE
             else
-                error_msg="Cannot write log in '$folder': Given path does not exist"
-                report_error $error_msg
-                exit 1
+                if [[ -d $folder  ]]; then
+                    error_msg="Cannot write log in '$folder': Permission Denied"
+                    report_error $error_msg
+                    exit 1
+                else
+                    error_msg="Cannot write log in '$folder': Given path does not exist"
+                    report_error $error_msg
+                    exit 1
+                fi
             fi
         fi
     fi
 fi
-
-# Check if folder is writable
-if [[ -n $ENABLE_LOG && -z $LOG_FILE ]];then
-    error_msg="Log enabled but there is no log file declared, add '--log-file' option."
-    report_error $error_msg
-    exit 1
-fi
-
-
 exit 0

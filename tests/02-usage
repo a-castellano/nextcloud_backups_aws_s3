@@ -1,9 +1,12 @@
 ##!/bin/sh
 # file: tests/02-usage
 
+oneTimeSetUp() {
+NEXTCLOUD_PATH="$(pwd)/config_test"
+}
 
 testUsage() {
-    ./nexcloud_backups_aws_s3 -u > /dev/null
+    ./nextcloud_backups_aws_s3 -u > /dev/null
     ok=$?
     assertEquals "$ok" "0"
 }
@@ -12,7 +15,7 @@ testUnregisteredOptions() {
    cat << EOF > /tmp/expectedError
 Error: parse-options: unrecognized option '--nonsene'
 EOF
-    ./nexcloud_backups_aws_s3 -s --test='undefined-variable, something' --nonsene  2> /tmp/error
+    ./nextcloud_backups_aws_s3 -s --test='undefined-variable, something' --nonsene  2> /tmp/error
     sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
     diff /tmp/expectedError /tmp/error
     match=$?
@@ -24,7 +27,7 @@ testNoLogFile() {
    cat << EOF > /tmp/expectedError
 Error: Log enabled but there is no log file declared, add '--log-file' option.
 EOF
-    ./nexcloud_backups_aws_s3 2> /tmp/error
+    ./nextcloud_backups_aws_s3 -l 2> /tmp/error
     sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
     diff /tmp/expectedError /tmp/error
     match=$?
@@ -34,9 +37,9 @@ EOF
 
 testFailToCreateLogPermissionCauseOfFolder() {
    cat << EOF > /tmp/expectedError
-Error: Cannot write log in '/var/log': Permission Denied
+Error: Cannot write log in '/var/log/nextcloud_backups_aws_s3.log': Permission Denied
 EOF
-    ./nexcloud_backups_aws_s3 -l --log-file="/var/log/nexcloud_backups_aws_s3.log" 2> /tmp/error
+    ./nextcloud_backups_aws_s3 -l --log-file="/var/log/nextcloud_backups_aws_s3.log" 2> /tmp/error
     sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
     diff /tmp/expectedError /tmp/error
     match=$?
@@ -46,12 +49,12 @@ EOF
 
 testFailToCreateLogPermission() {
    mkdir -p /tmp/nopermissionfolder/
-   touch /tmp/nopermissionfolder/nexcloud_backups_aws_s3.log
-   chmod 400 /tmp/nopermissionfolder/nexcloud_backups_aws_s3.log
+   touch /tmp/nopermissionfolder/nextcloud_backups_aws_s3.log
+   chmod 400 /tmp/nopermissionfolder/nextcloud_backups_aws_s3.log
    cat << EOF > /tmp/expectedError
-Error: Cannot write log in '/tmp/nopermissionfolder/nexcloud_backups_aws_s3.log': Permission Denied
+Error: Cannot write log in '/tmp/nopermissionfolder/nextcloud_backups_aws_s3.log': Permission Denied
 EOF
-    ./nexcloud_backups_aws_s3 -l --log-file="/tmp/nopermissionfolder/nexcloud_backups_aws_s3.log" 2> /tmp/error
+    ./nextcloud_backups_aws_s3 -l --log-file="/tmp/nopermissionfolder/nextcloud_backups_aws_s3.log" 2> /tmp/error
     sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
     diff /tmp/expectedError /tmp/error
     match=$?
@@ -65,7 +68,7 @@ testFailToCreateLogPathDoesNotExist() {
    cat << EOF > /tmp/expectedError
 Error: Cannot write log in '/tmp/nonexistentfolder': Given path does not exist
 EOF
-    ./nexcloud_backups_aws_s3 -l --log-file="/tmp/nonexistentfolder/nexcloud_backups_aws_s3.log" 2> /tmp/error
+    ./nextcloud_backups_aws_s3 -l --log-file="/tmp/nonexistentfolder/nextcloud_backups_aws_s3.log" 2> /tmp/error
     sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
     diff /tmp/expectedError /tmp/error
     match=$?
