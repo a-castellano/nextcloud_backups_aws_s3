@@ -3,17 +3,22 @@
 
 
 testUsage() {
-    usage_call=$(./nexcloud_backups_aws_s3 -u)
-    startSkipping
-    assertEquals "$usage_call" ""
+    ./nexcloud_backups_aws_s3 -u > /dev/null
+    ok=$?
+    assertEquals "$ok" "0"
 }
 
-testChangeNextcloudUsersWithspaces() {
-    users=$(./nexcloud_backups_aws_s3 --nextcloud-users="me, bob" --test='nextcloud-users')
-    startSkipping
-    assertEquals "$users" "NEXTCLOUD_USERS -> me,bob"
+testUnregisteredOptions() {
+   cat << EOF > /tmp/expectedError
+Error: parse-options: unrecognized option '--nonsene'
+EOF
+    ./nexcloud_backups_aws_s3 -s --test='undefined-variable, something' --nonsene  2> /tmp/error
+    sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
+    diff /tmp/expectedError /tmp/error
+    match=$?
+    assertEquals $match 0
+    rm /tmp/expectedError /tmp/error
 }
-
 
 
 # Load shUnit2.
