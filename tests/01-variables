@@ -126,6 +126,11 @@ testChangeNextcloudUsers() {
     assertEquals "$users" "NEXTCLOUD_USERS -> me,bob"
 }
 
+testChangeNextcloudUsersWithspaces() {
+    users=$(./nexcloud_backups_aws_s3 --nextcloud-users="me, bob" --test='nextcloud-users')
+    assertEquals "$users" "NEXTCLOUD_USERS -> me,bob"
+}
+
 testUndefinedValue() {
     undefined_variable=$(./nexcloud_backups_aws_s3 --test='undefined-variable')
     assertEquals "$undefined_variable" "UNDEFINED_VARIABLE is not defined"
