@@ -53,7 +53,7 @@ Arguments:
                                              by default.
     --nextcloud-users="user1,user2"        By default this script will backup
                                              all users folders.
-    --test
+    --test="argument,argument2"            Prints valuw of selected arguments.
 
 Options:
 
