@@ -208,5 +208,18 @@ testEnableLogFile() {
     assertEquals "$logfile" "LOG_FILE -> /tmp/log"
 }
 
+testIllegalParameters() {
+   rm -rf /tmp/error
+   cat << EOF > /tmp/expectedError
+Error: Found illegal parameters: bob foo
+EOF
+    ./nexcloud_backups_aws_s3 -l bob foo 2> /tmp/error > /dev/null
+    sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
+    diff /tmp/expectedError /tmp/error
+    match=$?
+    assertEquals $match 0
+    rm /tmp/expectedError /tmp/error
+}
+
 # Load shUnit2.
 . /usr/bin/shunit2

@@ -238,14 +238,14 @@ if [[ -n $USAGE || -n $HELP ]]; then
     exit 0
 fi
 
-#If there still arguments not handled abort this script
+# If there still arguments not handled abort this script
 if [[ "$#" -ne 0 ]]; then
-        error_msg="Found illegal parameters: $@"
-        report_error $error_msg
-        if [[ -z $SILENT  ]];then
-            usage
-        fi
-        exit 1
+    error_msg="Found illegal parameters: $@"
+    report_error $error_msg
+    if [[ -z $SILENT  ]];then
+        usage
+    fi
+    exit 1
 fi
 
 
