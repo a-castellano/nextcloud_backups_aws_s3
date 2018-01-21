@@ -190,7 +190,7 @@ testChangeNextcloudUsersWithspaces() {
 
 testDisableLog() {
     log=$(./nexcloud_backups_aws_s3  --test='enable-log')
-    assertEquals "$log" "ENABLE_LOG is not defined"
+    assertEquals "$log" "ENABLE_LOG -> false"
 }
 
 testEnableLog() {
