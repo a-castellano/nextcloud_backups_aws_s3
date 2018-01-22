@@ -14,3 +14,5 @@ test:
 	( $(TEST_DIR)/02-usage )
 	@echo "- config files"
 	( $(TEST_DIR)/03-configfiles )
+	@echo "- unset variables"
+	( $(TEST_DIR)/04-unsetvariables )
