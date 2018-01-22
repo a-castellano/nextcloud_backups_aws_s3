@@ -10,8 +10,8 @@ cleanVariables() {
 
 oneTimeSetUp() {
     cleanVariables
-    export NEXTCLOUD_PATH="$(pwd)/config_test"
-    export CONFIG_FILE="$(pwd)/config/nextcloud_backups_aws_s3"
+    export NEXTCLOUD_PATH="$(pwd)/tests/config_folders/config_test"
+    export CONFIG_FILE="$(pwd)/tests/config_folders/config/nextcloud_backups_aws_s3"
     mkdir -p /tmp/nextcloud_backups_aws_s3/var/www/nextcloud/config
     cat << EOF > /tmp/nextcloud_backups_aws_s3/var/www/nextcloud/config/config.php
 <?php
@@ -68,7 +68,7 @@ oneTimeTearDown() {
 
 testConfigDirDefault() {
     default=$(./nextcloud_backups_aws_s3 --test='config-file' --nextcloud-path="/tmp/nextcloud_backups_aws_s3/var/www/nextcloud" )
-    assertEquals "$default" "CONFIG_FILE -> $(pwd)/config/nextcloud_backups_aws_s3"
+    assertEquals "$default" "CONFIG_FILE -> $(pwd)/tests/config_folders/config/nextcloud_backups_aws_s3"
 }
 
 testConfigFileDoesNotExist() {
