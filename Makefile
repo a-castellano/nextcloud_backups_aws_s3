@@ -16,3 +16,5 @@ test:
 	( $(TEST_DIR)/03-configfiles )
 	@echo "- unset variables"
 	( $(TEST_DIR)/04-unsetvariables )
+	@echo "- check required software"
+	( $(TEST_DIR)/05-checkrequiredsoftware )

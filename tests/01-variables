@@ -1,4 +1,4 @@
-##!/bin/sh
+#!/bin/sh
 # file: tests/01-variables
 
 oneTimeSetUp() {
@@ -104,7 +104,7 @@ testDatabasePasswordIsDefined() {
 
 testDatabaseHostNotDefined() {
     undefined=$(./nextcloud_backups_aws_s3 --test='database-host')
-    assertEquals "$undefined" "DATABASE_HOST is not defined"
+    assertEquals "$undefined" "DATABASE_HOST -> localhost"
 }
 
 testDatabaseHostIsDefined() {
@@ -226,6 +226,16 @@ EOF
     match=$?
     assertEquals $match 0
     rm /tmp/expectedError /tmp/error
+}
+
+testS3BucketNotDefined() {
+    undefined=$(./nextcloud_backups_aws_s3 --test='s3-bucket')
+    assertEquals "$undefined" "S3_BUCKET is not defined"
+}
+
+testS3BucketIsDefined() {
+    defined=$(./nextcloud_backups_aws_s3 --s3-bucket="my-bucket" --test='s3-bucket')
+    assertEquals "$defined" "S3_BUCKET -> my-bucket"
 }
 
 # Load shUnit2.

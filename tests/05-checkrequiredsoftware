@@ -1,0 +1,98 @@
+#!/bin/sh
+# file: tests/04-unsetvariables
+
+oneTimeSetUp() {
+    export NEXTCLOUD_PATH="$(pwd)/tests/config_folders/config_test"
+    export CONFIG_FILE="$(pwd)/tests/config_folders/config/nextcloud_backups_aws_s3"
+    export S3_ACCESS_KEY="access-key"
+    export S3_SECRET_KEY="secretkey"
+    export S3_BUCKET="my-bucket"
+}
+
+setUp()
+{
+    originalPath=$PATH
+    export PATH=$(pwd)/tests/stubs:$PATH
+}
+
+tearDown()
+{
+    export PATH=$originalPath
+}
+
+testNoMysqlClientInstalled()
+{
+    rm -f /tmp/error /tmp/nomysqlclientinstalled
+    cat << EOF > /tmp/nomysqlclientinstalled
+Error: MySQL client is not installed, please install it before start backup jobs
+EOF
+    mv tests/stubs/mysql tests/stubs/_mysql
+    ./nextcloud_backups_aws_s3 2> /tmp/error
+    sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
+    diff /tmp/nomysqlclientinstalled /tmp/error
+    returnCode=$?
+    if [ "$IS_TRAVIS" = "true" ]; then
+        startSkipping
+    fi
+    assertEquals "$returnCode" "0"
+    mv tests/stubs/_mysql tests/stubs/mysql
+    rm -f /tmp/error /tmp/nomysqlclientinstalled
+}
+
+testNoMydumperInstalled()
+{
+    rm -f /tmp/error /tmp/nomydumperinstalled
+    cat << EOF > /tmp/nomydumperinstalled
+Error: mydumper is not installed, please install it before start backup jobs
+EOF
+    mv tests/stubs/mydumper tests/stubs/_mydumper
+    ./nextcloud_backups_aws_s3 2> /tmp/error
+    sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
+    diff /tmp/nomydumperinstalled /tmp/error
+    returnCode=$?
+    assertEquals "$returnCode" "0"
+    mv tests/stubs/_mydumper tests/stubs/mydumper
+    rm -f /tmp/error /tmp/nomydumperinstalled
+}
+
+testNoS3cmdInstalled()
+{
+    rm -f /tmp/error /tmp/nos3cmdinstalled
+    cat << EOF > /tmp/nos3cmdinstalled
+Error: s3cmd is not installed, please install it before start backup jobs
+EOF
+    mv tests/stubs/s3cmd tests/stubs/_s3cmd
+    ./nextcloud_backups_aws_s3 2> /tmp/error
+    sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
+    diff /tmp/nos3cmdinstalled /tmp/error
+    returnCode=$?
+    assertEquals "$returnCode" "0"
+    mv tests/stubs/_s3cmd tests/stubs/s3cmd
+    rm -f /tmp/error /tmp/nos3cmdinstalled
+}
+
+
+testMySQLCorrectCredentials()
+{
+    ./nextcloud_backups_aws_s3
+    returnCode=$?
+    assertEquals "$returnCode" "0"
+}
+
+testMySQLFailedCredentials()
+{
+    rm -f /tmp/error /tmp/fileFailedPasswd
+    cat << EOF > /tmp/fileFailedPasswd
+Error: ERROR 1045 (28000): Access denied for user 'test'@'localhost' (using password: YES)
+EOF
+    ./nextcloud_backups_aws_s3 --database-passwd="failed" 2> /tmp/error
+    sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
+    diff /tmp/fileFailedPasswd /tmp/error
+    returnCode=$?
+    assertEquals "$returnCode" "0"
+    rm -f /tmp/error /tmp/fileFailedPasswd
+}
+
+
+# Load shUnit2.
+. /usr/bin/shunit2

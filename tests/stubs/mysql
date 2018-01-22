@@ -1,0 +1,7 @@
+#!/bin/sh
+
+if [ ! "$2" = "-ptest" ]; then
+    ( >&2 echo "ERROR 1045 (28000): Access denied for user 'test'@'localhost' (using password: YES)")
+    exit 1
+fi
+exit 0

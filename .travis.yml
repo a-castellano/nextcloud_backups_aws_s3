@@ -1,5 +1,8 @@
 language: bash
 
+env:
+    - IS_TRAVIS=true
+
 before_script:
     - sudo apt-get install shunit2
 
