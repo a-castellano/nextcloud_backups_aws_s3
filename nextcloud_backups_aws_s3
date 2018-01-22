@@ -26,6 +26,9 @@ NEXTCLOUD_USERS='ALL'
 LOGGET_TAG="nextcloud_backups_aws_s3"
 LOGGER="$(which logger) -t $LOGGET_TAG"
 
+# Error file
+LOCAL_ERROR_FILE='.error.log'
+
 # Misc
 WHICH=$(which which)
 ECHO=$($WHICH echo)
@@ -107,10 +110,10 @@ function report_error {
 }
 
 function check_option_called {
-    values=$($ECHO $@ | $CUT -d " " -f2- | $SED 's/[ ]*//g')
+    values=$( $ECHO $@ | $CUT -d " " -f2- | $SED 's/[ ]*//g' )
     option_called="_OPTION_CALLED"
     option_name=$( $ECHO $@ | $CUT -d " " -f1 )
-    variable_name=$($ECHO $option_name | $TR '[:lower:]' '[:upper:]' | $TR '-' '_')
+    variable_name=$( $ECHO $option_name | $TR '[:lower:]' '[:upper:]' | $TR '-' '_' )
     variable_called_name="$variable_name$option_called"
     if [[ -z ${!variable_called_name} || "${!variable_called_name}" = false  ]]; then
         if [ "$#" -eq 1 ]; then
@@ -139,13 +142,13 @@ function get_option_from_short_options_array {
 }
 
 function get_option_from_short_options_hash {
-    arg=$(trim $1)
+    arg=$( trim $1 )
     result=${short_options_hash[$arg]}
     check_option_called $result
 }
 
 function variables_to_test {
-    variables_to_test=$($ECHO $1 | $SED 's/,/ /g' | $TR '[:lower:]' '[:upper:]' | $TR '-' '_' )
+    variables_to_test=$( $ECHO $1 | $SED 's/,/ /g' | $TR '[:lower:]' '[:upper:]' | $TR '-' '_' )
     for var in $variables_to_test
     do
         if [[ -z ${!var} ]]; then
@@ -156,8 +159,55 @@ function variables_to_test {
     done
 }
 
+function test_config_file {
+    file=$1
+
+    if [[ ! -f $file ]]; then
+        error_msg="Config file '$file' does not exist."
+        report_error $error_msg
+        exit 1
+    fi
+    if [[ ! -w $file ]]; then
+        error_msg="Can't write '$file', permission denied."
+        report_error $error_msg
+        exit 1
+    fi
+}
+
+function get_variables_config_file {
+
+    test_config_file $CONFIG_FILE
+
+    declare -a config_variables
+    config_variables=(
+        'S3_ACCESS_KEY'
+        'S3_SECRET_KEY'
+        'DATABASE_NAME'
+        'DATABASE_PASSWD'
+        'DATABASE_PORT'
+        'DATABASE_USER'
+        'DATABASE_HOST'
+        'NEXTCLOUD_USERS'
+        'LOG_FILE'
+    )
+
+    for var in "${config_variables[@]}"
+    do
+        if [[ -z ${!var}  ]]; then
+            value=$( $GREP $var $CONFIG_FILE | $SED "s|$var[ ]*=[ ]*||")
+            if [[ ! "$value" = "" ]]; then
+                eval $var=$value
+            fi
+        fi
+    done
+
+}
+
+
 function get_variables_from_nextcloud_config_file {
-    config_file=$NEXTCLOUD_PATH$NEXTCLOUD_CONFIG_ROUTE
+
+    nextcloud_config_file=$NEXTCLOUD_PATH$NEXTCLOUD_CONFIG_ROUTE
+    test_config_file $nextcloud_config_file
 
     declare -A variables_to_nextcloud_variables=(
         ["DATABASE_NAME"]="dbname"
@@ -170,16 +220,12 @@ function get_variables_from_nextcloud_config_file {
     for var in "${!variables_to_nextcloud_variables[@]}"
     do
         if [[ -z ${!var}  ]]; then
-            value=$($GREP ${variables_to_nextcloud_variables[$var]} $config_file | $SED "s/^.* => '//" | $SED "s/',$//")
+            value=$( $GREP ${variables_to_nextcloud_variables[$var]} $nextcloud_config_file | $SED "s/^.* => '//" | $SED "s/',$//" )
             if [[ ! "$value" = "" ]]; then
                 eval $var=$value
             fi
         fi
     done
-}
-
-function get_variables_config_file{
-
 }
 
 
@@ -268,6 +314,12 @@ done
 # Get variables from files
 get_variables_config_file
 get_variables_from_nextcloud_config_file
+
+# Check databse port
+
+if [[ -z $DATABASE_PORT ]]; then
+    DATABASE_PORT=3306
+fi
 
 # Look for tests
 if [[ -n $TEST ]]; then

@@ -2,7 +2,13 @@
 # file: tests/02-usage
 
 oneTimeSetUp() {
-NEXTCLOUD_PATH="$(pwd)/config_test"
+    export NEXTCLOUD_PATH="$(pwd)/config_test"
+    export CONFIG_FILE="$(pwd)/config/nextcloud_backups_aws_s3"
+}
+
+oneTimeTearDown() {
+    unset NEXTCLOUD_PATH
+    unset CONFIG_FILE
 }
 
 testUsage() {
