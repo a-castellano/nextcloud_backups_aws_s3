@@ -28,6 +28,38 @@ EOF
     mv tests/stubs/mysql tests/stubs/_mysql
     ./nextcloud_backups_aws_s3 2> /tmp/error
     sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
+    diff /tmp/nomysqlclientinstaled /tmp/error
+    returnCode=$?
+    assertEquals "$returnCode" "0"
+    mv tests/stubs/_mysql tests/stubs/mysql
+    rm -f /tmp/error /tmp/nomysqlclientinstaled
+}
+
+testNoMydumperInstaled()
+{
+    rm -f /tmp/error /tmp/nomydumperinstaled
+    cat << EOF > /tmp/nomydumperinstaled
+Error: mydumper is not installed, please install it before start backup jobs
+EOF
+    mv tests/stubs/mydumper tests/stubs/_mydumper
+    ./nextcloud_backups_aws_s3 2> /tmp/error
+    sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
+    diff /tmp/nomydumperinstaled /tmp/error
+    returnCode=$?
+    assertEquals "$returnCode" "0"
+    mv tests/stubs/_mydumper tests/stubs/mydumper
+    rm -f /tmp/error /tmp/nomydumperinstaled
+}
+
+testNoMysqlClientInstaled()
+{
+    rm -f /tmp/error /tmp/nomysqlclientinstaled
+    cat << EOF > /tmp/nomysqlclientinstaled
+Error: MySQL client is not installed, please install it before start backup jobs
+EOF
+    mv tests/stubs/mysql tests/stubs/_mysql
+    ./nextcloud_backups_aws_s3 2> /tmp/error
+    sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
     returnCode=$?
     assertEquals "$returnCode" "0"
     mv tests/stubs/_mysql tests/stubs/mysql
