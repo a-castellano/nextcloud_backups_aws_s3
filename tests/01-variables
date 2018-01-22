@@ -2,8 +2,8 @@
 # file: tests/01-variables
 
 oneTimeSetUp() {
-    export NEXTCLOUD_PATH="$(pwd)/config_test"
-    export CONFIG_FILE="$(pwd)/config/nextcloud_backups_aws_s3"
+    export NEXTCLOUD_PATH="$(pwd)/tests/config_folders/config_test"
+    export CONFIG_FILE="$(pwd)/tests/config_folders/config/nextcloud_backups_aws_s3"
 }
 
 oneTimeTearDown() {
@@ -72,7 +72,7 @@ testS3SecretIsDefined() {
 }
 
 testDatabaseNameNotDefined() {
-    NEXTCLOUD_PATH="$(pwd)/config_test_no_values"
+    NEXTCLOUD_PATH="$(pwd)/tests/config_folders/config_test_no_values"
     undefined=$(./nextcloud_backups_aws_s3 --test='database-name')
     assertEquals "$undefined" "DATABASE_NAME is not defined"
 }
@@ -123,14 +123,14 @@ testDatabasePortIsDefined() {
 }
 
 testDefaultNextcloudPath() {
-    NEXTCLOUD_PATH="$(pwd)/config_test_no_values"
+    NEXTCLOUD_PATH="$(pwd)/tests/config_folders/config_test_no_values"
     nextcloud_path=$(./nextcloud_backups_aws_s3 --test='nextcloud-path')
-    assertEquals "$nextcloud_path" "NEXTCLOUD_PATH -> $(pwd)/config_test_no_values"
+    assertEquals "$nextcloud_path" "NEXTCLOUD_PATH -> $(pwd)/tests/config_folders/config_test_no_values"
 }
 
 testChangueNextcloudPath() {
-    nextcloud_path=$(./nextcloud_backups_aws_s3 --nextcloud-path="$(pwd)/config_test_no_values" --test='nextcloud-path')
-    assertEquals "$nextcloud_path" "NEXTCLOUD_PATH -> $(pwd)/config_test_no_values"
+    nextcloud_path=$(./nextcloud_backups_aws_s3 --nextcloud-path="$(pwd)/tests/config_folders/config_test_no_values" --test='nextcloud-path')
+    assertEquals "$nextcloud_path" "NEXTCLOUD_PATH -> $(pwd)/tests/config_folders/config_test_no_values"
 }
 
 testDefaultNextcloudUsers() {
