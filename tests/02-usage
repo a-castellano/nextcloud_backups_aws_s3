@@ -1,9 +1,18 @@
 ##!/bin/sh
 # file: tests/02-usage
 
+oneTimeSetUp() {
+    export NEXTCLOUD_PATH="$(pwd)/config_test"
+    export CONFIG_FILE="$(pwd)/config/nextcloud_backups_aws_s3"
+}
+
+oneTimeTearDown() {
+    unset NEXTCLOUD_PATH
+    unset CONFIG_FILE
+}
 
 testUsage() {
-    ./nexcloud_backups_aws_s3 -u > /dev/null
+    ./nextcloud_backups_aws_s3 -u > /dev/null
     ok=$?
     assertEquals "$ok" "0"
 }
@@ -12,12 +21,54 @@ testUnregisteredOptions() {
    cat << EOF > /tmp/expectedError
 Error: parse-options: unrecognized option '--nonsene'
 EOF
-    ./nexcloud_backups_aws_s3 -s --test='undefined-variable, something' --nonsene  2> /tmp/error
+    ./nextcloud_backups_aws_s3 -s --test='undefined-variable, something' --nonsene  2> /tmp/error
     sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
     diff /tmp/expectedError /tmp/error
     match=$?
     assertEquals $match 0
     rm /tmp/expectedError /tmp/error
+}
+
+testNoLogFile() {
+   cat << EOF > /tmp/expectedError
+Error: Log enabled but there is no log file declared, add '--log-file' option.
+EOF
+    ./nextcloud_backups_aws_s3 -l 2> /tmp/error
+    sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
+    diff /tmp/expectedError /tmp/error
+    match=$?
+    assertEquals $match 0
+    rm /tmp/expectedError /tmp/error
+}
+
+testFailToCreateLogPermission() {
+   mkdir -p /tmp/nopermissionfolder/
+   touch /tmp/nopermissionfolder/nextcloud_backups_aws_s3.log
+   chmod 400 /tmp/nopermissionfolder/nextcloud_backups_aws_s3.log
+   cat << EOF > /tmp/expectedError
+Error: Cannot write log in '/tmp/nopermissionfolder/nextcloud_backups_aws_s3.log': Permission Denied
+EOF
+    ./nextcloud_backups_aws_s3 -l --log-file="/tmp/nopermissionfolder/nextcloud_backups_aws_s3.log" 2> /tmp/error
+    sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
+    diff /tmp/expectedError /tmp/error
+    match=$?
+    assertEquals $match 0
+    rm /tmp/expectedError /tmp/error
+    rm -rf /tmp/nopermissionfolde
+}
+
+testFailToCreateLogPathDoesNotExist() {
+   rm -rf /tmp/nonexistentfolder
+   cat << EOF > /tmp/expectedError
+Error: Cannot write log in '/tmp/nonexistentfolder': Given path does not exist
+EOF
+    ./nextcloud_backups_aws_s3 -l --log-file="/tmp/nonexistentfolder/nextcloud_backups_aws_s3.log" 2> /tmp/error
+    sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
+    diff /tmp/expectedError /tmp/error
+    match=$?
+    assertEquals $match 0
+    rm /tmp/expectedError /tmp/error
+    rm -rf /tmp/nonexistentfolder/
 }
 
 

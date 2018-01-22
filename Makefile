@@ -12,3 +12,5 @@ test:
 	( $(TEST_DIR)/01-variables )
 	@echo "- usage"
 	( $(TEST_DIR)/02-usage )
+	@echo "- config files"
+	( $(TEST_DIR)/03-configfiles )
