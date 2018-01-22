@@ -6,6 +6,7 @@ oneTimeSetUp() {
     export CONFIG_FILE="$(pwd)/tests/config_folders/config/nextcloud_backups_aws_s3"
     export S3_ACCESS_KEY="access-key"
     export S3_SECRET_KEY="secretkey"
+    export S3_BUCKET="my-bucket"
 }
 
 setUp()
@@ -19,52 +20,52 @@ tearDown()
     export PATH=$originalPath
 }
 
-testNoMysqlClientInstaled()
+testNoMysqlClientInstalled()
 {
-    rm -f /tmp/error /tmp/nomysqlclientinstaled
-    cat << EOF > /tmp/nomysqlclientinstaled
+    rm -f /tmp/error /tmp/nomysqlclientinstalled
+    cat << EOF > /tmp/nomysqlclientinstalled
 Error: MySQL client is not installed, please install it before start backup jobs
 EOF
     mv tests/stubs/mysql tests/stubs/_mysql
     ./nextcloud_backups_aws_s3 2> /tmp/error
     sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
-    diff /tmp/nomysqlclientinstaled /tmp/error
+    diff /tmp/nomysqlclientinstalled /tmp/error
     returnCode=$?
     assertEquals "$returnCode" "0"
     mv tests/stubs/_mysql tests/stubs/mysql
-    rm -f /tmp/error /tmp/nomysqlclientinstaled
+    rm -f /tmp/error /tmp/nomysqlclientinstalled
 }
 
-testNoMydumperInstaled()
+testNoMydumperInstalled()
 {
-    rm -f /tmp/error /tmp/nomydumperinstaled
-    cat << EOF > /tmp/nomydumperinstaled
+    rm -f /tmp/error /tmp/nomydumperinstalled
+    cat << EOF > /tmp/nomydumperinstalled
 Error: mydumper is not installed, please install it before start backup jobs
 EOF
     mv tests/stubs/mydumper tests/stubs/_mydumper
     ./nextcloud_backups_aws_s3 2> /tmp/error
     sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
-    diff /tmp/nomydumperinstaled /tmp/error
+    diff /tmp/nomydumperinstalled /tmp/error
     returnCode=$?
     assertEquals "$returnCode" "0"
     mv tests/stubs/_mydumper tests/stubs/mydumper
-    rm -f /tmp/error /tmp/nomydumperinstaled
+    rm -f /tmp/error /tmp/nomydumperinstalled
 }
 
-testNoS3cmdInstaled()
+testNoS3cmdInstalled()
 {
-    rm -f /tmp/error /tmp/nos3cmdinstaled
-    cat << EOF > /tmp/nos3cmdinstaled
+    rm -f /tmp/error /tmp/nos3cmdinstalled
+    cat << EOF > /tmp/nos3cmdinstalled
 Error: s3cmd is not installed, please install it before start backup jobs
 EOF
     mv tests/stubs/s3cmd tests/stubs/_s3cmd
     ./nextcloud_backups_aws_s3 2> /tmp/error
     sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
-    diff /tmp/nos3cmdinstaled /tmp/error
+    diff /tmp/nos3cmdinstalled /tmp/error
     returnCode=$?
     assertEquals "$returnCode" "0"
     mv tests/stubs/_s3cmd tests/stubs/s3cmd
-    rm -f /tmp/error /tmp/nos3cmdinstaled
+    rm -f /tmp/error /tmp/nos3cmdinstalled
 }
 
 

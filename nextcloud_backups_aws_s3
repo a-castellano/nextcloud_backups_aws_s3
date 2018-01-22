@@ -181,6 +181,7 @@ function get_variables_config_file {
     config_variables=(
         'S3_ACCESS_KEY'
         'S3_SECRET_KEY'
+        'S3_BUCKET'
         'DATABASE_NAME'
         'DATABASE_PASSWD'
         'DATABASE_PORT'
