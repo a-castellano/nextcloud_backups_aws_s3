@@ -13,7 +13,6 @@ if [[ -z $NEXTCLOUD_PATH ]]; then
     NEXTCLOUD_PATH='/var/www/nextcloud'
 fi
 
-
 if [[ -z $CONFIG_FILE  ]]; then
     CONFIG_FILE='~/.config/nextcloud_backups_aws_s3'
 fi
@@ -228,6 +227,44 @@ function get_variables_from_nextcloud_config_file {
     done
 }
 
+function check_required_software {
+
+    errors=false
+
+    MYSQL=$($WHICH mysql)
+    if [[ -z $MYSQL ]]; then
+        errors=true
+        error_msg="MySQL client is not installed, please install it before start backup jobs"
+        report_error $error_msg
+    fi
+    MYDUMPER=$($WHICH mydumper)
+    if [[ -z $MYDUMPER ]]; then
+        errors=true
+        error_msg="mydumper is not installed, please install it before start backup jobs"
+        report_error $error_msg
+    fi
+    S3CMD=$($WHICH s3cmd)
+    if [[ -z $S3CMD ]]; then
+        errors=true
+        error_msg="a3cmd is not installed, please install it before start backup jobs"
+        report_error $error_msg
+    fi
+
+    if [[ "$errors" = "true" ]]; then
+        exit 1
+    fi
+}
+
+function check_databse_connection {
+    TEST=$( mysql -u$DATABASE_USER -p$DATABASE_PASSWD --port=$DATABASE_PORT -h $DATABASE_HOST -Bse "use $DATABASE_NAME" 2> $LOCAL_ERROR_FILE > /dev/null )
+    if [ $? -ne 0 ]; then
+        error_msg=$( $CAT $LOCAL_ERROR_FILE )
+        report_error $error_msg
+        $RM $LOCAL_ERROR_FILE
+        exit 1
+    fi
+    $RM .error.log
+}
 
 # Options
 declare -A short_options_array=(
@@ -276,15 +313,15 @@ long_options_with_one_params_array=(
 one_param=$( $ECHO ${long_options_with_one_params_array[@]} | $SED 's/ /:,/g' | $SED 's/$/:,/g' )
 one_param_OR=$( $ECHO ${long_options_with_one_params_array[@]} | $SED 's/\([^ ]*\)/--\1 |/g' | $SED 's/|$//g' )
 
-OPTS=`getopt -o $short_options_array_list$short_options --long $no_params$of_short$one_param -n 'parse-options' -- "$@" 2> .error.log `
+OPTS=`getopt -o $short_options_array_list$short_options --long $no_params$of_short$one_param -n 'parse-options' -- "$@" 2> $LOCAL_ERROR_FILE `
 
 if [ $? -ne 0 ]; then
-    error_msg=$($CAT .error.log)
+    error_msg=$( $CAT $LOCAL_ERROR_FILE )
     report_error $error_msg
-    $RM .error.log
+    $RM $LOCAL_ERROR_FILE
     exit 1
 fi
-$RM .error.log
+$RM $LOCAL_ERROR_FILE
 
 eval set -- "$OPTS"
 
@@ -319,6 +356,10 @@ get_variables_from_nextcloud_config_file
 
 if [[ -z $DATABASE_PORT ]]; then
     DATABASE_PORT=3306
+fi
+
+if [[ -z $DATABASE_HOST ]]; then
+    DATABASE_HOST="localhost"
 fi
 
 # Look for tests
@@ -406,5 +447,14 @@ if [[ ! "$unset_variables" = "" ]]; then
     usage
     exit 1
 fi
+
+# Check installed software
+if [[ -z $SKIP_BECAUSE_OF_TEST ]]; then
+    check_required_software
+fi
+
+# Check database conection
+
+check_databse_connection
 
 exit 0

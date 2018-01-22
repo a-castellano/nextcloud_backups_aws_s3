@@ -1,4 +1,4 @@
-##!/bin/sh
+#!/bin/sh
 # file: tests/04-unsetvariables
 
 oneTimeSetUp() {
@@ -14,7 +14,7 @@ S3_SECRET_KEY=MySecretKey
 EOF
 
    cat << EOF > /tmp/expectedError
-Error: The following variables has to have value: database-name, database-user, database-passwd, database-host. Please set a valid value for it.
+Error: The following variables has to have value: database-name, database-user, database-passwd. Please set a valid value for it.
 EOF
     ./nextcloud_backups_aws_s3  --config-file="/tmp/variables" 2> /tmp/error > /dev/null
     sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error

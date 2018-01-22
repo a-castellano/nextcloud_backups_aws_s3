@@ -1,4 +1,4 @@
-##!/bin/sh
+#!/bin/sh
 # file: tests/01-variables
 
 oneTimeSetUp() {
@@ -104,7 +104,7 @@ testDatabasePasswordIsDefined() {
 
 testDatabaseHostNotDefined() {
     undefined=$(./nextcloud_backups_aws_s3 --test='database-host')
-    assertEquals "$undefined" "DATABASE_HOST is not defined"
+    assertEquals "$undefined" "DATABASE_HOST -> localhost"
 }
 
 testDatabaseHostIsDefined() {

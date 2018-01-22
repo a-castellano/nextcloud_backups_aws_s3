@@ -1,0 +1,45 @@
+#!/bin/sh
+# file: tests/04-unsetvariables
+
+oneTimeSetUp() {
+    export NEXTCLOUD_PATH="$(pwd)/tests/config_folders/config_test"
+    export CONFIG_FILE="$(pwd)/tests/config_folders/config/nextcloud_backups_aws_s3"
+    export S3_ACCESS_KEY="access-key"
+    export S3_SECRET_KEY="secretkey"
+}
+
+setUp()
+{
+    originalPath=$PATH
+    export PATH=$(pwd)/tests/stubs:$PATH
+}
+
+tearDown()
+{
+    export PATH=$originalPath
+}
+
+testMySQLCorrectCredentials()
+{
+      ./nextcloud_backups_aws_s3
+      returnCode=$?
+      assertEquals "$returnCode" "0"
+}
+
+testMySQLFailedCredentials()
+{
+    rm -f /tmp/none /tmp/fileFailedPasswd
+    cat << EOF > /tmp/fileFailedPasswd
+Error: ERROR 1045 (28000): Access denied for user 'test'@'localhost' (using password: YES)
+EOF
+      ./nextcloud_backups_aws_s3 --database-passwd="failed" 2> /tmp/error
+      sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
+      diff /tmp/fileFailedPasswd /tmp/error
+      returnCode=$?
+      assertEquals "$returnCode" "0"
+      rm -f /tmp/none /tmp/fileFailedPasswd
+}
+
+
+# Load shUnit2.
+. /usr/bin/shunit2
