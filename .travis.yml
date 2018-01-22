@@ -1,10 +1,10 @@
 language: bash
 
+env:
+    - IS_TRAVIS=true
+
 before_script:
     - sudo apt-get install shunit2
-    - sudo apt-get remove msyql-client
-    - sudo apt-get autoremove
-
 
 script:
     - make test

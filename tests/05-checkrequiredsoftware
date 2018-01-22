@@ -31,6 +31,9 @@ EOF
     sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
     diff /tmp/nomysqlclientinstalled /tmp/error
     returnCode=$?
+    if [[ ! -z $IS_TRAVIS]]; then
+        startSkipping
+    fi
     assertEquals "$returnCode" "0"
     mv tests/stubs/_mysql tests/stubs/mysql
     rm -f /tmp/error /tmp/nomysqlclientinstalled
