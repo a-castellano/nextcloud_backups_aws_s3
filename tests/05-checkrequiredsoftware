@@ -19,25 +19,41 @@ tearDown()
     export PATH=$originalPath
 }
 
+testNoMysqlClientInstaled()
+{
+    rm -f /tmp/error /tmp/nomysqlclientinstaled
+    cat << EOF > /tmp/nomysqlclientinstaled
+Error: MySQL client is not installed, please install it before start backup jobs
+EOF
+    mv tests/stubs/mysql tests/stubs/_mysql
+    ./nextcloud_backups_aws_s3 2> /tmp/error
+    sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
+    returnCode=$?
+    assertEquals "$returnCode" "0"
+    mv tests/stubs/_mysql tests/stubs/mysql
+    rm -f /tmp/error /tmp/nomysqlclientinstaled
+}
+
+
 testMySQLCorrectCredentials()
 {
-      ./nextcloud_backups_aws_s3
-      returnCode=$?
-      assertEquals "$returnCode" "0"
+    ./nextcloud_backups_aws_s3
+    returnCode=$?
+    assertEquals "$returnCode" "0"
 }
 
 testMySQLFailedCredentials()
 {
-    rm -f /tmp/none /tmp/fileFailedPasswd
+    rm -f /tmp/error /tmp/fileFailedPasswd
     cat << EOF > /tmp/fileFailedPasswd
 Error: ERROR 1045 (28000): Access denied for user 'test'@'localhost' (using password: YES)
 EOF
-      ./nextcloud_backups_aws_s3 --database-passwd="failed" 2> /tmp/error
-      sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
-      diff /tmp/fileFailedPasswd /tmp/error
-      returnCode=$?
-      assertEquals "$returnCode" "0"
-      rm -f /tmp/none /tmp/fileFailedPasswd
+    ./nextcloud_backups_aws_s3 --database-passwd="failed" 2> /tmp/error
+    sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
+    diff /tmp/fileFailedPasswd /tmp/error
+    returnCode=$?
+    assertEquals "$returnCode" "0"
+    rm -f /tmp/error /tmp/fileFailedPasswd
 }
 
 

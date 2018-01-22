@@ -449,9 +449,7 @@ if [[ ! "$unset_variables" = "" ]]; then
 fi
 
 # Check installed software
-if [[ -z $SKIP_BECAUSE_OF_TEST ]]; then
-    check_required_software
-fi
+check_required_software
 
 # Check database conection
 
