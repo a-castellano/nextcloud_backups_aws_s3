@@ -1,3 +1,19 @@
 #!/bin/sh
 
+if [ ! "$1" = "--access_key=access-key" ]; then
+    ( >&2 echo "ERROR: S3 error: 403 (InvalidAccessKeyId): The AWS Access Key Id you provided does not exist in our records.")
+    exit 1
+fi
+
+if [ ! "$2" = "--secret_key=secretkey" ]; then
+    ( >&2 echo "ERROR: S3 error: 403 (SignatureDoesNotMatch): The request signature we calculated does not match the signature you provided. Check your key and signing method.")
+    exit 1
+fi
+
+if [ ! "$4" = "s3://my-bucket" ]; then
+    ( >&2 echo "ERROR: Bucket 'failed' does not exist")
+    ( >&2 echo "ERROR: S3 error: 404 (NoSuchBucket): The specified bucket does not exist" )
+fi
+
+
 exit 0
