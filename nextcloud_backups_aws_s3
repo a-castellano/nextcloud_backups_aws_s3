@@ -471,4 +471,9 @@ check_databse_connection
 # Check S3 connection
 check_s3_conection
 
+# Perferm backup
+
+#if [[ ! -z $EXCLUDE_DATABASE ]]; then
+#fi
+
 exit 0
