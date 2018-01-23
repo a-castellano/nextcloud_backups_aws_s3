@@ -1,6 +1,11 @@
 #!/bin/sh
 # file: tests/01-variables
 
+setUp() {
+    export TMP_FOLDER="/var/tmp/nextcloud_backups_aws_s3/tests"
+    mkdir -p $TMP_FOLDER
+}
+
 oneTimeSetUp() {
     export NEXTCLOUD_PATH="$(pwd)/tests/config_folders/config_test"
     export CONFIG_FILE="$(pwd)/tests/config_folders/config/nextcloud_backups_aws_s3"
@@ -149,40 +154,40 @@ testUndefinedValue() {
 }
 
 testWithSpaces() {
-cat << EOF > /tmp/testSpaces
+cat << EOF > $TMP_FOLDER/testSpaces
 UNDEFINED_VARIABLE is not defined
 SPACE is not defined
 EOF
-    ./nextcloud_backups_aws_s3 --test='       undefined-variable, space' > /tmp/testWithSpaces
-    diff /tmp/testSpaces /tmp/testWithSpaces
+    ./nextcloud_backups_aws_s3 --test='       undefined-variable, space' > $TMP_FOLDER/testWithSpaces
+    diff $TMP_FOLDER/testSpaces $TMP_FOLDER/testWithSpaces
     match=$?
     assertEquals $match 0
-    rm -f /tmp/testSpaces /tmp/testWithSpaces
+    rm -f $TMP_FOLDER/testSpaces $TMP_FOLDER/testWithSpaces
 }
 
 testMultipleValues() {
-   cat << EOF > /tmp/testMultipleValues
+   cat << EOF > $TMP_FOLDER/testMultipleValues
 S3_ACCESS_KEY -> ACCESS_KEY
 S3_SECRET_KEY -> SECRET_KEY
 EOF
-    ./nextcloud_backups_aws_s3 --s3-access-key ACCESS_KEY --s3-secret-key SECRET_KEY --test='s3-access-key,s3-secret-key' > /tmp/testMultipleValuesResult
-    diff /tmp/testMultipleValues /tmp/testMultipleValuesResult
+    ./nextcloud_backups_aws_s3 --s3-access-key ACCESS_KEY --s3-secret-key SECRET_KEY --test='s3-access-key,s3-secret-key' > $TMP_FOLDER/testMultipleValuesResult
+    diff $TMP_FOLDER/testMultipleValues $TMP_FOLDER/testMultipleValuesResult
     match=$?
     assertEquals $match 0
-    rm -f /tmp/testMultipleValues /tmp/testMultipleValuesResult
+    rm -f $TMP_FOLDER/testMultipleValues $TMP_FOLDER/testMultipleValuesResult
 }
 
 testMultipleValues2() {
-    cat << EOF > /tmp/testMultipleValues
+    cat << EOF > $TMP_FOLDER/testMultipleValues
 S3_ACCESS_KEY -> ACCESS_KEY
 S3_SECRET_KEY -> SECRET_KEY
 NEXTCLOUD_USERS -> ALL
 EOF
-    ./nextcloud_backups_aws_s3 --s3-access-key ACCESS_KEY --s3-secret-key SECRET_KEY --test='s3-access-key,s3-secret-key,nextcloud-users' > /tmp/testMultipleValuesResult
-    diff /tmp/testMultipleValues /tmp/testMultipleValuesResult
+    ./nextcloud_backups_aws_s3 --s3-access-key ACCESS_KEY --s3-secret-key SECRET_KEY --test='s3-access-key,s3-secret-key,nextcloud-users' > $TMP_FOLDER/testMultipleValuesResult
+    diff $TMP_FOLDER/testMultipleValues $TMP_FOLDER/testMultipleValuesResult
     match=$?
     assertEquals $match 0
-    rm /tmp/testMultipleValues /tmp/testMultipleValuesResult
+    rm $TMP_FOLDER/testMultipleValues $TMP_FOLDER/testMultipleValuesResult
 }
 
 testChangeNextcloudUsersWithspaces() {
@@ -211,21 +216,21 @@ testDisabledLogFile() {
 }
 
 testEnableLogFile() {
-    logfile=$(./nextcloud_backups_aws_s3 --log-file="/tmp/log" --test='log-file')
-    assertEquals "$logfile" "LOG_FILE -> /tmp/log"
+    logfile=$(./nextcloud_backups_aws_s3 --log-file="$TMP_FOLDER/log" --test='log-file')
+    assertEquals "$logfile" "LOG_FILE -> $TMP_FOLDER/log"
 }
 
 testIllegalParameters() {
-   rm -rf /tmp/error
-   cat << EOF > /tmp/expectedError
+   rm -rf $TMP_FOLDER/error
+   cat << EOF > $TMP_FOLDER/expectedError
 Error: Found illegal parameters: bob foo
 EOF
-    ./nextcloud_backups_aws_s3 -l bob foo 2> /tmp/error > /dev/null
-    sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
-    diff /tmp/expectedError /tmp/error
+    ./nextcloud_backups_aws_s3 -l bob foo 2> $TMP_FOLDER/error > /dev/null
+    sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
+    diff $TMP_FOLDER/expectedError $TMP_FOLDER/error
     match=$?
     assertEquals $match 0
-    rm /tmp/expectedError /tmp/error
+    rm $TMP_FOLDER/expectedError $TMP_FOLDER/error
 }
 
 testS3BucketNotDefined() {

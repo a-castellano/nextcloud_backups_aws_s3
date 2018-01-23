@@ -13,6 +13,8 @@ setUp()
 {
     originalPath=$PATH
     export PATH=$(pwd)/tests/stubs:$PATH
+    export TMP_FOLDER="/var/tmp/nextcloud_backups_aws_s3/tests"
+    mkdir -p $TMP_FOLDER
 }
 
 tearDown()
@@ -22,65 +24,65 @@ tearDown()
 
 testNoMysqlClientInstalled()
 {
-    rm -f /tmp/error /tmp/nomysqlclientinstalled
-    cat << EOF > /tmp/nomysqlclientinstalled
+    rm -f $TMP_FOLDER/error $TMP_FOLDER/nomysqlclientinstalled
+    cat << EOF > $TMP_FOLDER/nomysqlclientinstalled
 Error: MySQL client is not installed, please install it before start backup jobs
 EOF
     mv tests/stubs/mysql tests/stubs/_mysql
     which mysql
     if [ $? -eq 1  ]; then
-        ./nextcloud_backups_aws_s3 2> /tmp/error
-        sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
-        diff /tmp/nomysqlclientinstalled /tmp/error
+        ./nextcloud_backups_aws_s3 2> $TMP_FOLDER/error
+        sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
+        diff $TMP_FOLDER/nomysqlclientinstalled $TMP_FOLDER/error
         returnCode=$?
     else
         startSkipping
     fi
     assertEquals "$returnCode" "0"
     mv tests/stubs/_mysql tests/stubs/mysql
-    rm -f /tmp/error /tmp/nomysqlclientinstalled
+    rm -f $TMP_FOLDER/error $TMP_FOLDER/nomysqlclientinstalled
 }
 
 testNoMydumperInstalled()
 {
-    rm -f /tmp/error /tmp/nomydumperinstalled
-    cat << EOF > /tmp/nomydumperinstalled
+    rm -f $TMP_FOLDER/error $TMP_FOLDER/nomydumperinstalled
+    cat << EOF > $TMP_FOLDER/nomydumperinstalled
 Error: mydumper is not installed, please install it before start backup jobs
 EOF
     mv tests/stubs/mydumper tests/stubs/_mydumper
     which mydumper
     if [ $? -eq 1 ]; then
-        ./nextcloud_backups_aws_s3 2> /tmp/error
-        sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
-        diff /tmp/nomydumperinstalled /tmp/error
+        ./nextcloud_backups_aws_s3 2> $TMP_FOLDER/error
+        sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
+        diff $TMP_FOLDER/nomydumperinstalled $TMP_FOLDER/error
         returnCode=$?
         assertEquals "$returnCode" "0"
     else
         startSkipping
     fi
     mv tests/stubs/_mydumper tests/stubs/mydumper
-    rm -f /tmp/error /tmp/nomydumperinstalled
+    rm -f $TMP_FOLDER/error $TMP_FOLDER/nomydumperinstalled
 }
 
 testNoS3cmdInstalled()
 {
-    rm -f /tmp/error /tmp/nos3cmdinstalled
-    cat << EOF > /tmp/nos3cmdinstalled
+    rm -f $TMP_FOLDER/error $TMP_FOLDER/nos3cmdinstalled
+    cat << EOF > $TMP_FOLDER/nos3cmdinstalled
 Error: s3cmd is not installed, please install it before start backup jobs
 EOF
     mv tests/stubs/s3cmd tests/stubs/_s3cmd
     which s3cmd
     if [ $? -eq 1 ]; then
-        ./nextcloud_backups_aws_s3 2> /tmp/error
-        sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
-        diff /tmp/nos3cmdinstalled /tmp/error
+        ./nextcloud_backups_aws_s3 2> $TMP_FOLDER/error
+        sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
+        diff $TMP_FOLDER/nos3cmdinstalled $TMP_FOLDER/error
         returnCode=$?
         assertEquals "$returnCode" "0"
     else
         startSkipping
     fi
     mv tests/stubs/_s3cmd tests/stubs/s3cmd
-    rm -f /tmp/error /tmp/nos3cmdinstalled
+    rm -f $TMP_FOLDER/error $TMP_FOLDER/nos3cmdinstalled
 }
 
 
@@ -93,55 +95,55 @@ testMySQLCorrectCredentials()
 
 testMySQLFailedCredentials()
 {
-    rm -f /tmp/error /tmp/fileFailedPasswd
-    cat << EOF > /tmp/fileFailedPasswd
+    rm -f $TMP_FOLDER/error $TMP_FOLDER/fileFailedPasswd
+    cat << EOF > $TMP_FOLDER/fileFailedPasswd
 Error: ERROR 1045 (28000): Access denied for user 'test'@'localhost' (using password: YES)
 EOF
-    ./nextcloud_backups_aws_s3 --database-passwd="failed" 2> /tmp/error
-    sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
-    diff /tmp/fileFailedPasswd /tmp/error
+    ./nextcloud_backups_aws_s3 --database-passwd="failed" 2> $TMP_FOLDER/error
+    sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
+    diff $TMP_FOLDER/fileFailedPasswd $TMP_FOLDER/error
     returnCode=$?
     assertEquals "$returnCode" "0"
-    rm -f /tmp/error /tmp/fileFailedPasswd
+    rm -f $TMP_FOLDER/error $TMP_FOLDER/fileFailedPasswd
 }
 
 testS3cmdFailedAccessKey(){
-    rm -f /tmp/error /tmp/fileFailedAccess
-    cat << EOF > /tmp/fileFailedAccess
+    rm -f $TMP_FOLDER/error $TMP_FOLDER/fileFailedAccess
+    cat << EOF > $TMP_FOLDER/fileFailedAccess
 Error: ERROR: S3 error: 403 (InvalidAccessKeyId): The AWS Access Key Id you provided does not exist in our records.
 EOF
-    ./nextcloud_backups_aws_s3 --s3-access-key="failed" 2> /tmp/error
-    sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
-    diff /tmp/fileFailedAccess /tmp/error
+    ./nextcloud_backups_aws_s3 --s3-access-key="failed" 2> $TMP_FOLDER/error
+    sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
+    diff $TMP_FOLDER/fileFailedAccess $TMP_FOLDER/error
     returnCode=$?
     assertEquals "$returnCode" "0"
-    rm -f /tmp/error /tmp/fileFailedAccess
+    rm -f $TMP_FOLDER/error $TMP_FOLDER/fileFailedAccess
 }
 
 testS3cmdFailedSecretKey(){
-    rm -f /tmp/error /tmp/fileFailedSecret
-    cat << EOF > /tmp/fileFailedSecret
+    rm -f $TMP_FOLDER/error $TMP_FOLDER/fileFailedSecret
+    cat << EOF > $TMP_FOLDER/fileFailedSecret
 Error: ERROR: S3 error: 403 (SignatureDoesNotMatch): The request signature we calculated does not match the signature you provided. Check your key and signing method.
 EOF
-    ./nextcloud_backups_aws_s3 --s3-secret-key="failed" 2> /tmp/error
-    sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
-    diff /tmp/fileFailedSecret /tmp/error
+    ./nextcloud_backups_aws_s3 --s3-secret-key="failed" 2> $TMP_FOLDER/error
+    sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
+    diff $TMP_FOLDER/fileFailedSecret $TMP_FOLDER/error
     returnCode=$?
     assertEquals "$returnCode" "0"
-    rm -f /tmp/error /tmp/fileFailedSecret
+    rm -f $TMP_FOLDER/error $TMP_FOLDER/fileFailedSecret
 }
 
 testS3cmdFailedBucket(){
-    rm -f /tmp/error /tmp/fileFailedBucket
-    cat << EOF > /tmp/fileFailedBucket
+    rm -f $TMP_FOLDER/error $TMP_FOLDER/fileFailedBucket
+    cat << EOF > $TMP_FOLDER/fileFailedBucket
 Error: ERROR: Bucket 'failed' does not exist ERROR: S3 error: 404 (NoSuchBucket): The specified bucket does not exist
 EOF
-    ./nextcloud_backups_aws_s3 --s3-bucket="other" 2> /tmp/error
-    sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
-    diff /tmp/fileFailedBucket /tmp/error
+    ./nextcloud_backups_aws_s3 --s3-bucket="other" 2> $TMP_FOLDER/error
+    sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
+    diff $TMP_FOLDER/fileFailedBucket $TMP_FOLDER/error
     returnCode=$?
     assertEquals "$returnCode" "0"
-    rm -f /tmp/error /tmp/fileFailedBucket
+    rm -f $TMP_FOLDER/error $TMP_FOLDER/fileFailedBucket
 }
 
 

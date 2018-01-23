@@ -1,33 +1,38 @@
 #!/bin/sh
 # file: tests/04-unsetvariables
 
+setUp() {
+    export TMP_FOLDER="/var/tmp/nextcloud_backups_aws_s3/tests"
+    mkdir -p $TMP_FOLDER
+}
+
 oneTimeSetUp() {
     export NEXTCLOUD_PATH="$(pwd)/tests/config_folders/config_test_no_values"
     export CONFIG_FILE="$(pwd)/tests/config_folders/config/nextcloud_backups_aws_s3"
 }
 
 testFailNoDatabaseVariables() {
-   rm -f /tmp/variables /tmp/expectedError /tmp/error
-   cat << EOF > /tmp/variables
+   rm -f $TMP_FOLDER/variables $TMP_FOLDER/expectedError $TMP_FOLDER/error
+   cat << EOF > $TMP_FOLDER/variables
 S3_ACCESS_KEY=MyAccesKey
 S3_SECRET_KEY=MySecretKey
 S3_BUCKET=MyBucket
 EOF
 
-   cat << EOF > /tmp/expectedError
+   cat << EOF > $TMP_FOLDER/expectedError
 Error: The following variables has to have value: database-name, database-user, database-passwd. Please set a valid value for it.
 EOF
-    ./nextcloud_backups_aws_s3  --config-file="/tmp/variables" 2> /tmp/error > /dev/null
-    sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
-    diff /tmp/expectedError /tmp/error
+    ./nextcloud_backups_aws_s3  --config-file="$TMP_FOLDER/variables" 2> $TMP_FOLDER/error > /dev/null
+    sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
+    diff $TMP_FOLDER/expectedError $TMP_FOLDER/error
     match=$?
     assertEquals "$match" "0"
-    rm -f /tmp/variables /tmp/expectedError /tmp/error
+    rm -f $TMP_FOLDER/variables $TMP_FOLDER/expectedError $TMP_FOLDER/error
 }
 
 testFailNoS3Variables() {
-   rm -f /tmp/variables /tmp/expectedError /tmp/error
-   cat << EOF > /tmp/variables
+   rm -f $TMP_FOLDER/variables $TMP_FOLDER/expectedError $TMP_FOLDER/error
+   cat << EOF > $TMP_FOLDER/variables
 DATABASE_NAME=dbname
 DATABASE_USER=dbuser
 DATABASE_PASSWD=mysecret
@@ -35,20 +40,20 @@ DATABASE_PORT=3307
 DATABASE_HOST=localhost
 EOF
 
-   cat << EOF > /tmp/expectedError
+   cat << EOF > $TMP_FOLDER/expectedError
 Error: The following variables has to have value: s3-access-key, s3-secret-key, s3-bucket. Please set a valid value for it.
 EOF
-    ./nextcloud_backups_aws_s3  --config-file="/tmp/variables" 2> /tmp/error > /dev/null
-    sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
-    diff /tmp/expectedError /tmp/error
+    ./nextcloud_backups_aws_s3  --config-file="$TMP_FOLDER/variables" 2> $TMP_FOLDER/error > /dev/null
+    sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
+    diff $TMP_FOLDER/expectedError $TMP_FOLDER/error
     match=$?
     assertEquals "$match" "0"
-    rm -f /tmp/variables /tmp/expectedError /tmp/error
+    rm -f $TMP_FOLDER/variables $TMP_FOLDER/expectedError $TMP_FOLDER/error
 }
 
 testFailMixedVariables() {
-   rm -f /tmp/variables /tmp/expectedError /tmp/error
-   cat << EOF > /tmp/variables
+   rm -f $TMP_FOLDER/variables $TMP_FOLDER/expectedError $TMP_FOLDER/error
+   cat << EOF > $TMP_FOLDER/variables
 S3_SECRET_KEY=MySecretKey
 S3_BUCKET=MyBucket
 DATABASE_USER=dbuser
@@ -57,15 +62,15 @@ DATABASE_PORT=3307
 DATABASE_HOST=localhost
 EOF
 
-   cat << EOF > /tmp/expectedError
+   cat << EOF > $TMP_FOLDER/expectedError
 Error: The following variables has to have value: s3-access-key, database-name. Please set a valid value for it.
 EOF
-    ./nextcloud_backups_aws_s3  --config-file="/tmp/variables" 2> /tmp/error > /dev/null
-    sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
-    diff /tmp/expectedError /tmp/error
+    ./nextcloud_backups_aws_s3  --config-file="$TMP_FOLDER/variables" 2> $TMP_FOLDER/error > /dev/null
+    sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
+    diff $TMP_FOLDER/expectedError $TMP_FOLDER/error
     match=$?
     assertEquals "$match" "0"
-    rm -f /tmp/variables /tmp/expectedError /tmp/error
+    rm -f $TMP_FOLDER/variables $TMP_FOLDER/expectedError $TMP_FOLDER/error
 }
 
 # Load shUnit2.
