@@ -105,6 +105,46 @@ EOF
     rm -f /tmp/error /tmp/fileFailedPasswd
 }
 
+testS3cmdFailedAccessKey(){
+    rm -f /tmp/error /tmp/fileFailedAccess
+    cat << EOF > /tmp/fileFailedAccess
+Error: ERROR: S3 error: 403 (InvalidAccessKeyId): The AWS Access Key Id you provided does not exist in our records.
+EOF
+    ./nextcloud_backups_aws_s3 --s3-access-key="failed" 2> /tmp/error
+    sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
+    diff /tmp/fileFailedAccess /tmp/error
+    returnCode=$?
+    assertEquals "$returnCode" "0"
+    rm -f /tmp/error /tmp/fileFailedAccess
+}
+
+testS3cmdFailedSecretKey(){
+    rm -f /tmp/error /tmp/fileFailedSecret
+    cat << EOF > /tmp/fileFailedSecret
+Error: ERROR: S3 error: 403 (SignatureDoesNotMatch): The request signature we calculated does not match the signature you provided. Check your key and signing method.
+EOF
+    ./nextcloud_backups_aws_s3 --s3-secret-key="failed" 2> /tmp/error
+    sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
+    diff /tmp/fileFailedSecret /tmp/error
+    returnCode=$?
+    assertEquals "$returnCode" "0"
+    rm -f /tmp/error /tmp/fileFailedSecret
+}
+
+testS3cmdFailedBucket(){
+    rm -f /tmp/error /tmp/fileFailedBucket
+    cat << EOF > /tmp/fileFailedBucket
+Error: ERROR: Bucket 'failed' does not exist ERROR: S3 error: 404 (NoSuchBucket): The specified bucket does not exist
+EOF
+    ./nextcloud_backups_aws_s3 --s3-bucket="other" 2> /tmp/error
+    sed  's/^.*nextcloud_backups_aws_s3: //' -i /tmp/error
+    diff /tmp/fileFailedBucket /tmp/error
+    returnCode=$?
+    assertEquals "$returnCode" "0"
+    rm -f /tmp/error /tmp/fileFailedBucket
+}
+
+
 
 # Load shUnit2.
 . /usr/bin/shunit2

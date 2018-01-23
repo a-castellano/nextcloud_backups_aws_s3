@@ -13,6 +13,7 @@ fi
 if [ ! "$4" = "s3://my-bucket" ]; then
     ( >&2 echo "ERROR: Bucket 'failed' does not exist")
     ( >&2 echo "ERROR: S3 error: 404 (NoSuchBucket): The specified bucket does not exist" )
+    exit 1
 fi
 
 
