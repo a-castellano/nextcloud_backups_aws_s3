@@ -18,7 +18,6 @@ oneTimeSetUp() {
     export NEXTCLOUD_PATH="$(pwd)/tests/config_folders/config_test"
     export CONFIG_FILE="$(pwd)/tests/config_folders/config/nextcloud_backups_aws_s3"
     export TMP_FOLDER="/var/tmp/nextcloud_backups_aws_s3/tests"
-    mkdir -p $TMP_FOLDER
     mkdir -p $TMP_FOLDER/nextcloud_backups_aws_s3/var/www/nextcloud/config
     cat << EOF > $TMP_FOLDER/nextcloud_backups_aws_s3/var/www/nextcloud/config/config.php
 <?php
@@ -97,19 +96,6 @@ EOF
    match=$?
    assertEquals "$match" "0"
    rm -f $TMP_FOLDER/none $TMP_FOLDER/fileDoesNotExistError $TMP_FOLDER/error
-}
-
-testConfigFileDoesNotExistCheckFile() {
-    rm -f $TMP_FOLDER/none
-    cat << EOF > $TMP_FOLDER/fileDoesNotExistError
-Error: Config file '$TMP_FOLDER/none' does not exist.
-EOF
-
-   ./nextcloud_backups_aws_s3 --config-file="$TMP_FOLDER/none"  --nextcloud-path="$TMP_FOLDER/nextcloud_backups_aws_s3/var/www/nextcloud" 2> $TMP_FOLDER/error
-   diff $TMP_FOLDER/fileDoesNotExistError $TMP_FOLDER/error
-   match=$?
-   assertEquals "$match" "0"
-   rm -f $TMP_FOLDER/none $TMP_FOLDER/fileDoesNotExistError
 }
 
 testGetVariablesFromFile() {
