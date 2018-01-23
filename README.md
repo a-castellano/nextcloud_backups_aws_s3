@@ -53,7 +53,7 @@ There shoud exist an admin user able to run commands as the HTTP user of your se
 If your user is called **admin** and HTTP user is **www-data** place the following config into sudoers file.
 
 ```
-user ALL=(www-data) NOPASSWD: ALL
+admin ALL=(www-data) NOPASSWD: ALL
 ```
 Now, this user is able to put Nexcloud on maintenance mode.
 

@@ -25,8 +25,10 @@ NEXTCLOUD_USERS='ALL'
 LOGGET_TAG="nextcloud_backups_aws_s3"
 LOGGER="$(which logger) -t $LOGGET_TAG"
 
+# App tmp folder
+TMP_FOLDER="/var/tmp/nextcloud_backups_aws_s3"
 # Error file
-LOCAL_ERROR_FILE='.error.log'
+LOCAL_ERROR_FILE="$TMP_FOLDER/.error.log"
 
 # Misc
 WHICH=$(which which)
@@ -39,6 +41,7 @@ PRINTF=$($WHICH printf)
 CUT=$($WHICH cut)
 TOUCH=$($WHICH touch)
 GREP=$($WHICH grep)
+MKDIR=$($WHICH mkdir)
 
 # Functions
 
@@ -263,7 +266,7 @@ function check_databse_connection {
         $RM $LOCAL_ERROR_FILE
         exit 1
     fi
-    $RM .error.log
+    $RM $LOCAL_ERROR_FILE
 }
 
 function check_s3_conection {
@@ -274,8 +277,12 @@ function check_s3_conection {
         $RM $LOCAL_ERROR_FILE
         exit 1
     fi
-    $RM .error.log
+    $RM $LOCAL_ERROR_FILE
 }
+
+# Main
+
+$MKDIR -p $TMP_FOLDER
 
 # Options
 declare -A short_options_array=(
