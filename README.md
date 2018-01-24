@@ -13,7 +13,7 @@ You will need the following:
 - An user with access to that bucket
 - The command-line Amazon S3 client -> [s3cmd](http://s3tools.org/s3cmd)
 - [myumper](https://github.com/maxbube/mydumper) -> High-performance MySQL backup tool.
-- User allowed to run commands as HTTP user. **Don't use root**
+- User allowed to run commands as HTTP user.
 
 
 Install required packages
