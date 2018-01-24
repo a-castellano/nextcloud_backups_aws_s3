@@ -26,8 +26,6 @@ NEXTCLOUD_USERS='ALL'
 
 # App tmp folder
 TMP_FOLDER="/var/tmp/nextcloud_backups_aws_s3"
-# Error file
-LOCAL_ERROR_FILE="$TMP_FOLDER/.error.log"
 
 # Misc
 WHICH=$(which which)

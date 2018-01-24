@@ -12,6 +12,9 @@
 LOGGET_TAG="nextcloud_backups_aws_s3"
 LOGGER="$(which logger) -t $LOGGET_TAG"
 
+# Error file
+LOCAL_ERROR_FILE="$TMP_FOLDER/.error.log"
+
 function report_error {
     error_message="Error: $@"
     stderr=""
