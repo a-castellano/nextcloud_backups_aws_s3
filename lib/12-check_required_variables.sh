@@ -9,6 +9,8 @@
 # Álvaro Castellano Vela - https://github.com/a-castellano
 
 # Logger
+source lib/01-default_values_and_commands.sh
+source lib/02-usage.sh
 source lib/04-logger.sh
 
 function check_required_variables {
@@ -25,7 +27,7 @@ function check_required_variables {
         'nextcloud-path'
         'nextcloud-users'
     )
-    
+
     unset_variables=""
     for var in ${required_variables[@]}
     do

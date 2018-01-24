@@ -34,7 +34,7 @@ source lib/08-required-software.sh
 source lib/09-check-connections.sh
 
 # Check unset database variables
-source lib/10-check_unset_database_variables.sh
+source lib/10-set_unset_database_variables.sh
 
 # Check if logging into external file is enabled
 source lib/11-check_logs.sh
