@@ -7,114 +7,19 @@
 # Álvaro Castellano Vela - https://github.com/a-castellano
 
 # Default values and commands as variables
-
 source lib/01-default_values_and_commands.sh
 
-# Functions
+# Usage
+source lib/02-usage.sh
 
-function usage {
-$CAT << EOF
-Usage: nextcloud_backups_aws_s3 [OPTIONS] [ARGUMENTS]
-Make backups of Nextcloud and store them in an S3 bucket.
+# Utils
+source lib/03-utils.sh
 
-For avoiding user to wirte thier secret credentials in the command line
-this script will look for config variables in ~/.config/nextcloud_backups_aws_s3
-folder. In that folder users can place a files or files contining their
-database credentials, S3 access keys, etc.
+# Logger
+source lib/04-logger.sh
 
-Arguments:
-
-    --s3-access-key=YOUR_S3_ACCES_KEY
-    --s3-secret-key=YOUR_S3_SECRET_KEY
-    --database-name=DATABASE_NAME
-    --database-user=DATABASE_USER_NAME
-    --database-passwd=DATABASE_PASSWORD
-    --database-host=DATABSE_HOST           (IP or domain)
-    --database-port=PORT                   By default it will be 3306.
-    --config-file=PATH_TO_FILE             File containing script config
-                                             by default it will be
-                                             ~/.config/nextcloud_backups_aws_s3.
-    --nextcloud-users="user1,user2"        By default this script will backup
-                                             all users folders.
-    --nextcloud-path=PATH                  Nexcloud path is /var/www/nextcloud
-                                             by default.
-    --test="argument,argument2"            Prints valuw of selected arguments.
-
-    Nexcloud users and test varibales can be separated by spaces
-
-Options:
-
-    -h                                    Prints this text.
-    -u --usage                            Prints this text.
-    -v --verbose                          Enables verbose output.
-    -s --silent                           Disable any output in STDOUT.
-    -l --enable-log                       By default this scripts uses syslog
-                                            for logging with this option enables
-                                            it also write logs in the file
-                                            spefied in "--logfile" option.
-    --log-file=FILE                       In addition to write logs in syslog the
-                                            logs will be written in the file provided.
-    --exclude-database                    Exclude Nextcloud databse form backups.
-    --dry-run                             Perform a trial run with no changes made.
-
-
-Exit status:
- 0  if OK,
- 1  if minor problems (e.g., some important variables are not set),
- 2  if serious trouble (e.g., cannot perform the backup).
-EOF
-}
-
-function trim {
-    $ECHO $1 | $SED 's/^-*//'
-}
-
-function report_error {
-    error_message="Error: $@"
-    stderr=""
-    if [[ -z "$SILENT" || "$SILENT" = false ]]; then
-       stderr="--stderr"
-    fi
-    $LOGGER $stderr $error_message
-}
-
-function check_option_called {
-    values=$( $ECHO $@ | $CUT -d " " -f2- | $SED 's/[ ]*//g' )
-    option_called="_OPTION_CALLED"
-    option_name=$( $ECHO $@ | $CUT -d " " -f1 )
-    variable_name=$( $ECHO $option_name | $TR '[:lower:]' '[:upper:]' | $TR '-' '_' )
-    variable_called_name="$variable_name$option_called"
-    if [[ -z ${!variable_called_name} || "${!variable_called_name}" = false  ]]; then
-        if [ "$#" -eq 1 ]; then
-            eval $variable_name=true
-        fi
-        if [ "$#" -gt 1 ]; then
-            eval $variable_name=$values
-            if [ -z "$variable_name" ]; then
-                error_msg="$variable_name was supposed to be set. Can't parse '$2'."
-                report_error $error_msg
-                exit 1
-            fi
-        fi
-        eval $variable_called_name=true
-    else
-        error_msg="It is not allowed to set $option_name options more than two times."
-        report_error $error_msg
-        exit 1
-    fi
-}
-
-function get_option_from_short_options_array {
-    arg=$(trim $1)
-    result=${short_options_array[$arg]}
-    check_option_called $result
-}
-
-function get_option_from_short_options_hash {
-    arg=$( trim $1 )
-    result=${short_options_hash[$arg]}
-    check_option_called $result
-}
+# Options
+source lib/05-options.sh
 
 function variables_to_test {
     variables_to_test=$( $ECHO $1 | $SED 's/,/ /g' | $TR '[:lower:]' '[:upper:]' | $TR '-' '_' )
@@ -251,53 +156,6 @@ function check_s3_conection {
 
 $MKDIR -p $TMP_FOLDER
 
-# Options
-declare -A short_options_array=(
-   ["h"]="help"
-)
-
-#Because of the eval below, --help option can't exist
-short_options_array_list=$( $ECHO "${!short_options_array[@]}" | $SED 's/ //g' )
-short_options_array_OR=$( $ECHO "${!short_options_array[@]}" | $SED 's/\([^ ]\)/-\1 |/g' | $SED 's/|$//g' )
-
-declare -A short_options_hash=(
-    ["v"]="verbose"
-    ["s"]="silent"
-    ["u"]="usage"
-    ["l"]="enable-log"
-)
-short_options=$( $ECHO "${!short_options_hash[@]}" | $SED 's/ //g' )
-short_options_OR=$( $ECHO "${!short_options_hash[@]}" | $SED 's/\([^ ]\)/-\1 |/g' | $SED 's/|$//g' )
-
-of_short=$(for KEY in "${!short_options_hash[@]}"; do $PRINTF "${short_options_hash[$KEY]},"; done )
-of_short_OR=$(for KEY in "${!short_options_hash[@]}"; do $PRINTF "--${short_options_hash[$KEY]} | "; done | $SED 's/| $//g' )
-
-declare -a long_options_with_no_params_array
-long_options_with_no_params_array=(
-    'exclude-database'
-    'dry-run'
-)
-no_params=$( $ECHO ${long_options_with_no_params_array[@]} | $SED 's/ /,/g' | $SED 's/$/,/g' )
-no_params_OR=$( $ECHO ${long_options_with_no_params_array[@]} | $SED 's/\([^ ]*\)/--\1 |/g' | $SED 's/|$//g' )
-
-declare -a long_options_with_one_param_array
-long_options_with_one_params_array=(
-    's3-access-key'
-    's3-secret-key'
-    's3-bucket'
-    'database-name'
-    'database-user'
-    'database-passwd'
-    'database-host'
-    'database-port'
-    'nextcloud-path'
-    'nextcloud-users'
-    'log-file'
-    'config-file'
-    'test'
-)
-one_param=$( $ECHO ${long_options_with_one_params_array[@]} | $SED 's/ /:,/g' | $SED 's/$/:,/g' )
-one_param_OR=$( $ECHO ${long_options_with_one_params_array[@]} | $SED 's/\([^ ]*\)/--\1 |/g' | $SED 's/|$//g' )
 
 OPTS=`getopt -o $short_options_array_list$short_options --long $no_params$of_short$one_param -n 'parse-options' -- "$@" 2> $LOCAL_ERROR_FILE `
 

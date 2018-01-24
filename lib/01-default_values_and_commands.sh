@@ -24,10 +24,6 @@ fi
 NEXTCLOUD_CONFIG_ROUTE='/config/config.php'
 NEXTCLOUD_USERS='ALL'
 
-# Log variables
-LOGGET_TAG="nextcloud_backups_aws_s3"
-LOGGER="$(which logger) -t $LOGGET_TAG"
-
 # App tmp folder
 TMP_FOLDER="/var/tmp/nextcloud_backups_aws_s3"
 # Error file
