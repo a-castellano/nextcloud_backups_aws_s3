@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-# **  nextcloud_backups_aws_s3   **
-# **        conig_files          **
+# **  nextcloud_backups_aws_s3  **
+# **        conig_files         **
 #
 # Utility to make backups of Nextcloud and store them in an S3 bucket
 # Functions to validate config files

@@ -32,6 +32,7 @@ WHICH=$(which which)
 ECHO=$($WHICH echo)
 TR=$($WHICH tr)
 RM=$($WHICH rm)
+RM="$RM -f"
 SED=$($WHICH sed)
 CAT=$($WHICH cat)
 PRINTF=$($WHICH printf)
@@ -39,3 +40,8 @@ CUT=$($WHICH cut)
 TOUCH=$($WHICH touch)
 GREP=$($WHICH grep)
 MKDIR=$($WHICH mkdir)
+
+#Required software
+MYSQL=$($WHICH mysql)
+MYDUMPER=$($WHICH mydumper)
+S3CMD=$($WHICH s3cmd)

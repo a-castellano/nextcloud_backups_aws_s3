@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-# **  nextcloud_backups_aws_s3   **
-# **          usage              **
+# **  nextcloud_backups_aws_s3  **
+# **          usage             **
 #
 # Utility to make backups of Nextcloud and store them in an S3 bucket
 # Fucntion which prints usage
@@ -52,6 +52,7 @@ Options:
                                             logs will be written in the file provided.
     --exclude-database                    Exclude Nextcloud databse form backups.
     --dry-run                             Perform a trial run with no changes made.
+    --http-user                           User who is running Nexcloud (www-data by default)
 
 
 Exit status:

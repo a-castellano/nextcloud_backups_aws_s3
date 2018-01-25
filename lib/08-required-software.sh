@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-# **  nextcloud_backups_aws_s3   **
-# **      required software      **
+# **  nextcloud_backups_aws_s3  **
+# **      required software     **
 #
 # Utility to make backups of Nextcloud and store them in an S3 bucket
 # Functions to validate if required sowtware is installed

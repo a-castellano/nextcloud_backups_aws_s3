@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-# **  nextcloud_backups_aws_s3   **
-# **        test_options         **
+# **  nextcloud_backups_aws_s3  **
+# **        test_options        **
 #
 # Utility to make backups of Nextcloud and store them in an S3 bucket
 # Functions to display if required variables exists

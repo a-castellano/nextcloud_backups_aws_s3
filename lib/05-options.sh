@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-# **  nextcloud_backups_aws_s3   **
-# **         options             **
+# **  nextcloud_backups_aws_s3  **
+# **         options            **
 #
 # Utility to make backups of Nextcloud and store them in an S3 bucket
 # Fucntions and variablesfor managing options passed to the script
@@ -52,6 +52,7 @@ long_options_with_one_params_array=(
     'log-file'
     'config-file'
     'test'
+    'http-user'
 )
 one_param=$( $ECHO ${long_options_with_one_params_array[@]} | $SED 's/ /:,/g' | $SED 's/$/:,/g' )
 one_param_OR=$( $ECHO ${long_options_with_one_params_array[@]} | $SED 's/\([^ ]*\)/--\1 |/g' | $SED 's/|$//g' )

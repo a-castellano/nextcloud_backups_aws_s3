@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-# **  nextcloud_backups_aws_s3   **
-# **          logger             **
+# **  nextcloud_backups_aws_s3  **
+# **          logger            **
 #
 # Utility to make backups of Nextcloud and store them in an S3 bucket
 # Fucntions for log management

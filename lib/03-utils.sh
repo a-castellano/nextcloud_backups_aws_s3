@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-# **  nextcloud_backups_aws_s3   **
-# **          utils              **
+# **  nextcloud_backups_aws_s3  **
+# **          utils             **
 #
 # Utility to make backups of Nextcloud and store them in an S3 bucket
 # Fucntion functions used by many parts of this script

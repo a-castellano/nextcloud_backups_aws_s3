@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-# **  nextcloud_backups_aws_s3   **
-# **         check logs          **
+# **  nextcloud_backups_aws_s3  **
+# **         check logs         **
 #
 # Utility to make backups of Nextcloud and store them in an S3 bucket
 # Check if logging into external file is enabled
