@@ -7,24 +7,24 @@ oneTimeSetUp() {
     export S3_ACCESS_KEY="access-key"
     export S3_SECRET_KEY="secretkey"
     export S3_BUCKET="my-bucket"
+    export TMP_FOLDER="/var/tmp/nextcloud_backups_aws_s3/tests"
+    mkdir -p $TMP_FOLDER
 }
 
 setUp()
 {
     originalPath=$PATH
     export PATH=$(pwd)/tests/stubs:$PATH
-    export TMP_FOLDER="/var/tmp/nextcloud_backups_aws_s3/tests"
-    mkdir -p $TMP_FOLDER
 }
 
 tearDown()
 {
     export PATH=$originalPath
+    rm -rf $TMP_FOLDER/*
 }
 
 testNoMysqlClientInstalled()
 {
-    rm -f $TMP_FOLDER/error $TMP_FOLDER/nomysqlclientinstalled
     cat << EOF > $TMP_FOLDER/nomysqlclientinstalled
 Error: MySQL client is not installed, please install it before start backup jobs
 EOF
@@ -40,12 +40,10 @@ EOF
     fi
     assertEquals "$returnCode" "0"
     mv tests/stubs/_mysql tests/stubs/mysql
-    rm -f $TMP_FOLDER/error $TMP_FOLDER/nomysqlclientinstalled
 }
 
 testNoMydumperInstalled()
 {
-    rm -f $TMP_FOLDER/error $TMP_FOLDER/nomydumperinstalled
     cat << EOF > $TMP_FOLDER/nomydumperinstalled
 Error: mydumper is not installed, please install it before start backup jobs
 EOF
@@ -61,12 +59,10 @@ EOF
         startSkipping
     fi
     mv tests/stubs/_mydumper tests/stubs/mydumper
-    rm -f $TMP_FOLDER/error $TMP_FOLDER/nomydumperinstalled
 }
 
 testNoS3cmdInstalled()
 {
-    rm -f $TMP_FOLDER/error $TMP_FOLDER/nos3cmdinstalled
     cat << EOF > $TMP_FOLDER/nos3cmdinstalled
 Error: s3cmd is not installed, please install it before start backup jobs
 EOF
@@ -82,7 +78,6 @@ EOF
         startSkipping
     fi
     mv tests/stubs/_s3cmd tests/stubs/s3cmd
-    rm -f $TMP_FOLDER/error $TMP_FOLDER/nos3cmdinstalled
 }
 
 
@@ -95,7 +90,6 @@ testMySQLCorrectCredentials()
 
 testMySQLFailedCredentials()
 {
-    rm -f $TMP_FOLDER/error $TMP_FOLDER/fileFailedPasswd
     cat << EOF > $TMP_FOLDER/fileFailedPasswd
 Error: ERROR 1045 (28000): Access denied for user 'test'@'localhost' (using password: YES)
 EOF
@@ -104,11 +98,9 @@ EOF
     diff $TMP_FOLDER/fileFailedPasswd $TMP_FOLDER/error
     returnCode=$?
     assertEquals "$returnCode" "0"
-    rm -f $TMP_FOLDER/error $TMP_FOLDER/fileFailedPasswd
 }
 
 testS3cmdFailedAccessKey(){
-    rm -f $TMP_FOLDER/error $TMP_FOLDER/fileFailedAccess
     cat << EOF > $TMP_FOLDER/fileFailedAccess
 Error: ERROR: S3 error: 403 (InvalidAccessKeyId): The AWS Access Key Id you provided does not exist in our records.
 EOF
@@ -117,11 +109,9 @@ EOF
     diff $TMP_FOLDER/fileFailedAccess $TMP_FOLDER/error
     returnCode=$?
     assertEquals "$returnCode" "0"
-    rm -f $TMP_FOLDER/error $TMP_FOLDER/fileFailedAccess
 }
 
 testS3cmdFailedSecretKey(){
-    rm -f $TMP_FOLDER/error $TMP_FOLDER/fileFailedSecret
     cat << EOF > $TMP_FOLDER/fileFailedSecret
 Error: ERROR: S3 error: 403 (SignatureDoesNotMatch): The request signature we calculated does not match the signature you provided. Check your key and signing method.
 EOF
@@ -130,11 +120,9 @@ EOF
     diff $TMP_FOLDER/fileFailedSecret $TMP_FOLDER/error
     returnCode=$?
     assertEquals "$returnCode" "0"
-    rm -f $TMP_FOLDER/error $TMP_FOLDER/fileFailedSecret
 }
 
 testS3cmdFailedBucket(){
-    rm -f $TMP_FOLDER/error $TMP_FOLDER/fileFailedBucket
     cat << EOF > $TMP_FOLDER/fileFailedBucket
 Error: ERROR: Bucket 'failed' does not exist ERROR: S3 error: 404 (NoSuchBucket): The specified bucket does not exist
 EOF
@@ -143,7 +131,6 @@ EOF
     diff $TMP_FOLDER/fileFailedBucket $TMP_FOLDER/error
     returnCode=$?
     assertEquals "$returnCode" "0"
-    rm -f $TMP_FOLDER/error $TMP_FOLDER/fileFailedBucket
 }
 
 

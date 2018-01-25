@@ -10,14 +10,11 @@ oneTimeSetUp() {
     mkdir -p $TMP_FOLDER
 }
 
-tearDown(){
-    rm -rf $TMP_FOLDER/*
-}
-
 oneTimeTearDown() {
     unset NEXTCLOUD_PATH
     unset CONFIG_FILE
     cleanVariables
+    rm -rf $TMP_FOLDER/*
 }
 
 testUsage() {
@@ -63,7 +60,7 @@ EOF
 }
 
 testFailToCreateLogPathDoesNotExist() {
-   rm -rf $TMP_FOLDER/nonexistentfolder
+#   rm -rf $TMP_FOLDER/nonexistentfolder
    cat << EOF > $TMP_FOLDER/expectedError
 Error: Cannot write log in '$TMP_FOLDER/nonexistentfolder': Given path does not exist
 EOF

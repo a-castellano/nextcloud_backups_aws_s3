@@ -64,7 +64,7 @@ EOF
 
 oneTimeTearDown() {
     cleanVariables
-    rm -rf $TMP_FOLDER/nextcloud_backups_aws_s3
+    rm -rf $TMP_FOLDER/*
 }
 
 testConfigDirDefault() {
@@ -73,15 +73,12 @@ testConfigDirDefault() {
 }
 
 testConfigFileDoesNotExist() {
-    rm -f $TMP_FOLDER/none
     ./nextcloud_backups_aws_s3 --nextcloud-path="$TMP_FOLDER/nextcloud_backups_aws_s3/var/www/nextcloud" --config-file="/tmp/none" 2> /dev/null
     ok=$?
     assertEquals "$ok" "1"
-    rm -f $TMP_FOLDER/none
 }
 
 testConfigFileDoesNotExistCheckFile() {
-    rm -f $TMP_FOLDER/none
     cat << EOF > $TMP_FOLDER/fileDoesNotExistError
 Error: Config file '$TMP_FOLDER/none' does not exist.
 EOF
@@ -90,12 +87,9 @@ EOF
    diff $TMP_FOLDER/fileDoesNotExistError $TMP_FOLDER/error
    match=$?
    assertEquals "$match" "0"
-   rm -f $TMP_FOLDER/none $TMP_FOLDER/fileDoesNotExistError $TMP_FOLDER/error
 }
 
 testGetVariablesFromFile() {
-    rm -f $TMP_FOLDER/variables $TMP_FOLDER/testMultipleValues $TMP_FOLDER/testMultipleValuesResult
-
     cat << EOF > $TMP_FOLDER/variables
 S3_ACCESS_KEY=MyAccesKey
 S3_SECRET_KEY=MySecretKey
@@ -116,11 +110,9 @@ EOF
    diff  $TMP_FOLDER/testMultipleValuesResult $TMP_FOLDER/testMultipleValues
    match=$?
    assertEquals "$match" "0"
-   rm -f /tmp/variables $TMP_FOLDER/testMultipleValues $TMP_FOLDER/testMultipleValuesResult
 }
 
 testGetVariablesFromNexcloudconfig() {
-    rm -f $TMP_FOLDER/testMultipleValues $TMP_FOLDER/testMultipleValuesResult
 
     cat << EOF > $TMP_FOLDER/variables
 S3_ACCESS_KEY=MyAccesKey
@@ -142,11 +134,9 @@ EOF
    diff  $TMP_FOLDER/testMultipleValuesResult $TMP_FOLDER/testMultipleValues
    match=$?
    assertEquals "$match" "0"
-   rm -f $TMP_FOLDER/variables $TMP_FOLDER/testMultipleValues $TMP_FOLDER/testMultipleValuesResult
 }
 
 testGetVariablesFromNexcloudconfigAndReplaceWithConfig() {
-    rm -f $TMP_FOLDER/testMultipleValues $TMP_FOLDER/testMultipleValuesResult
 
     cat << EOF > $TMP_FOLDER/variables
 S3_ACCESS_KEY=MyAccesKey
@@ -169,12 +159,9 @@ EOF
    diff  $TMP_FOLDER/testMultipleValuesResult $TMP_FOLDER/testMultipleValues
    match=$?
    assertEquals "$match" "0"
-   rm -f $TMP_FOLDER/variables $TMP_FOLDER/testMultipleValues $TMP_FOLDER/testMultipleValuesResult
 }
 
 testGetVariablesFromNexcloudconfigAndReplaceInCommandLine() {
-    rm -f $TMP_FOLDER/testMultipleValues $TMP_FOLDER/testMultipleValuesResult
-
     cat << EOF > $TMP_FOLDER/variables
 S3_ACCESS_KEY=MyAccesKey
 S3_SECRET_KEY=MySecretKey
@@ -197,7 +184,6 @@ EOF
    diff  $TMP_FOLDER/testMultipleValuesResult $TMP_FOLDER/testMultipleValues
    match=$?
    assertEquals "$match" "0"
-   rm -f $TMP_FOLDER/variables $TMP_FOLDER/testMultipleValues $TMP_FOLDER/testMultipleValuesResult
 }
 
 
