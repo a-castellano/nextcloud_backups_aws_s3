@@ -18,3 +18,5 @@ test:
 	( $(TEST_DIR)/04-unsetvariables )
 	@echo "- check required software"
 	( $(TEST_DIR)/05-checkrequiredsoftware )
+	@echo "- check connections"
+	( $(TEST_DIR)/06-checkconnections )

@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # file: tests/05-checkrequiredsoftware
 
+source lib/08-required-software.sh
+source lib/99-clean_variables.sh
+
 oneTimeSetUp() {
     export NEXTCLOUD_PATH="$(pwd)/tests/config_folders/config_test"
     export CONFIG_FILE="$(pwd)/tests/config_folders/config/nextcloud_backups_aws_s3"
@@ -21,17 +24,18 @@ tearDown()
 {
     export PATH=$originalPath
     rm -rf $TMP_FOLDER/*
+    cleanVariables
 }
 
 testNoMysqlClientInstalled()
 {
     cat << EOF > $TMP_FOLDER/nomysqlclientinstalled
-Error: MySQL client is not installed, please install it before start backup jobs
+Error: MySQL client is not installed, please install it before start backup jobs.
 EOF
     mv tests/stubs/mysql tests/stubs/_mysql
-    which mysql
+    which mysql > /dev/null
     if [ $? -eq 1  ]; then
-        ./nextcloud_backups_aws_s3 2> $TMP_FOLDER/error
+        output=$(check_required_software 2> $TMP_FOLDER/error)
         sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
         diff $TMP_FOLDER/nomysqlclientinstalled $TMP_FOLDER/error
         returnCode=$?
@@ -45,12 +49,12 @@ EOF
 testNoMydumperInstalled()
 {
     cat << EOF > $TMP_FOLDER/nomydumperinstalled
-Error: mydumper is not installed, please install it before start backup jobs
+Error: mydumper is not installed, please install it before start backup jobs.
 EOF
     mv tests/stubs/mydumper tests/stubs/_mydumper
-    which mydumper
+    which mydumper > /dev/null
     if [ $? -eq 1 ]; then
-        ./nextcloud_backups_aws_s3 2> $TMP_FOLDER/error
+        output=$(check_required_software 2> $TMP_FOLDER/error)
         sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
         diff $TMP_FOLDER/nomydumperinstalled $TMP_FOLDER/error
         returnCode=$?
@@ -64,12 +68,12 @@ EOF
 testNoS3cmdInstalled()
 {
     cat << EOF > $TMP_FOLDER/nos3cmdinstalled
-Error: s3cmd is not installed, please install it before start backup jobs
+Error: s3cmd is not installed, please install it before start backup jobs.
 EOF
     mv tests/stubs/s3cmd tests/stubs/_s3cmd
-    which s3cmd
+    which s3cmd > /dev/null
     if [ $? -eq 1 ]; then
-        ./nextcloud_backups_aws_s3 2> $TMP_FOLDER/error
+        output=$(check_required_software 2> $TMP_FOLDER/error)
         sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
         diff $TMP_FOLDER/nos3cmdinstalled $TMP_FOLDER/error
         returnCode=$?
@@ -80,59 +84,51 @@ EOF
     mv tests/stubs/_s3cmd tests/stubs/s3cmd
 }
 
-
-testMySQLCorrectCredentials()
-{
-    ./nextcloud_backups_aws_s3
-    returnCode=$?
-    assertEquals "$returnCode" "0"
-}
-
-testMySQLFailedCredentials()
-{
-    cat << EOF > $TMP_FOLDER/fileFailedPasswd
-Error: ERROR 1045 (28000): Access denied for user 'test'@'localhost' (using password: YES)
-EOF
-    ./nextcloud_backups_aws_s3 --database-passwd="failed" 2> $TMP_FOLDER/error
-    sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
-    diff $TMP_FOLDER/fileFailedPasswd $TMP_FOLDER/error
-    returnCode=$?
-    assertEquals "$returnCode" "0"
-}
-
-testS3cmdFailedAccessKey(){
-    cat << EOF > $TMP_FOLDER/fileFailedAccess
-Error: ERROR: S3 error: 403 (InvalidAccessKeyId): The AWS Access Key Id you provided does not exist in our records.
-EOF
-    ./nextcloud_backups_aws_s3 --s3-access-key="failed" 2> $TMP_FOLDER/error
-    sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
-    diff $TMP_FOLDER/fileFailedAccess $TMP_FOLDER/error
-    returnCode=$?
-    assertEquals "$returnCode" "0"
-}
-
-testS3cmdFailedSecretKey(){
-    cat << EOF > $TMP_FOLDER/fileFailedSecret
-Error: ERROR: S3 error: 403 (SignatureDoesNotMatch): The request signature we calculated does not match the signature you provided. Check your key and signing method.
-EOF
-    ./nextcloud_backups_aws_s3 --s3-secret-key="failed" 2> $TMP_FOLDER/error
-    sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
-    diff $TMP_FOLDER/fileFailedSecret $TMP_FOLDER/error
-    returnCode=$?
-    assertEquals "$returnCode" "0"
-}
-
-testS3cmdFailedBucket(){
-    cat << EOF > $TMP_FOLDER/fileFailedBucket
-Error: ERROR: Bucket 'failed' does not exist ERROR: S3 error: 404 (NoSuchBucket): The specified bucket does not exist
-EOF
-    ./nextcloud_backups_aws_s3 --s3-bucket="other" 2> $TMP_FOLDER/error
-    sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
-    diff $TMP_FOLDER/fileFailedBucket $TMP_FOLDER/error
-    returnCode=$?
-    assertEquals "$returnCode" "0"
-}
-
+#testMySQLFailedCredentials()
+#{
+#    cat << EOF > $TMP_FOLDER/fileFailedPasswd
+#Error: ERROR 1045 (28000): Access denied for user 'test'@'localhost' (using password: YES)
+#EOF
+#    ./nextcloud_backups_aws_s3 --database-passwd="failed" 2> $TMP_FOLDER/error
+#    sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
+#    diff $TMP_FOLDER/fileFailedPasswd $TMP_FOLDER/error
+#    returnCode=$?
+#    assertEquals "$returnCode" "0"
+#}
+#
+#testS3cmdFailedAccessKey(){
+#    cat << EOF > $TMP_FOLDER/fileFailedAccess
+#Error: ERROR: S3 error: 403 (InvalidAccessKeyId): The AWS Access Key Id you provided does not exist in our records.
+#EOF
+#    ./nextcloud_backups_aws_s3 --s3-access-key="failed" 2> $TMP_FOLDER/error
+#    sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
+#    diff $TMP_FOLDER/fileFailedAccess $TMP_FOLDER/error
+#    returnCode=$?
+#    assertEquals "$returnCode" "0"
+#}
+#
+#testS3cmdFailedSecretKey(){
+#    cat << EOF > $TMP_FOLDER/fileFailedSecret
+#Error: ERROR: S3 error: 403 (SignatureDoesNotMatch): The request signature we calculated does not match the signature you provided. Check your key and signing method.
+#EOF
+#    ./nextcloud_backups_aws_s3 --s3-secret-key="failed" 2> $TMP_FOLDER/error
+#    sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
+#    diff $TMP_FOLDER/fileFailedSecret $TMP_FOLDER/error
+#    returnCode=$?
+#    assertEquals "$returnCode" "0"
+#}
+#
+#testS3cmdFailedBucket(){
+#    cat << EOF > $TMP_FOLDER/fileFailedBucket
+#Error: ERROR: Bucket 'failed' does not exist ERROR: S3 error: 404 (NoSuchBucket): The specified bucket does not exist
+#EOF
+#    ./nextcloud_backups_aws_s3 --s3-bucket="other" 2> $TMP_FOLDER/error
+#    sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
+#    diff $TMP_FOLDER/fileFailedBucket $TMP_FOLDER/error
+#    returnCode=$?
+#    assertEquals "$returnCode" "0"
+#}
+#
 
 
 # Load shUnit2.
