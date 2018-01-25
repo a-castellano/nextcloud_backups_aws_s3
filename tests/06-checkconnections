@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+# file: tests/06-checkconnections
+
+source lib/09-check-connections.sh
+source lib/99-clean_variables.sh
+
+oneTimeSetUp() {
+    export TMP_FOLDER="/var/tmp/nextcloud_backups_aws_s3/tests"
+    mkdir -p $TMP_FOLDER
+}
+
+setUp()
+{
+    originalPath=$PATH
+    export PATH=$(pwd)/tests/stubs:$PATH
+}
+
+tearDown()
+{
+    export PATH=$originalPath
+    rm -rf $TMP_FOLDER/*
+    cleanVariables
+}
+
+testMySQLCorrectCredentials()
+{
+    DATABASE_NAME="dbname"
+    DATABASE_USER="user"
+    DATABASE_PASSWD="test"
+    DATABASE_PORT=3306
+    DATABASE_HOST="127.0.0.1"
+    echo > $TMP_FOLDER/error
+    output=$(check_databse_connection 2> $TMP_FOLDER/error)
+    output=$(cat $TMP_FOLDER/error)
+    assertEquals "$output" ""
+}
+
+testMySQLFailedCredentials()
+{
+    cat << EOF > $TMP_FOLDER/fileFailedPasswd
+Error: ERROR 1045 (28000): Access denied for user 'test'@'localhost' (using password: YES)
+EOF
+    output=$(check_databse_connection 2> $TMP_FOLDER/error)
+    sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
+    diff $TMP_FOLDER/fileFailedPasswd $TMP_FOLDER/error
+    returnCode=$?
+    assertEquals "$returnCode" "0"
+}
+
+testS3cmdFailedAccessKey(){
+    S3_ACCESS_KEY="failed"
+    S3_SECRET_KEY="secretkey"
+    S3_BUCKET="my-bucket"
+    cat << EOF > $TMP_FOLDER/fileFailedAccess
+Error: ERROR: S3 error: 403 (InvalidAccessKeyId): The AWS Access Key Id you provided does not exist in our records.
+EOF
+    output=$(check_s3_conection 2> $TMP_FOLDER/error)
+    sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
+    diff $TMP_FOLDER/fileFailedAccess $TMP_FOLDER/error
+    returnCode=$?
+    assertEquals "$returnCode" "0"
+}
+
+testS3cmdFailedSecretKey(){
+    S3_ACCESS_KEY="access-key"
+    S3_SECRET_KEY="failed"
+    S3_BUCKET="my-bucket"
+    cat << EOF > $TMP_FOLDER/fileFailedSecret
+Error: ERROR: S3 error: 403 (SignatureDoesNotMatch): The request signature we calculated does not match the signature you provided. Check your key and signing method.
+EOF
+    output=$(check_s3_conection 2> $TMP_FOLDER/error)
+    sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
+    diff $TMP_FOLDER/fileFailedSecret $TMP_FOLDER/error
+    returnCode=$?
+    assertEquals "$returnCode" "0"
+}
+
+testS3cmdFailedBucket(){
+    S3_ACCESS_KEY="access-key"
+    S3_SECRET_KEY="secretkey"
+    S3_BUCKET="no-bucket"
+    cat << EOF > $TMP_FOLDER/fileFailedBucket
+Error: ERROR: Bucket 'failed' does not exist ERROR: S3 error: 404 (NoSuchBucket): The specified bucket does not exist
+EOF
+    output=$(check_s3_conection 2> $TMP_FOLDER/error)
+    sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
+    diff $TMP_FOLDER/fileFailedBucket $TMP_FOLDER/error
+    returnCode=$?
+    assertEquals "$returnCode" "0"
+}
+
+# Load shUnit2.
+. /usr/bin/shunit2

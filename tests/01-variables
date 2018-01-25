@@ -1,19 +1,20 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # file: tests/01-variables
 
-setUp() {
-    export TMP_FOLDER="/var/tmp/nextcloud_backups_aws_s3/tests"
-    mkdir -p $TMP_FOLDER
-}
+source lib/99-clean_variables.sh
 
 oneTimeSetUp() {
+    export TMP_FOLDER="/var/tmp/nextcloud_backups_aws_s3/tests"
     export NEXTCLOUD_PATH="$(pwd)/tests/config_folders/config_test"
     export CONFIG_FILE="$(pwd)/tests/config_folders/config/nextcloud_backups_aws_s3"
+    mkdir -p $TMP_FOLDER
 }
 
 oneTimeTearDown() {
     unset NEXTCLOUD_PATH
     unset CONFIG_FILE
+    cleanVariables
+    rm -rf $TMP_FOLDER/
 }
 
 testVerboseNotDefined() {
@@ -162,7 +163,6 @@ EOF
     diff $TMP_FOLDER/testSpaces $TMP_FOLDER/testWithSpaces
     match=$?
     assertEquals $match 0
-    rm -f $TMP_FOLDER/testSpaces $TMP_FOLDER/testWithSpaces
 }
 
 testMultipleValues() {
@@ -174,7 +174,6 @@ EOF
     diff $TMP_FOLDER/testMultipleValues $TMP_FOLDER/testMultipleValuesResult
     match=$?
     assertEquals $match 0
-    rm -f $TMP_FOLDER/testMultipleValues $TMP_FOLDER/testMultipleValuesResult
 }
 
 testMultipleValues2() {
@@ -187,7 +186,6 @@ EOF
     diff $TMP_FOLDER/testMultipleValues $TMP_FOLDER/testMultipleValuesResult
     match=$?
     assertEquals $match 0
-    rm $TMP_FOLDER/testMultipleValues $TMP_FOLDER/testMultipleValuesResult
 }
 
 testChangeNextcloudUsersWithspaces() {
@@ -221,7 +219,6 @@ testEnableLogFile() {
 }
 
 testIllegalParameters() {
-   rm -rf $TMP_FOLDER/error
    cat << EOF > $TMP_FOLDER/expectedError
 Error: Found illegal parameters: bob foo
 EOF
@@ -230,7 +227,6 @@ EOF
     diff $TMP_FOLDER/expectedError $TMP_FOLDER/error
     match=$?
     assertEquals $match 0
-    rm $TMP_FOLDER/expectedError $TMP_FOLDER/error
 }
 
 testS3BucketNotDefined() {

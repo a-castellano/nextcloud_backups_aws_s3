@@ -1,19 +1,20 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # file: tests/02-usage
 
-setUp() {
-    export TMP_FOLDER="/var/tmp/nextcloud_backups_aws_s3/tests"
-    mkdir -p $TMP_FOLDER
-}
+source lib/99-clean_variables.sh
 
 oneTimeSetUp() {
     export NEXTCLOUD_PATH="$(pwd)/tests/config_folders/config_test"
     export CONFIG_FILE="$(pwd)/tests/config_folders/config/nextcloud_backups_aws_s3"
+    export TMP_FOLDER="/var/tmp/nextcloud_backups_aws_s3/tests"
+    mkdir -p $TMP_FOLDER
 }
 
 oneTimeTearDown() {
     unset NEXTCLOUD_PATH
     unset CONFIG_FILE
+    cleanVariables
+    rm -rf $TMP_FOLDER/*
 }
 
 testUsage() {
@@ -31,7 +32,6 @@ EOF
     diff $TMP_FOLDER/expectedError $TMP_FOLDER/error
     match=$?
     assertEquals $match 0
-    rm $TMP_FOLDER/expectedError $TMP_FOLDER/error
 }
 
 testNoLogFile() {
@@ -43,7 +43,6 @@ EOF
     diff $TMP_FOLDER/expectedError $TMP_FOLDER/error
     match=$?
     assertEquals $match 0
-    rm $TMP_FOLDER/expectedError $TMP_FOLDER/error
 }
 
 testFailToCreateLogPermission() {
@@ -58,12 +57,10 @@ EOF
     diff $TMP_FOLDER/expectedError $TMP_FOLDER/error
     match=$?
     assertEquals $match 0
-    rm $TMP_FOLDER/expectedError $TMP_FOLDER/error
-    rm -rf $TMP_FOLDER/nopermissionfolde
 }
 
 testFailToCreateLogPathDoesNotExist() {
-   rm -rf $TMP_FOLDER/nonexistentfolder
+#   rm -rf $TMP_FOLDER/nonexistentfolder
    cat << EOF > $TMP_FOLDER/expectedError
 Error: Cannot write log in '$TMP_FOLDER/nonexistentfolder': Given path does not exist
 EOF
@@ -72,8 +69,6 @@ EOF
     diff $TMP_FOLDER/expectedError $TMP_FOLDER/error
     match=$?
     assertEquals $match 0
-    rm $TMP_FOLDER/expectedError $TMP_FOLDER/error
-    rm -rf $TMP_FOLDER/nonexistentfolder/
 }
 
 
