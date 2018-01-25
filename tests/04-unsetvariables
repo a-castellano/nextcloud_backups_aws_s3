@@ -35,6 +35,38 @@ EOF
     match=$?
 
     assertEquals "$match" "0"
+
+    rm -f $TMP_FOLDER/variables $TMP_FOLDER/expectedError $TMP_FOLDER/error
+    for var in "S3_ACCESS_KEY S3_SECRET_KEY S3_BUCKET"
+    do
+        unset $var
+    done
+}
+
+testFailNoS3Variables() {
+    rm -f $TMP_FOLDER/variables $TMP_FOLDER/expectedError $TMP_FOLDER/error
+    cat << EOF > $TMP_FOLDER/variables
+DATABASE_NAME=dbname
+DATABASE_USER=dbuser
+DATABASE_PASSWD=mysecret
+DATABASE_PORT=3307
+DATABASE_HOST=localhost
+EOF
+    cat << EOF > $TMP_FOLDER/expectedError
+Error: The following variables has to have value: s3-access-key, s3-secret-key, s3-bucket. Please set a valid value for it.
+EOF
+    source $TMP_FOLDER/variables
+    output=$(check_required_variables 2> $TMP_FOLDER/error)
+    sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
+    diff $TMP_FOLDER/expectedError $TMP_FOLDER/error
+    match=$?
+    assertEquals "$match" "0"
+    rm -f $TMP_FOLDER/variables $TMP_FOLDER/expectedError $TMP_FOLDER/error
+    for var in "DATABASE_NAME DATABASE_USER DATABASE_PASSWD DATABASE_PORT DATABASE_HOST"
+    do
+        unset $var
+    done
+
 }
 
 # Load shUnit2.
