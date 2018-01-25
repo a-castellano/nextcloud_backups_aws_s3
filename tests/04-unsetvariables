@@ -18,10 +18,17 @@ oneTimeSetUp() {
 testFailNoDatabaseVariables () {
     rm -f $TMP_FOLDER/variables $TMP_FOLDER/expectedError $TMP_FOLDER/error
 
+   cat << EOF > $TMP_FOLDER/variables
+S3_ACCESS_KEY=MyAccesKey
+S3_SECRET_KEY=MySecretKey
+S3_BUCKET=MyBucket
+EOF
+
     cat << EOF > $TMP_FOLDER/expectedError
 Error: The following variables has to have value: database-name, database-user, database-passwd. Please set a valid value for it.
 EOF
 
+    source $TMP_FOLDER/variables
     output=$(check_required_variables 2> $TMP_FOLDER/error)
     sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
     diff $TMP_FOLDER/expectedError $TMP_FOLDER/error
