@@ -3,20 +3,27 @@
 
 source lib/10-set_unset_database_variables.sh
 source lib/12-check_required_variables.sh
-set_unset_database_variables
 
 setUp() {
+    rm -f $TMP_FOLDER/variables $TMP_FOLDER/expectedError $TMP_FOLDER/error
+    set_unset_database_variables
+}
+
+oneTimeSetUp() {
     export TMP_FOLDER="/var/tmp/nextcloud_backups_aws_s3/tests"
     mkdir -p $TMP_FOLDER
 }
 
-oneTimeSetUp() {
-    export NEXTCLOUD_PATH="$(pwd)/tests/config_folders/config_test_no_values"
-    export CONFIG_FILE="$(pwd)/tests/config_folders/config/nextcloud_backups_aws_s3"
+
+tearDown() {
+    for var in "DATABASE_NAME DATABASE_USER DATABASE_PASSWD DATABASE_PORT DATABASE_HOST S3_ACCESS_KEY S3_SECRET_KEY S3_BUCKET"
+    do
+        unset $var
+    done
+    rm -f $TMP_FOLDER/variables $TMP_FOLDER/expectedError $TMP_FOLDER/error
 }
 
 testFailNoDatabaseVariables () {
-    rm -f $TMP_FOLDER/variables $TMP_FOLDER/expectedError $TMP_FOLDER/error
 
    cat << EOF > $TMP_FOLDER/variables
 S3_ACCESS_KEY=MyAccesKey
@@ -35,16 +42,9 @@ EOF
     match=$?
 
     assertEquals "$match" "0"
-
-    rm -f $TMP_FOLDER/variables $TMP_FOLDER/expectedError $TMP_FOLDER/error
-    for var in "S3_ACCESS_KEY S3_SECRET_KEY S3_BUCKET"
-    do
-        unset $var
-    done
 }
 
 testFailNoS3Variables() {
-    rm -f $TMP_FOLDER/variables $TMP_FOLDER/expectedError $TMP_FOLDER/error
     cat << EOF > $TMP_FOLDER/variables
 DATABASE_NAME=dbname
 DATABASE_USER=dbuser
@@ -61,17 +61,9 @@ EOF
     diff $TMP_FOLDER/expectedError $TMP_FOLDER/error
     match=$?
     assertEquals "$match" "0"
-
-    rm -f $TMP_FOLDER/variables $TMP_FOLDER/expectedError $TMP_FOLDER/error
-    for var in "DATABASE_NAME DATABASE_USER DATABASE_PASSWD DATABASE_PORT DATABASE_HOST"
-    do
-        unset $var
-    done
 }
 
 testFailMixedVariables() {
-    rm -f $TMP_FOLDER/variables $TMP_FOLDER/expectedError $TMP_FOLDER/error
-
     cat << EOF > $TMP_FOLDER/variables
 S3_SECRET_KEY=MySecretKey
 S3_BUCKET=MyBucket
@@ -91,12 +83,6 @@ EOF
     diff $TMP_FOLDER/expectedError $TMP_FOLDER/error
     match=$?
     assertEquals "$match" "0"
-
-    rm -f $TMP_FOLDER/variables $TMP_FOLDER/expectedError $TMP_FOLDER/error
-    for var in "S3_SECRET_KEY S3_BUCKET DATABASE_USER DATABASE_PASSWD DATABASE_PORT DATABASE_HOST"
-    do
-        unset $var
-    done
 }
 
 # Load shUnit2.

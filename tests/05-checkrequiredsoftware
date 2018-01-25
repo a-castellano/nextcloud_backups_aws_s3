@@ -1,5 +1,5 @@
-#!/bin/sh
-# file: tests/04-unsetvariables
+#!/usr/bin/env bash
+# file: tests/05-checkrequiredsoftware
 
 oneTimeSetUp() {
     export NEXTCLOUD_PATH="$(pwd)/tests/config_folders/config_test"

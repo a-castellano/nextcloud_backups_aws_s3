@@ -1,12 +1,7 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # file: tests/03-configfiles
 
-cleanVariables() {
-    for var in NEXTCLOUD_PATH NEXTCLOUD_USERS CONFIG_FILE NEXTCLOUD_PATH NEXTCLOUD_CONFIG_ROUTE NEXTCLOUD_CONFIG_FILE VERBOSE HELP USAGE SILENT S3_ACCESS_KEY S3_SECRET_KEY DATABASE_NAME DATABASE_USER DATABASE_PASSWD DATABASE_HOST DATABASE_PORT TEST
-    do
-        unset $var
-    done
-}
+source lib/99-clean_variables.sh
 
 setUp(){
     export TMP_FOLDER="/var/tmp/nextcloud_backups_aws_s3/tests"
