@@ -15,8 +15,9 @@ source lib/04-logger.sh
 
 function check_users {
     users_in_database=$(mysql -u$DATABASE_USER -p$DATABASE_PASSWD --port=$DATABASE_PORT -h $DATABASE_HOST $DATABASE_NAME -Bse "select uid from oc_users;")
+    selected_database=$users_in_database
     if [ ! "$NEXTCLOUD_USERS" = "ALL" ]; then
-        users_in_database=""
+        selected_database=""
         provided_users=$($ECHO $NEXTCLOUD_USERS | $SED 's/,/ /g')
         lost_users=""
         for user in $provided_users
@@ -24,7 +25,7 @@ function check_users {
             if ! $ECHO $users_in_database | $GREP -w $user > /dev/null; then
                 lost_users="$user $lost_users"
             else
-                users_in_database="$user $users_in_database"
+                selected_database="$user $users_in_database"
             fi
         done
         if [[ ! -z "$lost_users" ]];then
@@ -33,5 +34,5 @@ function check_users {
             exit 1
         fi
     fi
-    echo $users_in_database
+    echo $selected_database
 }
