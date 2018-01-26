@@ -13,7 +13,7 @@ source lib/01-default_values_and_commands.sh
 source lib/02-usage.sh
 source lib/04-logger.sh
 
-$BACKUP_PATH="$NEXCLOUD_PATH/backups"
+BACKUP_PATH="$NEXCLOUD_PATH/backups"
 
 function database_backup {
 

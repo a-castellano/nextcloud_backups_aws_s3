@@ -14,20 +14,24 @@ source lib/02-usage.sh
 source lib/04-logger.sh
 
 function check_users {
-    users_in_database=$(mysql -u$DATABASE_USER -h$DATABASE_HOST -p$DATABASE_PASSWD $DATABASE_NAME --port=$DATABASE_PORT -Bse "select uid from oc_users;")
-    if [[ ! "$NEXCLOUD_USERS" -ne "ALL" ]]; then
-        provided_users=$($ECHO $NEXCLOUD_USERS | $SED '/,/ /')
+    users_in_database=$(mysql -u$DATABASE_USER -p$DATABASE_PASSWD --port=$DATABASE_PORT -h $DATABASE_HOST $DATABASE_NAME -Bse "select uid from oc_users;")
+    if [ ! "$NEXTCLOUD_USERS" = "ALL" ]; then
+        users_in_database=""
+        provided_users=$($ECHO $NEXTCLOUD_USERS | $SED 's/,/ /g')
         lost_users=""
-        for user in $NEXCLOUD_USERS
+        for user in $provided_users
         do
             if ! $ECHO $users_in_database | $GREP -w $user > /dev/null; then
                 lost_users="$user $lost_users"
+            else
+                users_in_database="$user $users_in_database"
             fi
         done
-        if [ "$lost_users" -ne "" ]; then
+        if [[ ! -z "$lost_users" ]];then
             error_msg="The following users are not present as Nexcloud users: $lost_users. Please, provide a valid list of users."
             report_error $error_msg
-            usage
             exit 1
         fi
+    fi
+    echo $users_in_database
 }

@@ -28,10 +28,10 @@ source lib/06-test_options.sh
 source lib/07-config_files.sh
 
 # Required software
-source lib/08-required-software.sh
+source lib/08-required_software.sh
 
 # Check connections
-source lib/09-check-connections.sh
+source lib/09-check_connections.sh
 
 # Check unset database variables
 source lib/10-set_unset_database_variables.sh
@@ -42,9 +42,20 @@ source lib/11-check_logs.sh
 # Check if all required varible for running the script are set
 source lib/12-check_required_variables.sh
 
+# Check if provided nexcloud users exist
+source lib/13-check_users.sh
+
+# Functions to set/unset nexcloud under maintenance mode
+source lib/14-maintenance.sh
+
+# Make a database backup using mydumper
+source lib/15-database_backup.sh
+
+# Make files backup using s3cmd
+source lib/16-files_backup.sh
+
 # Main
 $MKDIR -p $TMP_FOLDER
-
 
 OPTS=`getopt -o $short_options_array_list$short_options --long $no_params$of_short$one_param -n 'parse-options' -- "$@" 2> $LOCAL_ERROR_FILE `
 

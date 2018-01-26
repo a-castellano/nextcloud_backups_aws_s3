@@ -22,7 +22,9 @@ fi
 
 # Nextcloud variables
 NEXTCLOUD_CONFIG_ROUTE='/config/config.php'
-NEXTCLOUD_USERS='ALL'
+if [[ -z $NEXTCLOUD_USERS ]]; then
+    NEXTCLOUD_USERS='ALL'
+fi
 
 # App tmp folder
 TMP_FOLDER="/var/tmp/nextcloud_backups_aws_s3"
