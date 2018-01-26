@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+# file: tests/07-users
+
+source lib/13-check_users.sh
+source lib/99-clean_variables.sh
+
+oneTimeSetUp() {
+    export TMP_FOLDER="/var/tmp/nextcloud_backups_aws_s3/tests"
+    mkdir -p $TMP_FOLDER
+}
+
+setUp()
+{
+    originalPath=$PATH
+    export PATH=$(pwd)/tests/stubs:$PATH
+    DATABASE_NAME="dbname"
+    DATABASE_USER="user"
+    DATABASE_PASSWD="test"
+    DATABASE_PORT=3306
+    DATABASE_HOST="127.0.0.1"
+}
+
+tearDown()
+{
+    export PATH=$originalPath
+    rm -rf $TMP_FOLDER/*
+    cleanVariables
+}
+
+testAllUsers()
+{
+    NEXTCLOUD_USERS="ALL"
+    output=$(check_users 2> $TMP_FOLDER/error)
+    assertEquals "$?" "0"
+}
+
+testNonExistentUsers()
+{
+    NEXTCLOUD_USERS='philip,bob'
+    cat << EOF > $TMP_FOLDER/fileFailedPasswd
+Error: The following users are not present as Nexcloud users: bob philip . Please, provide a valid list of users.
+EOF
+    output=$(check_users 2> $TMP_FOLDER/error)
+    sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
+    diff $TMP_FOLDER/fileFailedPasswd $TMP_FOLDER/error
+    returnCode=$?
+    assertEquals "$returnCode" "0"
+}
+
+testExistentUser()
+{
+    NEXTCLOUD_USERS='george'
+    output=$(check_users)
+    returnCode=$?
+    assertEquals "$returnCode" "0"
+}
+
+testExistentUsers()
+{
+    NEXTCLOUD_USERS='george,cassandra'
+    output=$(check_users)
+    returnCode=$?
+    assertEquals "$returnCode" "0"
+}
+
+testExistentUsersSwitched()
+{
+    NEXTCLOUD_USERS='cassandra,george'
+    output=$(check_users)
+    returnCode=$?
+    assertEquals "$returnCode" "0"
+}
+
+testExistentUsersAndOneNonExistent()
+{
+    NEXTCLOUD_USERS='cassandra,george,philip'
+    cat << EOF > $TMP_FOLDER/fileFailedPasswd
+Error: The following users are not present as Nexcloud users: philip . Please, provide a valid list of users.
+EOF
+    output=$(check_users 2> $TMP_FOLDER/error)
+    sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
+    diff $TMP_FOLDER/fileFailedPasswd $TMP_FOLDER/error
+    returnCode=$?
+    assertEquals "$returnCode" "0"
+}
+
+
+# Load shUnit2.
+. /usr/bin/shunit2

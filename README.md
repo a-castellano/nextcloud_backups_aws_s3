@@ -66,3 +66,9 @@ Nextcloud is in maintenance mode - no app have been loaded
 
 Maintenance mode disabled
 ```
+
+## To Do
+- Make backup folder eligible.
+- Allow to choose between MySQL tcp port or socket.
+- Send e-mails about backup status.
+- Allow to choose nexcloud database tables prefix.

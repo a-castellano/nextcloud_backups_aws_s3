@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # file: tests/05-checkrequiredsoftware
 
-source lib/08-required-software.sh
+source lib/08-required_software.sh
 source lib/99-clean_variables.sh
 
 oneTimeSetUp() {

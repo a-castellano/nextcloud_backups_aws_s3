@@ -3,6 +3,7 @@
 
 source lib/10-set_unset_database_variables.sh
 source lib/12-check_required_variables.sh
+source lib/99-clean_variables.sh
 
 setUp() {
     rm -f $TMP_FOLDER/variables $TMP_FOLDER/expectedError $TMP_FOLDER/error
@@ -14,13 +15,9 @@ oneTimeSetUp() {
     mkdir -p $TMP_FOLDER
 }
 
-
 tearDown() {
-    for var in "DATABASE_NAME DATABASE_USER DATABASE_PASSWD DATABASE_PORT DATABASE_HOST S3_ACCESS_KEY S3_SECRET_KEY S3_BUCKET"
-    do
-        unset $var
-    done
-    rm -f $TMP_FOLDER/variables $TMP_FOLDER/expectedError $TMP_FOLDER/error
+    cleanVariables
+    rm -f $TMP_FOLDER/*
 }
 
 testFailNoDatabaseVariables () {
@@ -29,6 +26,7 @@ testFailNoDatabaseVariables () {
 S3_ACCESS_KEY=MyAccesKey
 S3_SECRET_KEY=MySecretKey
 S3_BUCKET=MyBucket
+HTTP_USER=www-data
 EOF
 
     cat << EOF > $TMP_FOLDER/expectedError
@@ -51,6 +49,9 @@ DATABASE_USER=dbuser
 DATABASE_PASSWD=mysecret
 DATABASE_PORT=3307
 DATABASE_HOST=localhost
+HTTP_USER=www-data
+NEXTCLOUD_PATH=/test/path
+NEXTCLOUD_USERS=ALL
 EOF
     cat << EOF > $TMP_FOLDER/expectedError
 Error: The following variables has to have value: s3-access-key, s3-secret-key, s3-bucket. Please set a valid value for it.
@@ -63,6 +64,27 @@ EOF
     assertEquals "$match" "0"
 }
 
+testNoHTTPUserVariable() {
+    cat << EOF > $TMP_FOLDER/variables
+S3_ACCESS_KEY=MyAccesKey
+S3_SECRET_KEY=MySecretKey
+S3_BUCKET=MyBucket
+DATABASE_NAME=dbname
+DATABASE_USER=dbuser
+DATABASE_PASSWD=mysecret
+DATABASE_PORT=3307
+DATABASE_HOST=localhost
+NEXTCLOUD_PATH=/test/path
+NEXTCLOUD_USERS=ALL
+EOF
+#http-user is sed by default
+    source $TMP_FOLDER/variables
+    output=$(check_required_variables 2> $TMP_FOLDER/error)
+    match=$?
+    assertEquals "$match" "0"
+}
+
+
 testFailMixedVariables() {
     cat << EOF > $TMP_FOLDER/variables
 S3_SECRET_KEY=MySecretKey
@@ -71,6 +93,9 @@ DATABASE_USER=dbuser
 DATABASE_PASSWD=mysecret
 DATABASE_PORT=3307
 DATABASE_HOST=localhost
+HTTP_USER=www-data
+NEXTCLOUD_PATH=/test/path
+NEXTCLOUD_USERS=ALL
 EOF
 
     cat << EOF > $TMP_FOLDER/expectedError

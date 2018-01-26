@@ -22,7 +22,9 @@ fi
 
 # Nextcloud variables
 NEXTCLOUD_CONFIG_ROUTE='/config/config.php'
-NEXTCLOUD_USERS='ALL'
+if [[ -z $NEXTCLOUD_USERS ]]; then
+    NEXTCLOUD_USERS='ALL'
+fi
 
 # App tmp folder
 TMP_FOLDER="/var/tmp/nextcloud_backups_aws_s3"
@@ -32,6 +34,7 @@ WHICH=$(which which)
 ECHO=$($WHICH echo)
 TR=$($WHICH tr)
 RM=$($WHICH rm)
+RM="$RM -f"
 SED=$($WHICH sed)
 CAT=$($WHICH cat)
 PRINTF=$($WHICH printf)
@@ -39,3 +42,8 @@ CUT=$($WHICH cut)
 TOUCH=$($WHICH touch)
 GREP=$($WHICH grep)
 MKDIR=$($WHICH mkdir)
+
+#Required software
+MYSQL=$($WHICH mysql)
+MYDUMPER=$($WHICH mydumper)
+S3CMD=$($WHICH s3cmd)

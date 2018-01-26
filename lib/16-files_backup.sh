@@ -1,14 +1,15 @@
 #!/bin/bash
 #
 # **  nextcloud_backups_aws_s3  **
-# **          utils             **
+# **       files backup         **
 #
 # Utility to make backups of Nextcloud and store them in an S3 bucket
-# Fucntion functions used by many parts of this script
+# Make files backup using s3cmd
 #
 # Álvaro Castellano Vela - https://github.com/a-castellano
 
-function trim {
-    $ECHO $1 | $SED 's/^-*//'
-}
+# Logger
+source lib/01-default_values_and_commands.sh
+source lib/02-usage.sh
+source lib/04-logger.sh
 

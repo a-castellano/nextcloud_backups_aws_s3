@@ -20,3 +20,5 @@ test:
 	( $(TEST_DIR)/05-checkrequiredsoftware )
 	@echo "- check connections"
 	( $(TEST_DIR)/06-checkconnections )
+	@echo "- check users"
+	( $(TEST_DIR)/07-checkusers )

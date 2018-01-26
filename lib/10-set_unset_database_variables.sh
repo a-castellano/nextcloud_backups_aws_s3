@@ -16,4 +16,8 @@ function set_unset_database_variables {
     if [[ -z $DATABASE_HOST ]]; then
         DATABASE_HOST="localhost"
     fi
+
+    if [[ -z $HTTP_USER ]]; then
+        HTTP_USER="www-data"
+    fi
 }

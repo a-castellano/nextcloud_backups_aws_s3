@@ -239,5 +239,16 @@ testS3BucketIsDefined() {
     assertEquals "$defined" "S3_BUCKET -> my-bucket"
 }
 
+testHTTPUserNotDefined() {
+    undefined=$(./nextcloud_backups_aws_s3 --test='http-user')
+    assertEquals "$undefined" "HTTP_USER -> www-data"
+}
+
+testHTTPUserIsDefined() {
+    defined=$(./nextcloud_backups_aws_s3 --http-user="test-user" --test='http-user')
+    assertEquals "$defined" "HTTP_USER -> test-user"
+}
+
+
 # Load shUnit2.
 . /usr/bin/shunit2
