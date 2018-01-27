@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# file: tests/07-checkusers
+
+source lib/15-database_backup.sh
+source lib/99-clean_variables.sh
+
+oneTimeSetUp() {
+    export TMP_FOLDER="/var/tmp/nextcloud_backups_aws_s3/tests"
+    mkdir -p $TMP_FOLDER
+}
+
+setUp()
+{
+    originalPath=$PATH
+    export PATH=$(pwd)/tests/stubs:$PATH
+    DATABASE_NAME="dbname"
+    DATABASE_USER="user"
+    DATABASE_PASSWD="test"
+    DATABASE_PORT=3306
+    DATABASE_HOST="127.0.0.1"
+    NEXTCLOUD_PATH=$TMP_FOLDER
+    BACKUP_PATH="$NEXTCLOUD_PATH/backups"
+}
+
+tearDown()
+{
+    export PATH=$originalPath
+    rm -rf $TMP_FOLDER/*
+    cleanVariables
+}
+
+testMydumperBackup()
+{
+    output=$(database_backup)
+    echo $output
+    assertEquals "$?" "0"
+}
+
+# Load shUnit2.
+. /usr/bin/shunit2

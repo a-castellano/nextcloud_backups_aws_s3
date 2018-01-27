@@ -136,6 +136,9 @@ check_databse_connection
 # Check S3 connection
 check_s3_conection
 
-# Perferm backup
+# Get database users
+NEXTCLOUD_USERS=$(check_users)
+
+# Perform backup
 
 exit 0
