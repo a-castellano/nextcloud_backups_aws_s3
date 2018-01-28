@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# file: tests/07-users
+# file: tests/07-checkusers
 
 source lib/13-check_users.sh
 source lib/99-clean_variables.sh

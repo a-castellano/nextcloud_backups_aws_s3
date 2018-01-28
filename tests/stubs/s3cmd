@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if [ ! "$1" = "--access_key=access-key" ]; then
     ( >&2 echo "ERROR: S3 error: 403 (InvalidAccessKeyId): The AWS Access Key Id you provided does not exist in our records.")

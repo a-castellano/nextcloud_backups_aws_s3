@@ -22,3 +22,5 @@ test:
 	( $(TEST_DIR)/06-checkconnections )
 	@echo "- check users"
 	( $(TEST_DIR)/07-checkusers )
+	@echo "- check database backup"
+	( $(TEST_DIR)/08-databasebackup )

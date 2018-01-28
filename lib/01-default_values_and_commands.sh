@@ -26,6 +26,10 @@ if [[ -z $NEXTCLOUD_USERS ]]; then
     NEXTCLOUD_USERS='ALL'
 fi
 
+# Exclude database
+if [[ -z $EXCLUDE_DATABASE ]]; then
+    EXCLUDE_DATABASE=false
+fi
 # App tmp folder
 TMP_FOLDER="/var/tmp/nextcloud_backups_aws_s3"
 

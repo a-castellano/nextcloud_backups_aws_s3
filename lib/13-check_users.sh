@@ -17,7 +17,7 @@ function check_users {
     users_in_database=$(mysql -u$DATABASE_USER -p$DATABASE_PASSWD --port=$DATABASE_PORT -h $DATABASE_HOST $DATABASE_NAME -Bse "select uid from oc_users;")
     selected_database=$users_in_database
     if [ ! "$NEXTCLOUD_USERS" = "ALL" ]; then
-        selected_database=""
+        selected_users=""
         provided_users=$($ECHO $NEXTCLOUD_USERS | $SED 's/,/ /g')
         lost_users=""
         for user in $provided_users
@@ -25,7 +25,7 @@ function check_users {
             if ! $ECHO $users_in_database | $GREP -w $user > /dev/null; then
                 lost_users="$user $lost_users"
             else
-                selected_database="$user $users_in_database"
+                selected_users="$user $selected_users"
             fi
         done
         if [[ ! -z "$lost_users" ]];then

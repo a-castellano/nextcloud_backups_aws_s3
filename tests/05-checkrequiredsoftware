@@ -84,52 +84,5 @@ EOF
     mv tests/stubs/_s3cmd tests/stubs/s3cmd
 }
 
-#testMySQLFailedCredentials()
-#{
-#    cat << EOF > $TMP_FOLDER/fileFailedPasswd
-#Error: ERROR 1045 (28000): Access denied for user 'test'@'localhost' (using password: YES)
-#EOF
-#    ./nextcloud_backups_aws_s3 --database-passwd="failed" 2> $TMP_FOLDER/error
-#    sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
-#    diff $TMP_FOLDER/fileFailedPasswd $TMP_FOLDER/error
-#    returnCode=$?
-#    assertEquals "$returnCode" "0"
-#}
-#
-#testS3cmdFailedAccessKey(){
-#    cat << EOF > $TMP_FOLDER/fileFailedAccess
-#Error: ERROR: S3 error: 403 (InvalidAccessKeyId): The AWS Access Key Id you provided does not exist in our records.
-#EOF
-#    ./nextcloud_backups_aws_s3 --s3-access-key="failed" 2> $TMP_FOLDER/error
-#    sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
-#    diff $TMP_FOLDER/fileFailedAccess $TMP_FOLDER/error
-#    returnCode=$?
-#    assertEquals "$returnCode" "0"
-#}
-#
-#testS3cmdFailedSecretKey(){
-#    cat << EOF > $TMP_FOLDER/fileFailedSecret
-#Error: ERROR: S3 error: 403 (SignatureDoesNotMatch): The request signature we calculated does not match the signature you provided. Check your key and signing method.
-#EOF
-#    ./nextcloud_backups_aws_s3 --s3-secret-key="failed" 2> $TMP_FOLDER/error
-#    sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
-#    diff $TMP_FOLDER/fileFailedSecret $TMP_FOLDER/error
-#    returnCode=$?
-#    assertEquals "$returnCode" "0"
-#}
-#
-#testS3cmdFailedBucket(){
-#    cat << EOF > $TMP_FOLDER/fileFailedBucket
-#Error: ERROR: Bucket 'failed' does not exist ERROR: S3 error: 404 (NoSuchBucket): The specified bucket does not exist
-#EOF
-#    ./nextcloud_backups_aws_s3 --s3-bucket="other" 2> $TMP_FOLDER/error
-#    sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
-#    diff $TMP_FOLDER/fileFailedBucket $TMP_FOLDER/error
-#    returnCode=$?
-#    assertEquals "$returnCode" "0"
-#}
-#
-
-
 # Load shUnit2.
 . /usr/bin/shunit2
