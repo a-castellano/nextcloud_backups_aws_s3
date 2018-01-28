@@ -5,7 +5,7 @@ source lib/15-database_backup.sh
 source lib/99-clean_variables.sh
 
 oneTimeSetUp() {
-    export TMP_FOLDER="/var/tmp/nextcloud_backups_aws_s3/tests"
+    TMP_FOLDER="/var/tmp/nextcloud_backups_aws_s3/tests"
     mkdir -p $TMP_FOLDER
 }
 
@@ -15,11 +15,11 @@ setUp()
     export PATH=$(pwd)/tests/stubs:$PATH
     DATABASE_NAME="dbname"
     DATABASE_USER="user"
-    DATABASE_PASSWD="test"
+    export DATABASE_PASSWD="passwdtest"
     DATABASE_PORT=3306
     DATABASE_HOST="127.0.0.1"
     NEXTCLOUD_PATH=$TMP_FOLDER
-    BACKUP_PATH="$NEXTCLOUD_PATH/backups"
+    export BACKUP_PATH="$NEXTCLOUD_PATH/backups"
 }
 
 tearDown()
@@ -29,10 +29,19 @@ tearDown()
     cleanVariables
 }
 
-testMydumperBackup()
+testMydumperBackupFolder()
 {
+    MYDUMPER=$(which mydumper)
     output=$(database_backup)
-    echo $output
+    test -d $BACKUP_PATH
+    assertEquals "$?" "0"
+}
+
+testMydumperBackupSomeTable()
+{
+    MYDUMPER=$(which mydumper)
+    output=$(database_backup)
+    test -f $BACKUP_PATH/table.sql.gz
     assertEquals "$?" "0"
 }
 

@@ -140,5 +140,6 @@ check_s3_conection
 NEXTCLOUD_USERS=$(check_users)
 
 # Perform backup
+BACKUP_PATH="$NEXTCLOUD_PATH/database_backup"
 
 exit 0

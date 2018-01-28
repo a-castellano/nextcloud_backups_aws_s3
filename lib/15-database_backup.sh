@@ -13,11 +13,9 @@ source lib/01-default_values_and_commands.sh
 source lib/02-usage.sh
 source lib/04-logger.sh
 
-BACKUP_PATH="$NEXTCLOUD_PATH/backups"
-
 function database_backup {
 
-    if [[ ! -z $EXCLUDE_DATABASE ]]; then
+    if [[ $EXCLUDE_DATABASE=false ]]; then
         $MKDIR $BACKUP_PATH 2> $LOCAL_ERROR_FILE
         if [ $? -ne 0 ]; then
             error_msg=$( $CAT $LOCAL_ERROR_FILE )
@@ -25,7 +23,8 @@ function database_backup {
             $RM $LOCAL_ERROR_FILE
             exit 1
         else
-            $MYDUMPER --user="$DATABASE_USER" --password="$DATABASE_PASSWORD" --port="$DATABASE_PORT"  --database="$DATABASE_NAME" -C --outputdir="$BACKUP_PATH" 2> $LOCAL_ERROR_FILE
+            $MYDUMPER --user="$DATABASE_USER" --password="$DATABASE_PASSWORD" --port=$DATABASE_PORT  --database="$DATABASE_NAME" -C --outputdir=$BACKUP_PATH 2> $LOCAL_ERROR_FILE
+            $CAT $LOCAL_ERROR_FILE
             if [ $? -ne 0  ]; then
                 error_msg=$( $CAT $LOCAL_ERROR_FILE  )
                 report_error $error_msg
@@ -36,5 +35,4 @@ function database_backup {
         fi
         $RM $LOCAL_ERROR_FILE
     fi
-
 }
