@@ -19,11 +19,11 @@ function backup_files_by_user {
     NEXTCLOUD_DATA_DIR="$NEXTCLOUD_PATH/data/"
 
     if [[ $EXCLUDE_DATABASE=false ]]; then
-        $S3CMD sync $DATABASE_BACKUP_PATH s3://$S3_BUCKET
+        $S3CMD --access_key="$S3_ACCESS_KEY" --secret_key="$S3_SECRET_KEY" sync $DATABASE_BACKUP_PATH s3://$S3_BUCKET
     fi
 
     for user in $NEXTCLOUD_USERS
     do
-        $S3CMD sync $NEXTCLOUD_DATA_DIR/$user s3://$S3_BUCKET
+        $S3CMD --access_key="$S3_ACCESS_KEY" --secret_key="$S3_SECRET_KEY" sync $NEXTCLOUD_DATA_DIR/$user s3://$S3_BUCKET
     done
 }
