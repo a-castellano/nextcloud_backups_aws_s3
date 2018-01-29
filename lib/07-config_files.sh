@@ -33,7 +33,7 @@ declare -A variables_to_nextcloud_variables=(
 
 
 function test_config_file {
-    file=$1
+    file=$( $ECHO $1 | $SED "s|~|$HOME|")
 
     if [[ ! -f $file ]]; then
         error_msg="Config file '$file' does not exist."
