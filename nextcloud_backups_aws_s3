@@ -144,5 +144,7 @@ DATABASE_BACKUP_PATH="$NEXTCLOUD_PATH/database_backup"
 
 set_maintenance
 
+database_backup
+
 unset_maintenance
 exit 0
