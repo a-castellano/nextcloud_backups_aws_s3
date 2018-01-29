@@ -137,7 +137,7 @@ check_databse_connection
 check_s3_conection
 
 # Get database users
-NEXTCLOUD_USERS=$(check_users)
+USERS_TO_BACKUP=$(check_users)
 
 # Perform backup
 DATABASE_BACKUP_PATH="$NEXTCLOUD_PATH/database_backup"
