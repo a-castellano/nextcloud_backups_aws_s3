@@ -146,5 +146,7 @@ set_maintenance
 
 database_backup
 
+backup_files_by_user
+
 unset_maintenance
 exit 0
