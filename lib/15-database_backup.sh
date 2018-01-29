@@ -16,15 +16,14 @@ source lib/04-logger.sh
 function database_backup {
 
     if [[ $EXCLUDE_DATABASE=false ]]; then
-        $MKDIR $DATABASE_BACKUP_PATH 2> $LOCAL_ERROR_FILE
+        $MKDIR -p $DATABASE_BACKUP_PATH 2> $LOCAL_ERROR_FILE
         if [ $? -ne 0 ]; then
             error_msg=$( $CAT $LOCAL_ERROR_FILE )
             report_error $error_msg
             $RM $LOCAL_ERROR_FILE
             exit 1
         else
-            $MYDUMPER --user="$DATABASE_USER" --password="$DATABASE_PASSWORD" --port=$DATABASE_PORT  --database="$DATABASE_NAME" -C --outputdir=$DATABASE_BACKUP_PATH 2> $LOCAL_ERROR_FILE
-            $CAT $LOCAL_ERROR_FILE
+            $MYDUMPER --user="$DATABASE_USER" --password="$DATABASE_PASSWD" --port=$DATABASE_PORT  --database="$DATABASE_NAME" -C --outputdir=$DATABASE_BACKUP_PATH 2> $LOCAL_ERROR_FILE
             if [ $? -ne 0  ]; then
                 error_msg=$( $CAT $LOCAL_ERROR_FILE  )
                 report_error $error_msg

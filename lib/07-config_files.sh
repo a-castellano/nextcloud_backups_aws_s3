@@ -33,15 +33,15 @@ declare -A variables_to_nextcloud_variables=(
 
 
 function test_config_file {
-    file=$( $ECHO $1 | $SED "s|~|$HOME|")
+    file=$1
 
     if [[ ! -f $file ]]; then
         error_msg="Config file '$file' does not exist."
         report_error $error_msg
         exit 1
     fi
-    if [[ ! -w $file ]]; then
-        error_msg="Can't write '$file', permission denied."
+    if [[ ! -r $file ]]; then
+        error_msg="Can't read '$file', permission denied."
         report_error $error_msg
         exit 1
     fi
@@ -49,6 +49,7 @@ function test_config_file {
 
 function get_variables_config_file {
 
+    CONFIG_FILE=$( $ECHO $CONFIG_FILE | $SED "s|~|$HOME|" )
     test_config_file $CONFIG_FILE
 
     for var in "${required_config_variables[@]}"
