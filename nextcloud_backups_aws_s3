@@ -142,4 +142,6 @@ NEXTCLOUD_USERS=$(check_users)
 # Perform backup
 DATABASE_BACKUP_PATH="$NEXTCLOUD_PATH/database_backup"
 
+set_maintenance
+
 exit 0
