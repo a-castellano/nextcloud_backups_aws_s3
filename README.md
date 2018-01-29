@@ -58,10 +58,10 @@ admin ALL=(www-data) NOPASSWD: ALL
 Now, this user is able to put Nexcloud on maintenance mode.
 
 ```
-$ sudo -u www-data -H php PATH_TO_NEXCLOUD/occ maintenance:mode --on
+$ sudo -u www-data -H php PATH_TO_NEXTCLOUD/occ maintenance:mode --on
 Maintenance mode enabled
 
-sudo -u www-data -H php PATH_TO_NEXCLOUD/occ maintenance:mode --off
+sudo -u www-data -H php PATH_TO_NEXTCLOUD/occ maintenance:mode --off
 Nextcloud is in maintenance mode - no app have been loaded
 
 Maintenance mode disabled
