@@ -13,13 +13,13 @@ setUp()
 {
     originalPath=$PATH
     export PATH=$(pwd)/tests/stubs:$PATH
-    DATABASE_NAME="dbname"
-    DATABASE_USER="user"
+    export DATABASE_NAME="dbname"
+    export DATABASE_USER="user"
     export DATABASE_PASSWD="passwdtest"
-    DATABASE_PORT=3306
-    DATABASE_HOST="127.0.0.1"
-    NEXTCLOUD_PATH=$TMP_FOLDER
-    export BACKUP_PATH="$NEXTCLOUD_PATH/backups"
+    export DATABASE_PORT=3306
+    export DATABASE_HOST="127.0.0.1"
+    export NEXTCLOUD_PATH=$TMP_FOLDER
+    export DATABASE_BACKUP_PATH="$NEXTCLOUD_PATH/backups"
 }
 
 tearDown()
@@ -33,7 +33,7 @@ testMydumperBackupFolder()
 {
     MYDUMPER=$(which mydumper)
     output=$(database_backup)
-    test -d $BACKUP_PATH
+    test -d $DATABASE_BACKUP_PATH
     assertEquals "$?" "0"
 }
 
@@ -41,7 +41,7 @@ testMydumperBackupSomeTable()
 {
     MYDUMPER=$(which mydumper)
     output=$(database_backup)
-    test -f $BACKUP_PATH/table.sql.gz
+    test -f $DATABASE_BACKUP_PATH/table.sql.gz
     assertEquals "$?" "0"
 }
 

@@ -34,5 +34,5 @@ function check_users {
             exit 1
         fi
     fi
-    echo $selected_database
+    echo $provided_users
 }
