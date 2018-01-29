@@ -1,8 +1,8 @@
 #!/bin/bash
 
 if [ "$DATABASE_PASSWD" = "passwdtest" ]; then
-    mkdir -p $BACKUP_PATH
-    echo "" > $BACKUP_PATH/table.sql.gz
+    mkdir -p $DATABASE_BACKUP_PATH
+    echo "" > $DATABASE_BACKUP_PATH/table.sql.gz
 fi
 
 

@@ -51,3 +51,6 @@ MKDIR=$($WHICH mkdir)
 MYSQL=$($WHICH mysql)
 MYDUMPER=$($WHICH mydumper)
 S3CMD=$($WHICH s3cmd)
+
+# s3cmd options
+S3CMDOPTIONS="--recursive --preserve --exclude '*/cache/*'  --storage-class=REDUCED_REDUNDANCY"
