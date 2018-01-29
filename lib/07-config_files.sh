@@ -40,8 +40,8 @@ function test_config_file {
         report_error $error_msg
         exit 1
     fi
-    if [[ ! -w $file ]]; then
-        error_msg="Can't write '$file', permission denied."
+    if [[ ! -r $file ]]; then
+        error_msg="Can't read '$file', permission denied."
         report_error $error_msg
         exit 1
     fi
