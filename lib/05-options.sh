@@ -66,12 +66,12 @@ function check_option_called {
     variable_name=$( $ECHO $option_name | $TR '[:lower:]' '[:upper:]' | $TR '-' '_' )
     variable_called_name="$variable_name$option_called"
     if [[ -z ${!variable_called_name} || "${!variable_called_name}" = false  ]]; then
-        if [ "$#" -eq 1 ]; then
+        if [[ "$#" -eq 1 ]]; then
             eval $variable_name=true
         fi
-        if [ "$#" -gt 1 ]; then
+        if [[ "$#" -gt 1 ]]; then
             eval $variable_name=$values
-            if [ -z "$variable_name" ]; then
+            if [[ -z "$variable_name" ]]; then
                 error_msg="$variable_name was supposed to be set. Can't parse '$2'."
                 report_error $error_msg
                 exit 1

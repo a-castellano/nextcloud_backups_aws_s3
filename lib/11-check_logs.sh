@@ -19,7 +19,7 @@ if [[ "$ENABLE_LOG" = true ]]; then
         exit 1
     else
         # Check if folder is writable
-        if [ -f "$LOG_FILE" ]; then
+        if [[ -f "$LOG_FILE" ]]; then
             if [[ ! -w "$LOG_FILE" ]];then
                 error_msg="Cannot write log in '$LOG_FILE': Permission Denied"
                 report_error $error_msg
@@ -30,7 +30,7 @@ if [[ "$ENABLE_LOG" = true ]]; then
             if [[ -w $folder ]]; then
                 $TOUCH $LOG_FILE
             else
-                if [[ -d $folder  ]]; then
+                if [[ -d $folder ]]; then
                     error_msg="Cannot write log in '$folder': Permission Denied"
                     report_error $error_msg
                     exit 1

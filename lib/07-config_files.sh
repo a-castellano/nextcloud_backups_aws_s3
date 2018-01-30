@@ -54,7 +54,7 @@ function get_variables_config_file {
 
     for var in "${required_config_variables[@]}"
     do
-        if [[ -z ${!var}  ]]; then
+        if [[ -z ${!var} ]]; then
             value=$( $GREP $var $CONFIG_FILE | $SED "s|$var[ ]*=[ ]*||")
             if [[ ! "$value" = "" ]]; then
                 eval $var=$value
@@ -71,7 +71,7 @@ function get_variables_from_nextcloud_config_file {
 
     for var in "${!variables_to_nextcloud_variables[@]}"
     do
-        if [[ -z ${!var}  ]]; then
+        if [[ -z ${!var} ]]; then
             value=$( $GREP ${variables_to_nextcloud_variables[$var]} $nextcloud_config_file | $SED "s/^.* => '//" | $SED "s/',$//" )
             if [[ ! "$value" = "" ]]; then
                 eval $var=$value
