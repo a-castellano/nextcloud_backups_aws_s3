@@ -34,7 +34,7 @@ source lib/08-required_software.sh
 source lib/09-check_connections.sh
 
 # Check unset database variables
-source lib/10-set_unset_database_variables.sh
+source lib/10-set_unset_variables.sh
 
 # Check if logging into external file is enabled
 source lib/11-check_logs.sh
@@ -97,7 +97,7 @@ get_variables_config_file
 get_variables_from_nextcloud_config_file
 
 # Check databse port and host
-set_unset_database_variables
+set_unset_variables
 
 # Look for tests
 if [[ -n $TEST ]]; then

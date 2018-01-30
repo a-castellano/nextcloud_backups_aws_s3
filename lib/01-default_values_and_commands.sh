@@ -22,9 +22,6 @@ fi
 
 # Nextcloud variables
 NEXTCLOUD_CONFIG_ROUTE='/config/config.php'
-if [[ -z $NEXTCLOUD_USERS ]]; then
-    NEXTCLOUD_USERS='ALL'
-fi
 
 # Exclude database
 if [[ -z $EXCLUDE_DATABASE ]]; then
