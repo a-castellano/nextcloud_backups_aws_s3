@@ -16,7 +16,7 @@ source lib/04-logger.sh
 
 function backup_files_by_user {
 
-    NEXTCLOUD_DATA_DIR="$NEXTCLOUD_PATH/data/"
+    NEXTCLOUD_DATA_DIR="$NEXTCLOUD_PATH/data
 
     if [[ $EXCLUDE_DATABASE=false ]]; then
         $S3CMD --access_key="$S3_ACCESS_KEY" --secret_key="$S3_SECRET_KEY" sync $DATABASE_BACKUP_PATH s3://$S3_BUCKET
