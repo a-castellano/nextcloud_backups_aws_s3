@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # file: tests/04-unsetvariables
 
-source lib/10-set_unset_database_variables.sh
+source lib/10-set_unset_variables.sh
 source lib/12-check_required_variables.sh
 source lib/99-clean_variables.sh
 
 setUp() {
     rm -f $TMP_FOLDER/variables $TMP_FOLDER/expectedError $TMP_FOLDER/error
-    set_unset_database_variables
+    set_unset_variables
 }
 
 oneTimeSetUp() {

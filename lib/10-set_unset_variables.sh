@@ -1,14 +1,14 @@
 #!/bin/bash
 #
 # **  nextcloud_backups_aws_s3  **
-# **  check database variables  **
+# **  check unser variables  **
 #
 # Utility to make backups of Nextcloud and store them in an S3 bucket
-# Set required database variables with default values uf they are unset
+# Set required variables with default values if they are unset
 #
 # Álvaro Castellano Vela - https://github.com/a-castellano
 
-function set_unset_database_variables {
+function set_unset_variables {
     if [[ -z $DATABASE_PORT ]]; then
         DATABASE_PORT=3306
     fi
@@ -19,5 +19,9 @@ function set_unset_database_variables {
 
     if [[ -z $HTTP_USER ]]; then
         HTTP_USER="www-data"
+    fi
+
+    if [[ -z $NEXTCLOUD_USERS ]]; then
+        NEXTCLOUD_USERS='ALL'
     fi
 }
