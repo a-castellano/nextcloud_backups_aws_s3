@@ -17,7 +17,7 @@ source lib/04-logger.sh
 
 function set_maintenance {
     sudo -u $HTTP_USER -H php $NEXTCLOUD_PATH/occ maintenance:mode --on 2> $LOCAL_ERROR_FILE
-    if [ $? -ne 0 ]; then
+    if [[ $? -ne 0 ]]; then
         error_msg=$( $CAT $LOCAL_ERROR_FILE )
         report_error $error_msg
         $RM $LOCAL_ERROR_FILE
@@ -28,7 +28,7 @@ function set_maintenance {
 
 function unset_maintenance {
     sudo -u $HTTP_USER -H php $NEXTCLOUD_PATH/occ maintenance:mode --off 2> $LOCAL_ERROR_FILE
-    if [ $? -ne 0 ]; then
+    if [[ $? -ne 0 ]]; then
         error_msg=$( $CAT $LOCAL_ERROR_FILE )
         report_error $error_msg
         $RM $LOCAL_ERROR_FILE
