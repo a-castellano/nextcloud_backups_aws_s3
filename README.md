@@ -67,7 +67,11 @@ Nextcloud is in maintenance mode - no app have been loaded
 Maintenance mode disabled
 ```
 
-## To Do
+## To Do (2018-01-30)
+- Write build method, parent script loads **lib** files locally so it cannot be called from outside nextcloud_backups_aws_s3 path.
+- Document cron examples.
+- S3 storage class is hardcoded to cheaper one, make it eligible.
+- There is no logs yet...
 - Make backup folder eligible.
 - Allow to choose between MySQL tcp port or socket.
 - Send e-mails about backup status.
