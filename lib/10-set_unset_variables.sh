@@ -8,6 +8,9 @@
 #
 # Álvaro Castellano Vela - https://github.com/a-castellano
 
+#Logger
+source lib/04-logger.sh
+
 function set_unset_variables {
     if [[ -z $DATABASE_PORT ]]; then
         DATABASE_PORT=3306
