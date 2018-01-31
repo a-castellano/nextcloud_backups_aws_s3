@@ -20,12 +20,12 @@ function set_unset_variables {
     fi
 
     if [[ -z $HTTP_USER ]]; then
-        write_log "HTTP_USER has been set to its default value $HTTP_USER."
         HTTP_USER="www-data"
+        write_log "HTTP_USER has been set to its default value $HTTP_USER."
     fi
 
     if [[ -z $NEXTCLOUD_USERS ]]; then
-        write_log "NEXTCLOUD_USERS has been set to its default value $NEXTCLOUD_USERS."
         NEXTCLOUD_USERS='ALL'
+        write_log "NEXTCLOUD_USERS has been set to its default value $NEXTCLOUD_USERS."
     fi
 }

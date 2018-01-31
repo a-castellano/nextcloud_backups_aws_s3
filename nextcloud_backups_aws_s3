@@ -107,6 +107,7 @@ set_unset_variables
 
 # Look for tests
 if [[ -n $TEST ]]; then
+    write_log "Test is enabled: testing $TEST."
     variables_to_test $TEST
     exit 0
 fi
