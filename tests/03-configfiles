@@ -68,12 +68,12 @@ oneTimeTearDown() {
 }
 
 testConfigDirDefault() {
-    default=$(./nextcloud_backups_aws_s3 --test='config-file' --nextcloud-path="$TMP_FOLDER/nextcloud_backups_aws_s3/var/www/nextcloud" )
+    default=$(./src/nextcloud_backups_aws_s3 --test='config-file' --nextcloud-path="$TMP_FOLDER/nextcloud_backups_aws_s3/var/www/nextcloud" )
     assertEquals "$default" "CONFIG_FILE -> $(pwd)/tests/config_folders/config/nextcloud_backups_aws_s3"
 }
 
 testConfigFileDoesNotExist() {
-    ./nextcloud_backups_aws_s3 --nextcloud-path="$TMP_FOLDER/nextcloud_backups_aws_s3/var/www/nextcloud" --config-file="/tmp/none" 2> /dev/null
+    ./src/nextcloud_backups_aws_s3 --nextcloud-path="$TMP_FOLDER/nextcloud_backups_aws_s3/var/www/nextcloud" --config-file="/tmp/none" 2> /dev/null
     ok=$?
     assertEquals "$ok" "1"
 }
@@ -82,7 +82,7 @@ testConfigFileDoesNotExistCheckFile() {
     cat << EOF > $TMP_FOLDER/fileDoesNotExistError
 Error: Config file '$TMP_FOLDER/none' does not exist.
 EOF
-   ./nextcloud_backups_aws_s3 --config-file="$TMP_FOLDER/none" --nextcloud-path="$TMP_FOLDER/nextcloud_backups_aws_s3/var/www/nextcloud" 2> $TMP_FOLDER/error
+   ./src/nextcloud_backups_aws_s3 --config-file="$TMP_FOLDER/none" --nextcloud-path="$TMP_FOLDER/nextcloud_backups_aws_s3/var/www/nextcloud" 2> $TMP_FOLDER/error
    sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
    diff $TMP_FOLDER/fileDoesNotExistError $TMP_FOLDER/error
    match=$?
@@ -106,7 +106,7 @@ DATABASE_NAME -> MyDatabase
 DATABASE_PASSWD -> Pass word
 EOF
 
-   ./nextcloud_backups_aws_s3  --config-file="$TMP_FOLDER/variables" --test="s3-access-key,s3-secret-key,nextcloud-users,database-name,database-passwd" --nextcloud-path="$TMP_FOLDER/nextcloud_backups_aws_s3/var/www/nextcloud" > $TMP_FOLDER/testMultipleValuesResult
+   ./src/nextcloud_backups_aws_s3  --config-file="$TMP_FOLDER/variables" --test="s3-access-key,s3-secret-key,nextcloud-users,database-name,database-passwd" --nextcloud-path="$TMP_FOLDER/nextcloud_backups_aws_s3/var/www/nextcloud" > $TMP_FOLDER/testMultipleValuesResult
    diff  $TMP_FOLDER/testMultipleValuesResult $TMP_FOLDER/testMultipleValues
    match=$?
    assertEquals "$match" "0"
@@ -130,7 +130,7 @@ DATABASE_USER -> dbuser
 DATABASE_HOST -> localhost
 EOF
 
-   ./nextcloud_backups_aws_s3  --config-file="$TMP_FOLDER/variables" --test="s3-access-key,s3-secret-key,nextcloud-users,database-name,database-passwd,database-port,database-user,database-host" --nextcloud-path="$TMP_FOLDER/nextcloud_backups_aws_s3/var/www/nextcloud" > $TMP_FOLDER/testMultipleValuesResult
+   ./src/nextcloud_backups_aws_s3  --config-file="$TMP_FOLDER/variables" --test="s3-access-key,s3-secret-key,nextcloud-users,database-name,database-passwd,database-port,database-user,database-host" --nextcloud-path="$TMP_FOLDER/nextcloud_backups_aws_s3/var/www/nextcloud" > $TMP_FOLDER/testMultipleValuesResult
    diff  $TMP_FOLDER/testMultipleValuesResult $TMP_FOLDER/testMultipleValues
    match=$?
    assertEquals "$match" "0"
@@ -155,7 +155,7 @@ DATABASE_HOST -> localhost
 NEXTCLOUD_USERS -> ALL
 EOF
 
-   ./nextcloud_backups_aws_s3  --config-file="$TMP_FOLDER/variables" --test="s3-access-key,s3-secret-key,database-name,database-passwd,database-port,database-user,database-host,nextcloud-users" --nextcloud-path="$TMP_FOLDER/nextcloud_backups_aws_s3/var/www/nextcloud" > $TMP_FOLDER/testMultipleValuesResult
+   ./src/nextcloud_backups_aws_s3  --config-file="$TMP_FOLDER/variables" --test="s3-access-key,s3-secret-key,database-name,database-passwd,database-port,database-user,database-host,nextcloud-users" --nextcloud-path="$TMP_FOLDER/nextcloud_backups_aws_s3/var/www/nextcloud" > $TMP_FOLDER/testMultipleValuesResult
    diff  $TMP_FOLDER/testMultipleValuesResult $TMP_FOLDER/testMultipleValues
    match=$?
    assertEquals "$match" "0"
@@ -180,7 +180,7 @@ DATABASE_HOST -> 127.0.0.1
 NEXTCLOUD_USERS -> ALL
 EOF
 
-   ./nextcloud_backups_aws_s3 --s3-secret-key="MyChangedSecretKey" --database-port=3307 --database-host="127.0.0.1" --config-file="$TMP_FOLDER/variables" --test="s3-access-key,s3-secret-key,database-name,database-passwd,database-port,database-user,database-host,nextcloud-users" --nextcloud-path="$TMP_FOLDER/nextcloud_backups_aws_s3/var/www/nextcloud" > $TMP_FOLDER/testMultipleValuesResult
+   ./src/nextcloud_backups_aws_s3 --s3-secret-key="MyChangedSecretKey" --database-port=3307 --database-host="127.0.0.1" --config-file="$TMP_FOLDER/variables" --test="s3-access-key,s3-secret-key,database-name,database-passwd,database-port,database-user,database-host,nextcloud-users" --nextcloud-path="$TMP_FOLDER/nextcloud_backups_aws_s3/var/www/nextcloud" > $TMP_FOLDER/testMultipleValuesResult
    diff  $TMP_FOLDER/testMultipleValuesResult $TMP_FOLDER/testMultipleValues
    match=$?
    assertEquals "$match" "0"
@@ -206,13 +206,11 @@ DATABASE_HOST -> 127.0.0.1
 NEXTCLOUD_USERS -> user
 EOF
 
-   ./nextcloud_backups_aws_s3 --s3-secret-key="MyChangedSecretKey" --database-port=3307 --database-host="127.0.0.1" --config-file="$TMP_FOLDER/variables" --test="s3-access-key,s3-secret-key,database-name,database-passwd,database-port,database-user,database-host,nextcloud-users" --nextcloud-path="$TMP_FOLDER/nextcloud_backups_aws_s3/var/www/nextcloud" > $TMP_FOLDER/testMultipleValuesResult
+   ./src/nextcloud_backups_aws_s3 --s3-secret-key="MyChangedSecretKey" --database-port=3307 --database-host="127.0.0.1" --config-file="$TMP_FOLDER/variables" --test="s3-access-key,s3-secret-key,database-name,database-passwd,database-port,database-user,database-host,nextcloud-users" --nextcloud-path="$TMP_FOLDER/nextcloud_backups_aws_s3/var/www/nextcloud" > $TMP_FOLDER/testMultipleValuesResult
    diff  $TMP_FOLDER/testMultipleValuesResult $TMP_FOLDER/testMultipleValues
    match=$?
    assertEquals "$match" "0"
 }
-
-
 
 # Load shUnit2.
 . /usr/bin/shunit2

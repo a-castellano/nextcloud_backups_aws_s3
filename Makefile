@@ -1,10 +1,8 @@
-# $Id$
-
-PROG=nexcloud_backups_aws_s3
+PROG=nextcloud_backups_aws_s3
 
 TEST_DIR=$(PWD)/tests
 
-all: test
+all: test build
 
 test:
 	@echo "executing $(PROG) unit tests"
@@ -24,3 +22,11 @@ test:
 	( $(TEST_DIR)/07-checkusers )
 	@echo "- check database backup"
 	( $(TEST_DIR)/08-databasebackup )
+
+build:
+	( cp -R lib clean_lib )
+	( find clean_lib -type f -exec sed  -i '/^\#.*$$/d' {} \; )
+	( find clean_lib -type f -exec sed  -i '/source .*$$/d' {} \; )
+	( perl -pe 's/source lib\/(.*)$$/`cat clean_lib\/$$1`/e'  src/$(PROG) > $(PROG) )
+	( chmod 755 $(PROG) )
+	( rm -rf clean_lib )
