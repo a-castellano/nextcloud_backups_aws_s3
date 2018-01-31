@@ -14,4 +14,3 @@ cleanVariables() {
         unset $var
     done
 }
-

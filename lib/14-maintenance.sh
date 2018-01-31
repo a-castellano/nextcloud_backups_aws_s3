@@ -16,6 +16,7 @@ source lib/04-logger.sh
 # I don't know how to test these functions
 
 function set_maintenance {
+    write_log "Set nextcloud into maintenance mode."
     sudo -u $HTTP_USER -H php $NEXTCLOUD_PATH/occ maintenance:mode --on 2> $LOCAL_ERROR_FILE
     if [[ $? -ne 0 ]]; then
         error_msg=$( $CAT $LOCAL_ERROR_FILE )
@@ -23,10 +24,12 @@ function set_maintenance {
         $RM $LOCAL_ERROR_FILE
         exit 1
     fi
+    write_log "Maintenance mode set."
     $RM $LOCAL_ERROR_FILE
 }
 
 function unset_maintenance {
+    write_log "Disabling Nextcloud maintence."
     sudo -u $HTTP_USER -H php $NEXTCLOUD_PATH/occ maintenance:mode --off 2> $LOCAL_ERROR_FILE
     if [[ $? -ne 0 ]]; then
         error_msg=$( $CAT $LOCAL_ERROR_FILE )
@@ -34,5 +37,6 @@ function unset_maintenance {
         $RM $LOCAL_ERROR_FILE
         exit 1
     fi
+    write_log "Nextcloud's maintenance disabled."
     $RM $LOCAL_ERROR_FILE
 }

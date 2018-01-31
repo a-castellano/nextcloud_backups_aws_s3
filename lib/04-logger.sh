@@ -23,3 +23,8 @@ function report_error {
     fi
     $LOGGER $stderr $error_message
 }
+
+function write_log {
+    message="Info: $@"
+    $LOGGER $message
+}

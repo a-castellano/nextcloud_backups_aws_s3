@@ -54,9 +54,13 @@ source lib/15-database_backup.sh
 # Make files backup using s3cmd
 source lib/16-files_backup.sh
 
-# Main
+# MainA
+
+write_log "Starting nextcloud_backups_aws_s3."
+
 $MKDIR -p $TMP_FOLDER
 
+write_log "Checking command line arguments."
 OPTS=`getopt -o $short_options_array_list$short_options --long $no_params$of_short$one_param -n 'parse-options' -- "$@" 2> $LOCAL_ERROR_FILE `
 
 if [ $? -ne 0 ]; then
@@ -92,6 +96,8 @@ while true; do
   esac"
 done
 
+write_log "Recollecting variables from config files."
+
 # Get variables from files
 get_variables_config_file
 get_variables_from_nextcloud_config_file
@@ -101,6 +107,7 @@ set_unset_variables
 
 # Look for tests
 if [[ -n $TEST ]]; then
+    write_log "Test is enabled: testing $TEST."
     variables_to_test $TEST
     exit 0
 fi
@@ -149,4 +156,6 @@ database_backup
 backup_files_by_user
 
 unset_maintenance
+
+write_log "nextcloud_backups_aws_s3 has ended successfully."
 exit 0

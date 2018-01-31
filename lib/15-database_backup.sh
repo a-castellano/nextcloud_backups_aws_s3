@@ -14,7 +14,6 @@ source lib/02-usage.sh
 source lib/04-logger.sh
 
 function database_backup {
-
     if [[ $EXCLUDE_DATABASE=false ]]; then
         $MKDIR -p $DATABASE_BACKUP_PATH 2> $LOCAL_ERROR_FILE
         if [[ $? -ne 0 ]]; then
@@ -23,6 +22,7 @@ function database_backup {
             $RM $LOCAL_ERROR_FILE
             exit 1
         else
+            write_log "Database backup proccess started."
             $MYDUMPER --user="$DATABASE_USER" --password="$DATABASE_PASSWD" --port=$DATABASE_PORT  --database="$DATABASE_NAME" -C --outputdir=$DATABASE_BACKUP_PATH --no-locks > /dev/null 2> $LOCAL_ERROR_FILE
             if [[ $? -ne 0 ]]; then
                 error_msg=$( $CAT $LOCAL_ERROR_FILE  )
@@ -31,7 +31,10 @@ function database_backup {
                 exit 1
             fi
             $RM $LOCAL_ERROR_FILE
+            write_log "Database backup proccess ended."
         fi
         $RM $LOCAL_ERROR_FILE
+    else
+        write_log "Not performing database backup, EXCLUDE_DATABASE is enabled."
     fi
 }
