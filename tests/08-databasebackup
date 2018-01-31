@@ -20,6 +20,7 @@ setUp()
     export DATABASE_HOST="127.0.0.1"
     export NEXTCLOUD_PATH=$TMP_FOLDER
     export DATABASE_BACKUP_PATH="$NEXTCLOUD_PATH/backups"
+    export EXCLUDE_DATABASE=false
 }
 
 tearDown()
