@@ -47,10 +47,10 @@ EOF
 
 testFailToCreateLogPermission() {
    mkdir -p $TMP_FOLDER/nopermissionfolder/
-   touch $TMP_FOLDER/nopermissionfolder/src/nextcloud_backups_aws_s3.log
-   chmod 400 $TMP_FOLDER/nopermissionfolder/src/nextcloud_backups_aws_s3.log
+   touch $TMP_FOLDER/nopermissionfolder/nextcloud_backups_aws_s3.log
+   chmod 400 $TMP_FOLDER/nopermissionfolder/nextcloud_backups_aws_s3.log
    cat << EOF > $TMP_FOLDER/expectedError
-Error: Cannot write log in '$TMP_FOLDER/nopermissionfolder/src/nextcloud_backups_aws_s3.log': Permission Denied
+Error: Cannot write log in '$TMP_FOLDER/nopermissionfolder/nextcloud_backups_aws_s3.log': Permission Denied
 EOF
     ./src/nextcloud_backups_aws_s3 -l --log-file="$TMP_FOLDER/nopermissionfolder/nextcloud_backups_aws_s3.log" 2> $TMP_FOLDER/error
     sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
