@@ -28,12 +28,15 @@ function check_required_variables {
         'nextcloud-users'
         'http-user'
     )
-
+    write_log "Cheking if all required variables are set before start he backup."
     unset_variables=""
     for var in ${required_variables[@]}
     do
         variable=$($ECHO $var | $TR '[:lower:]' '[:upper:]' | $TR '-' '_' )
         if [[ -z ${!variable} ]]; then
+            if [[ ! -z $VERBOSE ]]; then
+                write_log "$variable is not defined."
+            fi
             unset_variables="$unset_variables, $var"
         fi
     done

@@ -52,11 +52,16 @@ function get_variables_config_file {
     CONFIG_FILE=$( $ECHO $CONFIG_FILE | $SED "s|~|$HOME|" )
     test_config_file $CONFIG_FILE
 
+    write_log "Recollecting variable from $CONFIG_FILE"
+
     for var in "${required_config_variables[@]}"
     do
         if [[ -z ${!var} ]]; then
             value=$( $GREP $var $CONFIG_FILE | $SED "s|$var[ ]*=[ ]*||")
             if [[ ! "$value" = "" ]]; then
+                if [[ ! -z $VERBOSE ]]; then
+                    write_log "    $var=$value"
+                fi
                 eval $var=$value
             fi
         fi
@@ -69,14 +74,18 @@ function get_variables_from_nextcloud_config_file {
     nextcloud_config_file=$NEXTCLOUD_PATH$NEXTCLOUD_CONFIG_ROUTE
     test_config_file $nextcloud_config_file
 
+    write_log "Recollecting variable from $nextcloud_config_file"
+
     for var in "${!variables_to_nextcloud_variables[@]}"
     do
         if [[ -z ${!var} ]]; then
             value=$( $GREP ${variables_to_nextcloud_variables[$var]} $nextcloud_config_file | $SED "s/^.* => '//" | $SED "s/',$//" )
             if [[ ! "$value" = "" ]]; then
+                if [[ ! -z $VERBOSE ]]; then
+                    write_log "    $var=$value"
+                fi
                 eval $var=$value
             fi
         fi
     done
 }
-
