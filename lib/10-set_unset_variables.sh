@@ -8,6 +8,9 @@
 #
 # Álvaro Castellano Vela - https://github.com/a-castellano
 
+#Logger
+source lib/04-logger.sh
+
 function set_unset_variables {
     if [[ -z $DATABASE_PORT ]]; then
         DATABASE_PORT=3306
@@ -27,5 +30,9 @@ function set_unset_variables {
     if [[ -z $NEXTCLOUD_USERS ]]; then
         NEXTCLOUD_USERS='ALL'
         write_log "NEXTCLOUD_USERS has been set to its default value $NEXTCLOUD_USERS."
+    fi
+
+    if [[ -z $EXCLUDE_DATABASE ]]; then
+       EXCLUDE_DATABASE=false
     fi
 }

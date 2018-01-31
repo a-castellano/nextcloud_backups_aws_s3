@@ -23,10 +23,6 @@ fi
 # Nextcloud variables
 NEXTCLOUD_CONFIG_ROUTE='/config/config.php'
 
-# Exclude database
-if [[ -z $EXCLUDE_DATABASE ]]; then
-    EXCLUDE_DATABASE=false
-fi
 # App tmp folder
 TMP_FOLDER="/var/tmp/nextcloud_backups_aws_s3"
 
