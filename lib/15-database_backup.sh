@@ -14,7 +14,7 @@ source lib/02-usage.sh
 source lib/04-logger.sh
 
 function database_backup {
-    if [[ $EXCLUDE_DATABASE=false ]]; then
+    if [[ $EXCLUDE_DATABASE = false ]]; then
         $MKDIR -p $DATABASE_BACKUP_PATH 2> $LOCAL_ERROR_FILE
         if [[ $? -ne 0 ]]; then
             error_msg=$( $CAT $LOCAL_ERROR_FILE )

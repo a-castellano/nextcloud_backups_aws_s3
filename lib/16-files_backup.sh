@@ -18,7 +18,7 @@ function backup_files_by_user {
 
     NEXTCLOUD_DATA_DIR="$NEXTCLOUD_PATH/data"
     write_log "Uploading data to S3 bucket."
-    if [[ $EXCLUDE_DATABASE=false ]]; then
+    if [[ $EXCLUDE_DATABASE = false ]]; then
         write_log "Uploading database backup."
         $S3CMD --access_key="$S3_ACCESS_KEY" --secret_key="$S3_SECRET_KEY" --storage-class=REDUCED_REDUNDANCY sync --delete-removed --recursive --preserve $DATABASE_BACKUP_PATH s3://$S3_BUCKET
     fi
