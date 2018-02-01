@@ -38,7 +38,7 @@ testNoLogFile() {
    cat << EOF > $TMP_FOLDER/expectedError
 Error: Log enabled but there is no log file declared, add '--log-file' option.
 EOF
-    ./src/nextcloud_backups_aws_s3 -l 2> $TMP_FOLDER/error
+    ./src/nextcloud_backups_aws_s3 -l > /dev/null 2> $TMP_FOLDER/error
     sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
     diff $TMP_FOLDER/expectedError $TMP_FOLDER/error
     match=$?

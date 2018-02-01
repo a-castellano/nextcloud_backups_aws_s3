@@ -15,11 +15,16 @@ LOGGER="$(which logger) -t $LOGGET_TAG"
 # Error file
 LOCAL_ERROR_FILE="$TMP_FOLDER/.error.log"
 
+NOW=`$DATE '+%Y-%m-%d %H:%M:%S'`
+
 function report_error {
     error_message="Error: $@"
     stderr=""
     if [[ -z "$SILENT" || "$SILENT" = false ]]; then
        stderr="--stderr"
+    fi
+    if [[ "$ENABLE_LOG" = true && -z LOG_FILE ]]; then
+        $ECHO "$NOW $error_message" >> $LOG_FILE
     fi
     $LOGGER $stderr $error_message
 }
@@ -27,4 +32,7 @@ function report_error {
 function write_log {
     message="Info: $@"
     $LOGGER $message
+    if [[ "$ENABLE_LOG" = true && -z LOG_FILE ]]; then
+        $ECHO "$NOW $error_message" >> $LOG_FILE
+    fi
 }

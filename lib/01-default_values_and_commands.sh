@@ -39,6 +39,7 @@ CUT=$($WHICH cut)
 TOUCH=$($WHICH touch)
 GREP=$($WHICH grep)
 MKDIR=$($WHICH mkdir)
+DATE=$($WHICH date)
 
 #Required software
 MYSQL=$($WHICH mysql)
