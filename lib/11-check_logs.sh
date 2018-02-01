@@ -8,6 +8,7 @@
 #
 # Álvaro Castellano Vela - https://github.com/a-castellano
 
+source lib/02-usage.sh
 # Logger
 source lib/04-logger.sh
 
@@ -20,6 +21,7 @@ function check_log_file {
         if [[ "$ENABLE_LOG" = true && -z $LOG_FILE ]];then
             error_msg="Log enabled but there is no log file declared, add '--log-file' option."
             report_error $error_msg
+            usage
             exit 1
         else
             # Check if folder is writable
