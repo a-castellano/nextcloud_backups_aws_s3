@@ -19,17 +19,17 @@ function backup_files_by_user {
     NEXTCLOUD_DATA_DIR="$NEXTCLOUD_PATH/data"
     write_log "Uploading backups to S3 bucket."
     if [[ $EXCLUDE_DATABASE = false ]]; then
-        if [[ ! -z $VERBOSE ]]; then
+        if [[ -v VERBOSE ]]; then
             write_log "Uploading database backup."
         fi
         $S3CMD --access_key="$S3_ACCESS_KEY" --secret_key="$S3_SECRET_KEY" --storage-class=REDUCED_REDUNDANCY sync --delete-removed --recursive --preserve $DATABASE_BACKUP_PATH s3://$S3_BUCKET
     fi
-    if [[ ! -z $VERBOSE   ]]; then
+    if [[ -v VERBOSE   ]]; then
         write_log "Uploading users data folders."
     fi
     for user in $USERS_TO_BACKUP
     do
-        if [[ ! -z $VERBOSE   ]]; then
+        if [[ -v VERBOSE   ]]; then
             write_log "Uploading $user's data."
         fi
         $S3CMD --access_key="$S3_ACCESS_KEY" --secret_key="$S3_SECRET_KEY" --storage-class=REDUCED_REDUNDANCY sync --delete-removed --recursive --preserve $NEXTCLOUD_DATA_DIR/$user s3://$S3_BUCKET

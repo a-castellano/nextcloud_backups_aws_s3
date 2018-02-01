@@ -35,7 +35,7 @@ function database_backup {
         fi
         $RM $LOCAL_ERROR_FILE
     else
-        if [[ ! -z $VERBOSE ]]; then
+        if [[ -v VERBOSE ]]; then
             write_log "Not performing database backup, EXCLUDE_DATABASE is enabled."
         fi
     fi

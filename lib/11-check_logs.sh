@@ -14,12 +14,12 @@ source lib/04-logger.sh
 
 function check_log_file {
 
-    if [[ ! -z $VERBOSE ]]; then
+    if [[ -v VERBOSE ]]; then
         write_log "Checking if logs are enabled."
     fi
 
     if [[ "$ENABLE_LOG" = true ]]; then
-        if [[ ! -z $VERBOSE ]]; then
+        if [[ -v VERBOSE ]]; then
             write_log "Log Enabled"
         fi
         if [[ "$ENABLE_LOG" = true && -z $LOG_FILE ]];then
@@ -60,7 +60,7 @@ function check_log_file {
                 fi
             fi
         fi
-        if [[ ! -z $VERBOSE ]]; then
+        if [[ -v VERBOSE ]]; then
             write_log "Script is allowed to write logs in $LOG_FILE"
         fi
     fi

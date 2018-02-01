@@ -13,7 +13,7 @@ source lib/04-logger.sh
 
 function check_databse_connection {
 
-    if [[ ! -z $VERBOSE ]]; then
+    if [[ -v VERBOSE ]]; then
         write_log "Testing mysql database connection."
     fi
 
