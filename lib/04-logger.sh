@@ -23,7 +23,7 @@ function report_error {
     if [[ -z "$SILENT" || "$SILENT" = false ]]; then
        stderr="--stderr"
     fi
-    if [[ "$ENABLE_LOG" = true && -z LOG_FILE ]]; then
+    if [[ -z LOG_FILE ]]; then
         $ECHO "$NOW $error_message" >> $LOG_FILE
     fi
     $LOGGER $stderr $error_message
@@ -32,7 +32,7 @@ function report_error {
 function write_log {
     message="Info: $@"
     $LOGGER $message
-    if [[ "$ENABLE_LOG" = true && -z LOG_FILE ]]; then
+    if [[ -z LOG_FILE ]]; then
         $ECHO "$NOW $error_message" >> $LOG_FILE
     fi
 }
