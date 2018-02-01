@@ -32,7 +32,7 @@ build:
 	( rm -rf clean_lib )
 
 clean:
-	( rm $(PROG) )
+	( rm -f $(PROG) )
 
 install:
 	( mv $(PROG) /usr/bin/$(PROG) )
