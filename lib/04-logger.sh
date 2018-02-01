@@ -33,6 +33,6 @@ function write_log {
     message="Info: $@"
     $LOGGER $message
     if [[ -w $LOG_FILE ]]; then
-        $ECHO "$NOW $error_message" >> $LOG_FILE
+        $ECHO "$NOW $error" >> $LOG_FILE
     fi
 }
