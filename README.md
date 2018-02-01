@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/a-castellano/nextcloud_backups_aws_s3.svg?branch=master)](https://travis-ci.org/a-castellano/nextcloud_backups_aws_s3)
 
-Utility to make backups of Nextcloud and store them in an S3 bucket
+Utility to make backups of Nextcloud and store them into S3 bucket
 
 ## Requirements
 
@@ -67,12 +67,11 @@ Nextcloud is in maintenance mode - no app have been loaded
 Maintenance mode disabled
 ```
 
-## To Do (2018-01-30)
-- Write build method, parent script loads **lib** files locally so it cannot be called from outside nextcloud_backups_aws_s3 path.
+## To Do (2018-02-01)
 - Document cron examples.
 - S3 storage class is hardcoded to cheaper one, make it eligible.
 - There is no logs yet...
-- Make backup folder eligible.
+- Make database backup folder eligible.
 - Allow to choose between MySQL tcp port or socket.
 - Send e-mails about backup status.
 - Allow to choose nexcloud database tables prefix.
