@@ -70,7 +70,6 @@ Maintenance mode disabled
 ## To Do (2018-02-01)
 - Document cron examples.
 - S3 storage class is hardcoded to cheaper one, make it eligible.
-- There is no logs yet...
 - Make database backup folder eligible.
 - Allow to choose between MySQL tcp port or socket.
 - Send e-mails about backup status.
