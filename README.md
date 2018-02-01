@@ -67,10 +67,46 @@ Nextcloud is in maintenance mode - no app have been loaded
 Maintenance mode disabled
 ```
 
+## Instalation
+
+There are no packages neither repositories for this script, creating these packages is in my roadmap.
+For the time being the script can be built and installed in your system.
+
+```
+git clone https://github.com/a-castellano/nextcloud_backups_aws_s3.git nextcloud_backups_aws_s3
+cd nextcloud_backups_aws_s3
+make build
+sudo make install
+```
+
+## Usage example
+
+Exclude database from backups
+```
+nextcloud_backups_aws_s3 --exclude-databse
+```
+
+Make backups only for certain users
+```
+nextcloud_backups_aws_s3 --users="undu"
+```
+```
+nextcloud_backups_aws_s3 --users="undu,maitesin"
+```
+
+View your variables values.
+```
+nextcloud_backups_aws_s3 --test="s3-access-key,s3-bucket"
+```
+
+You can also create a cron task
+```
+0 1 * * * nextcloud_backups_aws_s3
+```
+
 ## To Do (2018-02-01)
-- Document cron examples.
 - S3 storage class is hardcoded to cheaper one, make it eligible.
 - Make database backup folder eligible.
 - Allow to choose between MySQL tcp port or socket.
 - Send e-mails about backup status.
-- Allow to choose nexcloud database tables prefix.
+- Create deb and rmp packages.
