@@ -28,7 +28,11 @@ function check_required_variables {
         'nextcloud-users'
         'http-user'
     )
-    write_log "Cheking if all required variables are set before start he backup."
+
+    if [[ ! -z $VERBOSE ]]; then
+        write_log "Cheking if all required variables are set before start he backup."
+    fi
+
     unset_variables=""
     for var in ${required_variables[@]}
     do

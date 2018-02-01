@@ -15,7 +15,9 @@ source lib/04-logger.sh
 function check_required_software {
     errors=false
 
-    write_log "Checking if mysql-client is installed."
+    if [[ ! -z $VERBOSE ]]; then
+        write_log "Checking if mysql-client is installed."
+    fi
 
     MYSQL=$($WHICH mysql)
     if [[ -z $MYSQL ]]; then
@@ -24,7 +26,9 @@ function check_required_software {
         report_error $error_msg
     fi
 
-    write_log "Checking if mydumper is installed."
+    if [[ ! -z $VERBOSE ]]; then
+        write_log "Checking if mydumper is installed."
+    fi
 
     MYDUMPER=$($WHICH mydumper)
     if [[ -z $MYDUMPER ]]; then
@@ -33,8 +37,9 @@ function check_required_software {
         report_error $error_msg
     fi
 
-
-    write_log "Checking if s3cmd is installed."
+    if [[ ! -z $VERBOSE ]]; then
+        write_log "Checking if s3cmd is installed."
+    fi
 
     S3CMD=$($WHICH s3cmd)
     if [[ -z $S3CMD ]]; then
@@ -47,5 +52,7 @@ function check_required_software {
         exit 1
     fi
 
-    write_log "All required software is installed."
+    if [[ ! -z $VERBOSE ]]; then
+        write_log "All required software is installed."
+    fi
 }

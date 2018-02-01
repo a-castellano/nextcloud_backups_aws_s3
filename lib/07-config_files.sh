@@ -52,7 +52,9 @@ function get_variables_config_file {
     CONFIG_FILE=$( $ECHO $CONFIG_FILE | $SED "s|~|$HOME|" )
     test_config_file $CONFIG_FILE
 
-    write_log "Recollecting variable from $CONFIG_FILE"
+    if [[ ! -z $VERBOSE  ]]; then
+        write_log "Recollecting variable from $CONFIG_FILE"
+    fi
 
     for var in "${required_config_variables[@]}"
     do
@@ -74,7 +76,9 @@ function get_variables_from_nextcloud_config_file {
     nextcloud_config_file=$NEXTCLOUD_PATH$NEXTCLOUD_CONFIG_ROUTE
     test_config_file $nextcloud_config_file
 
-    write_log "Recollecting variable from $nextcloud_config_file"
+    if [[ ! -z $VERBOSE  ]]; then
+        write_log "Recollecting variable from $nextcloud_config_file"
+    fi
 
     for var in "${!variables_to_nextcloud_variables[@]}"
     do

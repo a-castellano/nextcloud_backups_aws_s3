@@ -12,7 +12,11 @@ source lib/01-default_values_and_commands.sh
 source lib/04-logger.sh
 
 function check_databse_connection {
-    write_log "Testing mysql database connection."
+
+    if [[ ! -z $VERBOSE ]]; then
+        write_log "Testing mysql database connection."
+    fi
+
     TEST=$( mysql -u$DATABASE_USER -p$DATABASE_PASSWD --port=$DATABASE_PORT -h $DATABASE_HOST -Bse "use $DATABASE_NAME" 2> $LOCAL_ERROR_FILE > /dev/null )
     if [[ $? -ne 0 ]]; then
         error_msg=$( $CAT $LOCAL_ERROR_FILE )
