@@ -14,10 +14,14 @@ source lib/04-logger.sh
 
 function check_log_file {
 
-    write_log "Checking if logs are enabled."
+    if [[ -v VERBOSE ]]; then
+        write_log "Checking if logs are enabled."
+    fi
 
     if [[ "$ENABLE_LOG" = true ]]; then
-        write_log "Log Enabled"
+        if [[ -v VERBOSE ]]; then
+            write_log "Log Enabled"
+        fi
         if [[ "$ENABLE_LOG" = true && -z $LOG_FILE ]];then
             error_msg="Log enabled but there is no log file declared, add '--log-file' option."
             ENABLE_LOG=false
@@ -56,6 +60,8 @@ function check_log_file {
                 fi
             fi
         fi
-        write_log "Script is allowed to write logs in $LOG_FILE"
+        if [[ -v VERBOSE ]]; then
+            write_log "Script is allowed to write logs in $LOG_FILE"
+        fi
     fi
 }

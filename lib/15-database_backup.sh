@@ -25,7 +25,7 @@ function database_backup {
             write_log "Database backup proccess started."
             $MYDUMPER --user="$DATABASE_USER" --password="$DATABASE_PASSWD" --port=$DATABASE_PORT  --database="$DATABASE_NAME" -C --outputdir=$DATABASE_BACKUP_PATH --no-locks > /dev/null 2> $LOCAL_ERROR_FILE
             if [[ $? -ne 0 ]]; then
-                error_msg=$( $CAT $LOCAL_ERROR_FILE  )
+                error_msg=$( $CAT $LOCAL_ERROR_FILE )
                 report_error $error_msg
                 $RM $LOCAL_ERROR_FILE
                 exit 1
@@ -35,6 +35,8 @@ function database_backup {
         fi
         $RM $LOCAL_ERROR_FILE
     else
-        write_log "Not performing database backup, EXCLUDE_DATABASE is enabled."
+        if [[ -v VERBOSE ]]; then
+            write_log "Not performing database backup, EXCLUDE_DATABASE is enabled."
+        fi
     fi
 }

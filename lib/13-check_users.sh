@@ -14,7 +14,9 @@ source lib/02-usage.sh
 source lib/04-logger.sh
 
 function check_users {
-    write_log "Recollectiong database users to backup."
+    if [[ -v VERBOSE ]]; then
+        write_log "Recollectiong database users to backup."
+    fi
     users_in_database=$(mysql -u$DATABASE_USER -p$DATABASE_PASSWD --port=$DATABASE_PORT -h $DATABASE_HOST $DATABASE_NAME -Bse "select uid from oc_users;")
     if [[ ! "$NEXTCLOUD_USERS" = "ALL" ]]; then
         selected_users=""
@@ -39,7 +41,7 @@ function check_users {
     else
         provided_users=$users_in_database
     fi
-    if [[ ! -z $VERBOSE ]]; then
+    if [[ -v VERBOSE ]]; then
         write_log "Users with data to be backuped: $provided_users"
     fi
     echo $provided_users
