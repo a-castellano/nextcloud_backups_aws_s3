@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # ** nextcloud_backups_aws_s3 **
-# Utility to make backups of Nextcloud and store them in an S3 bucket
+# Utility to make backups of Nextcloud and store them into S3 bucket
 #
 #
 # Álvaro Castellano Vela - https://github.com/a-castellano

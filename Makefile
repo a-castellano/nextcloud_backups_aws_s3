@@ -30,3 +30,12 @@ build:
 	( perl -pe 's/source lib\/(.*)$$/`cat clean_lib\/$$1`/e'  src/$(PROG) > $(PROG) )
 	( chmod 755 $(PROG) )
 	( rm -rf clean_lib )
+
+clean:
+	( rm $(PROG) )
+
+install:
+	( mv $(PROG) /usr/bin/$(PROG) )
+
+uninstall:
+	( rm /usr/bin/$(PROG) )
