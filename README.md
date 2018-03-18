@@ -24,6 +24,7 @@ apt-get install s3cmd mydumper
 AWS user you create should be in a group with the following policy:
 ```
 {
+  "Version": "2012-10-17",
   "Statement": [
     {
       "Action": "s3:*",
