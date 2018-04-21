@@ -2,7 +2,7 @@ PROG=nextcloud_backups_aws_s3
 
 TEST_DIR=$(PWD)/tests
 
-all: test build
+all: build
 
 test:
 	@echo "executing $(PROG) unit tests"
