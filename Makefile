@@ -1,8 +1,10 @@
 PROG=nextcloud_backups_aws_s3
 
+PREFIX=/usr/bin/
+
 TEST_DIR=$(PWD)/tests
 
-all: build
+all: build test
 
 test:
 	@echo "executing $(PROG) unit tests"
@@ -35,7 +37,7 @@ clean:
 	( rm -f $(PROG) )
 
 install:
-	( mv $(PROG) /usr/bin/$(PROG) )
+	( mv $(PROG) $(PREFIX)$(PROG) )
 
 uninstall:
-	( rm /usr/bin/$(PROG) )
+	( rm $(PREFIX)$(PROG) )
