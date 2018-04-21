@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# file: tests/07-checkusers
+# file: tests/08-databasebackup
 
 source lib/15-database_backup.sh
+source lib/17-remove_database_backup.sh
 source lib/99-clean_variables.sh
 
 oneTimeSetUp() {
@@ -45,6 +46,16 @@ testMydumperBackupSomeTable()
     test -f $DATABASE_BACKUP_PATH/table.sql.gz
     assertEquals "$?" "0"
 }
+
+testDatabaseBackupIsRemoved()
+{
+    MYDUMPER=$(which mydumper)
+    database_backup
+    output=$(remove_database_backup)
+    test -d $DATABASE_BACKUP_PATH
+    assertEquals "$?" "1"
+}
+
 
 # Load shUnit2.
 . /usr/bin/shunit2

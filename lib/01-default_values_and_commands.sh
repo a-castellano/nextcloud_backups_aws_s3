@@ -32,6 +32,7 @@ ECHO=$($WHICH echo)
 TR=$($WHICH tr)
 RM=$($WHICH rm)
 RM="$RM -f"
+RMR="$RM -r"
 SED=$($WHICH sed)
 CAT=$($WHICH cat)
 PRINTF=$($WHICH printf)
