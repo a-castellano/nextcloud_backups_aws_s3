@@ -37,7 +37,7 @@ clean:
 	( rm -f $(PROG) )
 
 install:
-	( mv $(PROG) $(PREFIX)$(PROG) )
+	( mv $(PROG) $(DESTDIR)$(PREFIX)$(PROG) )
 
 uninstall:
 	( rm $(PREFIX)$(PROG) )
