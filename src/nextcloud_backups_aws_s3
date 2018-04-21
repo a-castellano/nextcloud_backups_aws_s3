@@ -54,6 +54,9 @@ source lib/15-database_backup.sh
 # Make files backup using s3cmd
 source lib/16-files_backup.sh
 
+# Make files backup using s3cmd
+source lib/17-remove_database_backup.sh
+
 # MainA
 
 write_log "Starting nextcloud_backups_aws_s3."
@@ -154,6 +157,8 @@ set_maintenance
 database_backup
 
 backup_files_by_user
+
+remove_database_backup
 
 unset_maintenance
 
