@@ -105,8 +105,7 @@ You can also create a cron task
 0 1 * * * nextcloud_backups_aws_s3
 ```
 
-## To Do (2018-02-23)
-- Remove database_backup folder after backup.
+## To Do (2018-04-21)
 - S3 storage class is hardcoded to cheaper one, make it eligible.
 - Make database backup folder eligible.
 - Allow to choose between MySQL tcp port or socket.

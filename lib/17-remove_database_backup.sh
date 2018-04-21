@@ -17,12 +17,11 @@ source lib/04-logger.sh
 function remove_database_backup {
 
     NEXTCLOUD_DATA_DIR="$NEXTCLOUD_PATH/data"
-    write_log "Uploading backups to S3 bucket."
     if [[ $EXCLUDE_DATABASE = false ]]; then
         if [[ -v VERBOSE ]]; then
             write_log "Removing local database backup."
         fi
-        $RM $DATABASE_BACKUP_PATH
+        $RMR $DATABASE_BACKUP_PATH
     fi
     write_log "Local Database Backup Removed."
 }
