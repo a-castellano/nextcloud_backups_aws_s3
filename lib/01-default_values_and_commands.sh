@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# **  nextcloud_backups_aws_s3   **
+# **  nextcloudbackupsawss3   **
 # ** default_values_and_commands **
 #
 # Utility to make backups of Nextcloud and store them in an S3 bucket
@@ -17,14 +17,14 @@ if [[ -z $NEXTCLOUD_PATH ]]; then
 fi
 
 if [[ -z $CONFIG_FILE  ]]; then
-    CONFIG_FILE='~/.config/nextcloud_backups_aws_s3'
+    CONFIG_FILE='~/.config/nextcloudbackupsawss3'
 fi
 
 # Nextcloud variables
 NEXTCLOUD_CONFIG_ROUTE='/config/config.php'
 
 # App tmp folder
-TMP_FOLDER="/var/tmp/nextcloud_backups_aws_s3"
+TMP_FOLDER="/var/tmp/nextcloudbackupsawss3"
 
 # Misc
 WHICH=$(which which)

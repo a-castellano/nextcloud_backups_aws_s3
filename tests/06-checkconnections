@@ -5,7 +5,7 @@ source lib/09-check_connections.sh
 source lib/99-clean_variables.sh
 
 oneTimeSetUp() {
-    export TMP_FOLDER="/var/tmp/nextcloud_backups_aws_s3/tests"
+    export TMP_FOLDER="/var/tmp/nextcloudbackupsawss3/tests"
     mkdir -p $TMP_FOLDER
 }
 
@@ -41,7 +41,7 @@ testMySQLFailedCredentials()
 Error: ERROR 1045 (28000): Access denied for user 'test'@'localhost' (using password: YES)
 EOF
     output=$(check_databse_connection 2> $TMP_FOLDER/error)
-    sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
+    sed  's/^.*nextcloudbackupsawss3: //' -i $TMP_FOLDER/error
     diff $TMP_FOLDER/fileFailedPasswd $TMP_FOLDER/error
     returnCode=$?
     assertEquals "$returnCode" "0"
@@ -55,7 +55,7 @@ testS3cmdFailedAccessKey(){
 Error: ERROR: S3 error: 403 (InvalidAccessKeyId): The AWS Access Key Id you provided does not exist in our records.
 EOF
     output=$(check_s3_conection 2> $TMP_FOLDER/error)
-    sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
+    sed  's/^.*nextcloudbackupsawss3: //' -i $TMP_FOLDER/error
     diff $TMP_FOLDER/fileFailedAccess $TMP_FOLDER/error
     returnCode=$?
     assertEquals "$returnCode" "0"
@@ -69,7 +69,7 @@ testS3cmdFailedSecretKey(){
 Error: ERROR: S3 error: 403 (SignatureDoesNotMatch): The request signature we calculated does not match the signature you provided. Check your key and signing method.
 EOF
     output=$(check_s3_conection 2> $TMP_FOLDER/error)
-    sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
+    sed  's/^.*nextcloudbackupsawss3: //' -i $TMP_FOLDER/error
     diff $TMP_FOLDER/fileFailedSecret $TMP_FOLDER/error
     returnCode=$?
     assertEquals "$returnCode" "0"
@@ -83,7 +83,7 @@ testS3cmdFailedBucket(){
 Error: ERROR: Bucket 'failed' does not exist ERROR: S3 error: 404 (NoSuchBucket): The specified bucket does not exist
 EOF
     output=$(check_s3_conection 2> $TMP_FOLDER/error)
-    sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
+    sed  's/^.*nextcloudbackupsawss3: //' -i $TMP_FOLDER/error
     diff $TMP_FOLDER/fileFailedBucket $TMP_FOLDER/error
     returnCode=$?
     assertEquals "$returnCode" "0"

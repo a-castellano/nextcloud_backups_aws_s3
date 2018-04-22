@@ -6,11 +6,11 @@ source lib/99-clean_variables.sh
 
 oneTimeSetUp() {
     export NEXTCLOUD_PATH="$(pwd)/tests/config_folders/config_test"
-    export CONFIG_FILE="$(pwd)/tests/config_folders/config/nextcloud_backups_aws_s3"
+    export CONFIG_FILE="$(pwd)/tests/config_folders/config/nextcloudbackupsawss3"
     export S3_ACCESS_KEY="access-key"
     export S3_SECRET_KEY="secretkey"
     export S3_BUCKET="my-bucket"
-    export TMP_FOLDER="/var/tmp/nextcloud_backups_aws_s3/tests"
+    export TMP_FOLDER="/var/tmp/nextcloudbackupsawss3/tests"
     mkdir -p $TMP_FOLDER
 }
 
@@ -36,7 +36,7 @@ EOF
     which mysql > /dev/null
     if [ $? -eq 1  ]; then
         output=$(check_required_software 2> $TMP_FOLDER/error)
-        sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
+        sed  's/^.*nextcloudbackupsawss3: //' -i $TMP_FOLDER/error
         diff $TMP_FOLDER/nomysqlclientinstalled $TMP_FOLDER/error
         returnCode=$?
     else
@@ -55,7 +55,7 @@ EOF
     which mydumper > /dev/null
     if [ $? -eq 1 ]; then
         output=$(check_required_software 2> $TMP_FOLDER/error)
-        sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
+        sed  's/^.*nextcloudbackupsawss3: //' -i $TMP_FOLDER/error
         diff $TMP_FOLDER/nomydumperinstalled $TMP_FOLDER/error
         returnCode=$?
         assertEquals "$returnCode" "0"
@@ -74,7 +74,7 @@ EOF
     which s3cmd > /dev/null
     if [ $? -eq 1 ]; then
         output=$(check_required_software 2> $TMP_FOLDER/error)
-        sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
+        sed  's/^.*nextcloudbackupsawss3: //' -i $TMP_FOLDER/error
         diff $TMP_FOLDER/nos3cmdinstalled $TMP_FOLDER/error
         returnCode=$?
         assertEquals "$returnCode" "0"

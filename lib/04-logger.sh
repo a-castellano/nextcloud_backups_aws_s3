@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# **  nextcloud_backups_aws_s3  **
+# **  nextcloudbackupsawss3  **
 # **          logger            **
 #
 # Utility to make backups of Nextcloud and store them in an S3 bucket
@@ -9,7 +9,7 @@
 # Álvaro Castellano Vela - https://github.com/a-castellano
 
 # Log variables
-LOGGET_TAG="nextcloud_backups_aws_s3"
+LOGGET_TAG="nextcloudbackupsawss3"
 LOGGER="$(which logger) -t $LOGGET_TAG"
 
 # Error file

@@ -6,7 +6,7 @@ source lib/17-remove_database_backup.sh
 source lib/99-clean_variables.sh
 
 oneTimeSetUp() {
-    TMP_FOLDER="/var/tmp/nextcloud_backups_aws_s3/tests"
+    TMP_FOLDER="/var/tmp/nextcloudbackupsawss3/tests"
     mkdir -p $TMP_FOLDER
 }
 
