@@ -1,8 +1,8 @@
 #!/usr/bin/make -f
 %:
-        dh $@
+	dh $@
 
 override_dh_auto_install:
-        $(MAKE) DESTDIR=$$(pwd)/debian/nextcloudbackupsawss3 prefix=/usr install
+	$(MAKE) DESTDIR=$$(pwd)/debian/nextcloudbackupsawss3 prefix=/usr install
 override_dh_auto_test:
-        $(MAKE) TEST_DIR=$$(pwd)/tests test
+	$(MAKE) TEST_DIR=$$(pwd)/tests test
