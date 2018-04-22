@@ -74,7 +74,7 @@ There are no packages neither repositories for this script, creating these packa
 For the time being the script can be built and installed in your system.
 
 ```
-git clone https://github.com/a-castellano/nextcloudbackupsawss3.git nextcloudbackupsawss3
+git clone https://github.com/a-castellano/nextcloud_backups_aws_s3.git nextcloudbackupsawss3
 cd nextcloudbackupsawss3
 make build
 sudo make install
@@ -105,9 +105,9 @@ You can also create a cron task
 0 1 * * * nextcloudbackupsawss3
 ```
 
-## To Do (2018-04-21)
+## To Do (2018-04-22)
 - S3 storage class is hardcoded to cheaper one, make it eligible.
 - Make database backup folder eligible.
 - Allow to choose between MySQL tcp port or socket.
 - Send e-mails about backup status.
-- Create deb and rmp packages.
+- Create rmp package.
