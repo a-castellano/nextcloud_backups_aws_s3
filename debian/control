@@ -1,0 +1,13 @@
+Source: nextcloudbackupsawss3
+Maintainer: Álvaro Castellano Vela <alvaro.castellano.vela@gmail.com>
+Section: misc
+Priority: optional
+Standards-Version: 0.4
+Build-Depends: debhelper (>= 9)
+
+Package: nextcloudbackupsawss3
+Architecture: any
+Depends: s3cmd, mydumper, ${shlibs:Depends}, ${misc:Depends}
+Recommends: default-mysql-client
+Description: Utility to make backups of
+ Nextcloud and store them into S3 bucket.

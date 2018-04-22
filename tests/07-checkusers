@@ -5,7 +5,7 @@ source lib/13-check_users.sh
 source lib/99-clean_variables.sh
 
 oneTimeSetUp() {
-    export TMP_FOLDER="/var/tmp/nextcloud_backups_aws_s3/tests"
+    export TMP_FOLDER="/var/tmp/nextcloudbackupsawss3/tests"
     mkdir -p $TMP_FOLDER
 }
 
@@ -41,7 +41,7 @@ testNonExistentUsers()
 Error: The following users are not present as Nexcloud users: bob philip . Please, provide a valid list of users.
 EOF
     output=$(check_users 2> $TMP_FOLDER/error)
-    sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
+    sed  's/^.*nextcloudbackupsawss3: //' -i $TMP_FOLDER/error
     diff $TMP_FOLDER/fileFailedPasswd $TMP_FOLDER/error
     returnCode=$?
     assertEquals "$returnCode" "0"
@@ -78,7 +78,7 @@ testExistentUsersAndOneNonExistent()
 Error: The following users are not present as Nexcloud users: philip . Please, provide a valid list of users.
 EOF
     output=$(check_users 2> $TMP_FOLDER/error)
-    sed  's/^.*nextcloud_backups_aws_s3: //' -i $TMP_FOLDER/error
+    sed  's/^.*nextcloudbackupsawss3: //' -i $TMP_FOLDER/error
     diff $TMP_FOLDER/fileFailedPasswd $TMP_FOLDER/error
     returnCode=$?
     assertEquals "$returnCode" "0"

@@ -1,12 +1,16 @@
-PROG=nextcloud_backups_aws_s3
+PROG=nextcloudbackupsawss3
 
-PREFIX=/usr/bin/
+prefix = /usr/local
+bindir = $(prefix)/bin
+sharedir = $(prefix)/share
+mandir = $(sharedir)/man
+man1dir = $(mandir)/man1
 
 TEST_DIR=$(PWD)/tests
 
-all: build test
+all: build
 
-test:
+test: 
 	@echo "executing $(PROG) unit tests"
 	@echo "- variables"
 	( $(TEST_DIR)/01-variables )
@@ -37,7 +41,7 @@ clean:
 	( rm -f $(PROG) )
 
 install:
-	( mv $(PROG) $(DESTDIR)$(PREFIX)$(PROG) )
+	install $(PROG) $(DESTDIR)$(bindir)
 
 uninstall:
-	( rm $(PREFIX)$(PROG) )
+	( rm $(DESTDIR)$(bindir)$(PROG) )

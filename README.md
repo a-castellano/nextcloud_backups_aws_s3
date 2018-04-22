@@ -1,6 +1,6 @@
-# nextcloud_backups_aws_s3
+# nextcloudbackupsawss3
 
-[![Build Status](https://travis-ci.org/a-castellano/nextcloud_backups_aws_s3.svg?branch=master)](https://travis-ci.org/a-castellano/nextcloud_backups_aws_s3)
+[![Build Status](https://travis-ci.org/a-castellano/nextcloudbackupsawss3.svg?branch=master)](https://travis-ci.org/a-castellano/nextcloudbackupsawss3)
 
 Utility to make backups of Nextcloud and store them into S3 bucket
 
@@ -74,8 +74,8 @@ There are no packages neither repositories for this script, creating these packa
 For the time being the script can be built and installed in your system.
 
 ```
-git clone https://github.com/a-castellano/nextcloud_backups_aws_s3.git nextcloud_backups_aws_s3
-cd nextcloud_backups_aws_s3
+git clone https://github.com/a-castellano/nextcloud_backups_aws_s3.git nextcloudbackupsawss3
+cd nextcloudbackupsawss3
 make build
 sudo make install
 ```
@@ -84,30 +84,30 @@ sudo make install
 
 Exclude database from backups
 ```
-nextcloud_backups_aws_s3 --exclude-databse
+nextcloudbackupsawss3 --exclude-databse
 ```
 
 Make backups only for certain users
 ```
-nextcloud_backups_aws_s3 --users="undu"
+nextcloudbackupsawss3 --users="undu"
 ```
 ```
-nextcloud_backups_aws_s3 --users="undu,maitesin"
+nextcloudbackupsawss3 --users="undu,maitesin"
 ```
 
 View your variables values.
 ```
-nextcloud_backups_aws_s3 --test="s3-access-key,s3-bucket"
+nextcloudbackupsawss3 --test="s3-access-key,s3-bucket"
 ```
 
 You can also create a cron task
 ```
-0 1 * * * nextcloud_backups_aws_s3
+0 1 * * * nextcloudbackupsawss3
 ```
 
-## To Do (2018-04-21)
+## To Do (2018-04-22)
 - S3 storage class is hardcoded to cheaper one, make it eligible.
 - Make database backup folder eligible.
 - Allow to choose between MySQL tcp port or socket.
 - Send e-mails about backup status.
-- Create deb and rmp packages.
+- Create rmp package.
