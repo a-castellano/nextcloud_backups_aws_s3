@@ -1,6 +1,6 @@
 # nextcloudbackupsawss3
 
-[![Build Status](https://travis-ci.org/a-castellano/nextcloudbackupsawss3.svg?branch=master)](https://travis-ci.org/a-castellano/nextcloudbackupsawss3)
+[![Build Status](https://travis-ci.org/a-castellano/nextcloudbackupsawss3.svg?branch=master)](https://travis-ci.org/a-castellano/nextcloud_backups_aws_s3)
 
 Utility to make backups of Nextcloud and store them into S3 bucket
 
