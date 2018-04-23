@@ -117,5 +117,5 @@ You can also create a cron task
 - S3 storage class is hardcoded to cheaper one, make it eligible.
 - Make database backup folder eligible.
 - Allow to choose between MySQL tcp port or socket.
-- Send e-mails about backup status.
+- Send e-mails informing about backup process.
 - Create RPM package.
