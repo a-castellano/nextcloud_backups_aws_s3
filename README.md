@@ -1,8 +1,36 @@
 # nextcloudbackupsawss3
 
-[![Build Status](https://travis-ci.org/a-castellano/nextcloudbackupsawss3.svg?branch=master)](https://travis-ci.org/a-castellano/nextcloud_backups_aws_s3)
+[![Build Status](https://travis-ci.org/a-castellano/nextcloud_backups_aws_s3.svg?branch=master)](https://travis-ci.org/a-castellano/nextcloud_backups_aws_s3)
 
 Utility to make backups of Nextcloud and store them into S3 bucket
+
+
+## Instalation
+
+### Debian/Ubuntu
+
+This script is available through my repo:
+```
+wget -O - https://packages.windmaker.net/WINDMAKER-GPG-KEY.pub | sudo apt-key add -
+echo "deb http://packages.windmaker.net/ any windmaker" > /etc/apt/sources.list.d/windmaker.list
+apt-get update
+apt-get install apt-get install nextcloudbackupsawss3
+```
+
+### Build it
+
+```
+git clone https://github.com/a-castellano/nextcloud_backups_aws_s3.git nextcloudbackupsawss3
+cd nextcloudbackupsawss3
+make build
+sudo make install
+```
+You will also need the following packages (Debian package has them as dependence):
+- The command-line Amazon S3 client -> [s3cmd](http://s3tools.org/s3cmd)
+- [myumper](https://github.com/maxbube/mydumper) -> High-performance MySQL backup tool.
+```
+apt-get install s3cmd mydumper
+```
 
 ## Requirements
 
@@ -11,15 +39,7 @@ You will need the following:
 - An AWS account
 - A S3 bucket
 - An user with access to that bucket
-- The command-line Amazon S3 client -> [s3cmd](http://s3tools.org/s3cmd)
-- [myumper](https://github.com/maxbube/mydumper) -> High-performance MySQL backup tool.
 - User allowed to run commands as HTTP user.
-
-
-Install required packages
-```
-apt-get install s3cmd mydumper
-```
 
 AWS user you create should be in a group with the following policy:
 ```
@@ -68,18 +88,6 @@ Nextcloud is in maintenance mode - no app have been loaded
 Maintenance mode disabled
 ```
 
-## Instalation
-
-There are no packages neither repositories for this script, creating these packages is in my roadmap.
-For the time being the script can be built and installed in your system.
-
-```
-git clone https://github.com/a-castellano/nextcloud_backups_aws_s3.git nextcloudbackupsawss3
-cd nextcloudbackupsawss3
-make build
-sudo make install
-```
-
 ## Usage example
 
 Exclude database from backups
@@ -105,9 +113,9 @@ You can also create a cron task
 0 1 * * * nextcloudbackupsawss3
 ```
 
-## To Do (2018-04-22)
+## To Do (2018-04-23)
 - S3 storage class is hardcoded to cheaper one, make it eligible.
 - Make database backup folder eligible.
 - Allow to choose between MySQL tcp port or socket.
 - Send e-mails about backup status.
-- Create rmp package.
+- Create RPM package.
