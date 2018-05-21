@@ -27,7 +27,7 @@ sudo make install
 ```
 You will also need the following packages (Debian package has them as dependence):
 - The command-line Amazon S3 client -> [s3cmd](http://s3tools.org/s3cmd)
-- [myumper](https://github.com/maxbube/mydumper) -> High-performance MySQL backup tool.
+- [mydumper](https://github.com/maxbube/mydumper) -> High-performance MySQL backup tool.
 ```
 apt-get install s3cmd mydumper
 ```
