@@ -9,7 +9,7 @@ integration_tests:
         - apt-get update -qq
         - apt-get install -y -qq shunit2 make rsyslog
         - service rsyslog start
-        - mkdir -p /var/tmp/
-        - chmod 777 -R /var/tmp/
+        - mkdir -p /var/tmp/nextcloudbackupsawss3
+        - chmod 777 -R /var/tmp/nextcloudbackupsawss3
     script:
         - make test
