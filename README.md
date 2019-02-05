@@ -12,7 +12,7 @@ Utility to make backups of Nextcloud and store them into S3 bucket
 This script is available through my repo:
 ```
 wget -O - https://packages.windmaker.net/WINDMAKER-GPG-KEY.pub | sudo apt-key add -
-echo "deb http://packages.windmaker.net/ any windmaker" > /etc/apt/sources.list.d/windmaker.list
+echo "deb http://packages.windmaker.net/ any main" > /etc/apt/sources.list.d/windmaker.list
 apt-get update
 apt-get install nextcloudbackupsawss3
 ```
