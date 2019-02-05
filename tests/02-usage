@@ -45,19 +45,6 @@ EOF
     assertEquals $match 0
 }
 
-testFailToCreateLogPermission() {
-   mkdir -p $TMP_FOLDER/nopermissionfolder/
-   chmod 0 -R $TMP_FOLDER/nopermissionfolder
-   cat << EOF > $TMP_FOLDER/expectedError
-Error: Cannot write log in '$TMP_FOLDER/nopermissionfolder/nextcloudbackupsawss3.log': Permission Denied
-EOF
-    ./src/nextcloudbackupsawss3 -l --log-file="$TMP_FOLDER/nopermissionfolder/nextcloudbackupsawss3.log" 2> $TMP_FOLDER/error > /dev/null
-    sed  's/^.*nextcloudbackupsawss3: //' -i $TMP_FOLDER/error
-    diff $TMP_FOLDER/expectedError $TMP_FOLDER/error
-    match=$?
-    assertEquals $match 0
-}
-
 testFailToCreateLogPathDoesNotExist() {
    rm -rf $TMP_FOLDER/nonexistentfolder
    cat << EOF > $TMP_FOLDER/expectedError
