@@ -8,5 +8,6 @@ integration_tests:
     before_script:
         - apt-get update -qq
         - apt-get install -y -q shunit2 make
+        - touch /dev/log
     script:
         - make test
