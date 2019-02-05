@@ -1,5 +1,6 @@
 # nextcloudbackupsawss3
 
+[![pipeline master status](https://git.windmaker.net/a-castellano/nextcloud_backups_aws_s3/badges/master/pipeline.svg)](https://git.windmaker.net/a-castellano/nextcloud_backups_aws_s3/commits/master)
 [![Build Status](https://travis-ci.org/a-castellano/nextcloud_backups_aws_s3.svg?branch=master)](https://travis-ci.org/a-castellano/nextcloud_backups_aws_s3)
 
 Utility to make backups of Nextcloud and store them into S3 bucket
@@ -12,7 +13,7 @@ Utility to make backups of Nextcloud and store them into S3 bucket
 This script is available through my repo:
 ```
 wget -O - https://packages.windmaker.net/WINDMAKER-GPG-KEY.pub | sudo apt-key add -
-echo "deb http://packages.windmaker.net/ any windmaker" > /etc/apt/sources.list.d/windmaker.list
+echo "deb http://packages.windmaker.net/ any main" > /etc/apt/sources.list.d/windmaker.list
 apt-get update
 apt-get install nextcloudbackupsawss3
 ```

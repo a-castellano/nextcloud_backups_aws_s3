@@ -22,6 +22,7 @@ Arguments:
 
     --s3-access-key=YOUR_S3_ACCES_KEY
     --s3-secret-key=YOUR_S3_SECRET_KEY
+    --s3-bucket=YOUR_S3_BUCKET_NAME
     --database-name=DATABASE_NAME
     --database-user=DATABASE_USER_NAME
     --database-passwd=DATABASE_PASSWORD
