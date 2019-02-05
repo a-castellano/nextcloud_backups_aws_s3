@@ -7,6 +7,7 @@ integration_tests:
     stage: test
     before_script:
         - apt-get update -qq
-        - apt-get install -y -q shunit2 make rsyslog
+        - apt-get install -y -qq shunit2 make rsyslog
+        - service rsyslog start
     script:
         - make test
