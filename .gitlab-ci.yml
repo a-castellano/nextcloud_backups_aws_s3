@@ -9,5 +9,7 @@ integration_tests:
         - apt-get update -qq
         - apt-get install -y -qq shunit2 make rsyslog
         - service rsyslog start
+        - mkdir /var/tmp/
+        - chmod 775 /var/tmp/
     script:
         - make test
