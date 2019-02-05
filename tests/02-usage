@@ -60,11 +60,10 @@ EOF
 }
 
 testFailToCreateLogPathDoesNotExist() {
-   rm -rf $TMP_FOLDER/nonexistentfolder
    cat << EOF > $TMP_FOLDER/expectedError
 Error: Cannot write log in '$TMP_FOLDER/nonexistentfolder': Given path does not exist
 EOF
-    ./src/nextcloudbackupsawss3 -l --log-file="$TMP_FOLDER/nonexistentfolder/nextcloudbackupsawss3.log" --s3-access-key=YOUR_S3_ACCES_KEY --s3-secret-key=YOUR_S3_SECRET_KEY --s3-bucket=YOUR_S3_BUCKET_NAME  2> $TMP_FOLDER/error
+    ./src/nextcloudbackupsawss3 -l --log-file="$TMP_FOLDER/nonexistentfolder/nextcloudbackupsawss3.log" --s3-access-key="YOUR_S3_ACCES_KEY" --s3-secret-key="YOUR_S3_SECRET_KEY" --s3-bucket="YOUR_S3_BUCKET_NAME"  2> $TMP_FOLDER/error
     sed  's/^.*nextcloudbackupsawss3: //' -i $TMP_FOLDER/error
     diff $TMP_FOLDER/expectedError $TMP_FOLDER/error
     match=$?
