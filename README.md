@@ -1,5 +1,6 @@
 # nextcloudbackupsawss3
 
+[![pipeline master status](https://git.windmaker.net/a-castellano/nextcloud_backups_aws_s3/badges/master/pipeline.svg)](https://git.windmaker.net/a-castellano/nextcloud_backups_aws_s3/commits/master)
 [![Build Status](https://travis-ci.org/a-castellano/nextcloud_backups_aws_s3.svg?branch=master)](https://travis-ci.org/a-castellano/nextcloud_backups_aws_s3)
 
 Utility to make backups of Nextcloud and store them into S3 bucket
